@@ -1,0 +1,150 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Platform {
+  INSTAGRAM
+  TWITTER
+  FACEBOOK
+}
+
+enum InboxItemType {
+  COMMENT
+  MENTION
+  TAG
+}
+
+enum ScheduledPostStatus {
+  DRAFT
+  QUEUED
+  PUBLISHED
+  FAILED
+}
+
+enum ActionType {
+  COMMENT
+  REPLY
+  LIKE
+  FOLLOW
+}
+
+enum ActionOutcome {
+  SUCCESS
+  REJECTED
+  FAILED
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id                  String          @id @default(uuid())
+  email               String          @unique
+  passwordHash        String
+  globalSafetyPause   Boolean         @default(false)
+  createdAt           DateTime        @default(now())
+
+  socialAccounts SocialAccount[]
+}
+
+model SocialAccount {
+  id                    String    @id @default(uuid())
+  userId                String
+  platform              Platform
+  accountHandle         String
+  accessTokenEncrypted  String
+  refreshTokenEncrypted String?
+  tokenExpiresAt        DateTime?
+  notificationPrefs     Json      @default("{\"frequency\": \"OFF\", \"email\": \"\", \"notifyComments\": true, \"notifyMentions\": true, \"notifyTags\": true}")
+  safetyPrefs           Json      @default("{\"dailyCap\": 15, \"gapSeconds\": 60, \"blackoutStart\": 0, \"blackoutEnd\": 6}")
+  followersCount        Int       @default(0)
+  createdAt             DateTime  @default(now())
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts          Post[]
+  inboxItems     InboxItem[]
+  scheduledPosts ScheduledPost[]
+  actionLogs     ActionLog[]
+
+  @@unique([userId, platform, accountHandle])
+  @@index([userId])
+}
+
+model Post {
+  id             String   @id @default(uuid())
+  socialAccountId String
+  platformPostId String
+  caption        String?
+  captionTsv     Unsupported("tsvector")?
+  mediaUrls      String[]
+  publishedAt    DateTime
+  metrics        Json?
+  createdAt      DateTime @default(now())
+
+  socialAccount SocialAccount @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([socialAccountId, platformPostId])
+  @@index([socialAccountId])
+  @@index([publishedAt])
+}
+
+model InboxItem {
+  id             String        @id @default(uuid())
+  socialAccountId String
+  type           InboxItemType
+  authorHandle   String
+  content        String
+  platformItemId String
+  isRead         Boolean       @default(false)
+  isResolved     Boolean       @default(false)
+  receivedAt     DateTime      @default(now())
+
+  socialAccount SocialAccount @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([socialAccountId, platformItemId])
+  @@index([socialAccountId])
+  @@index([isRead])
+  @@index([receivedAt])
+}
+
+model ScheduledPost {
+  id              String              @id @default(uuid())
+  socialAccountId String
+  content         String
+  mediaUrls       String[]
+  scheduledAt     DateTime
+  status          ScheduledPostStatus @default(DRAFT)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  socialAccount SocialAccount @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+
+  @@index([socialAccountId])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+model ActionLog {
+  id              String        @id @default(uuid())
+  socialAccountId String
+  actionType      ActionType
+  targetId        String
+  contentHash     String?
+  executedAt      DateTime      @default(now())
+  outcome         ActionOutcome
+
+  socialAccount SocialAccount @relation(fields: [socialAccountId], references: [id], onDelete: Cascade)
+
+  @@index([socialAccountId])
+  @@index([executedAt])
+  @@index([contentHash])
+}
