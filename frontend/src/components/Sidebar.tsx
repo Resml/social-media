@@ -26,7 +26,7 @@ const navItems = [
   { to: '/quick-comment', label: 'Quick Commenter',  Icon: MessageSquarePlus },
 ];
 
-export const Sidebar = () => {
+export const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -42,8 +42,23 @@ export const Sidebar = () => {
   }, []);
 
   return (
-    <div className="w-64 shrink-0 flex flex-col min-h-screen"
+    <div className={`
+      fixed inset-y-0 left-0 z-50 w-64 shrink-0 flex flex-col transition-transform duration-300 ease-in-out
+      lg:relative lg:translate-x-0
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+    `}
       style={{ background: '#ffffff', borderRight: '1px solid var(--slate-200)' }}>
+
+      {/* Close button for mobile */}
+      <button 
+        onClick={onClose}
+        className="lg:hidden absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
 
       {/* Logo */}
       <div className="px-5 py-5 mb-1" style={{ borderBottom: '1px solid var(--slate-100)' }}>

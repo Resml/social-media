@@ -62,24 +62,24 @@ export const CommentExporter = () => {
     : null;
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ background: 'var(--slate-50)', padding: '2rem' }}>
+    <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8" style={{ background: 'var(--slate-50)' }}>
       <div className="max-w-5xl mx-auto">
 
         {/* Page header */}
         <header className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 tracking-tight"
+          <h1 className="text-2xl lg:text-3xl font-bold mb-2 tracking-tight"
             style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
             Comment Exporter
           </h1>
-          <p style={{ color: 'var(--slate-500)' }}>
+          <p className="text-sm lg:text-base" style={{ color: 'var(--slate-500)' }}>
             Paste an Instagram or Facebook post link to fetch and download all comments as a CSV.
           </p>
         </header>
 
         {/* URL input card */}
-        <div className="rounded-2xl p-6 mb-6"
+        <div className="rounded-2xl p-4 lg:p-6 mb-6"
           style={{ background: '#ffffff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.06)' }}>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <input
                 type="text"
@@ -102,7 +102,7 @@ export const CommentExporter = () => {
                 onBlur={e  => { (e.target as HTMLInputElement).style.borderColor = 'var(--slate-200)'; (e.target as HTMLInputElement).style.boxShadow = 'none'; }}
               />
               {detectedPlatform && (
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold uppercase tracking-wider"
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] lg:text-xs font-bold uppercase tracking-wider hidden sm:block"
                   style={{ color: detectedPlatform.color }}>
                   {detectedPlatform.label}
                 </span>
@@ -111,7 +111,7 @@ export const CommentExporter = () => {
             <button
               onClick={fetchComments}
               disabled={loading || !url}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               style={{ background: 'var(--brand-600)', boxShadow: '0 2px 8px rgba(2,132,199,0.25)' }}
               onMouseEnter={e => { if (!loading && url) (e.currentTarget as HTMLElement).style.background = 'var(--brand-700)'; }}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--brand-600)'}
@@ -127,6 +127,7 @@ export const CommentExporter = () => {
               ) : 'Fetch Comments'}
             </button>
           </div>
+
 
           {error && (
             <div className="mt-4 p-4 rounded-xl text-sm flex items-start gap-2"
@@ -169,8 +170,8 @@ export const CommentExporter = () => {
               </button>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
+            {/* Responsive Table / Card View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr style={{ background: 'var(--slate-50)' }}>
@@ -196,6 +197,19 @@ export const CommentExporter = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {comments.map(comment => (
+                <div key={comment.id} className="p-4 space-y-2">
+                  <div className="flex justify-between items-start">
+                    <span className="font-bold text-sm" style={{ color: 'var(--slate-900)' }}>@{comment.username}</span>
+                    <span className="text-[10px]" style={{ color: 'var(--slate-400)' }}>{new Date(comment.timestamp).toLocaleString()}</span>
+                  </div>
+                  <p className="text-sm" style={{ color: 'var(--slate-600)' }}>{comment.text}</p>
+                </div>
+              ))}
             </div>
           </div>
         )}

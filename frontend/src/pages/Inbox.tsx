@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/axios';
 import { io } from 'socket.io-client';
-import { CheckCircle2, Sparkles, Target, Bot } from 'lucide-react';
+import { CheckCircle2, Sparkles, Target, Bot, ChevronLeft } from 'lucide-react';
+
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
 const socket = io('http://localhost:3001');
 
@@ -112,8 +113,12 @@ export const Inbox = () => {
       )}
 
       {/* Left column — message list */}
-      <div className="w-[380px] shrink-0 flex flex-col h-full"
+      <div className={`
+        w-full lg:w-[380px] shrink-0 flex flex-col h-full transition-all
+        ${selectedItem ? 'hidden lg:flex' : 'flex'}
+      `}
         style={{ background: '#ffffff', borderRight: '1px solid var(--slate-200)' }}>
+
         {/* Filter tabs */}
         <div className="p-4 flex gap-2 shrink-0" style={{ borderBottom: '1px solid var(--slate-100)' }}>
           {['ALL', 'COMMENT', 'MENTION', 'TAG'].map(f => (
@@ -182,23 +187,34 @@ export const Inbox = () => {
       </div>
 
       {/* Right panel — detail + AI */}
-      <div className="flex-1 overflow-y-auto p-8" style={{ background: 'var(--slate-50)' }}>
+      <div className={`
+        flex-1 overflow-y-auto p-4 lg:p-8
+        ${selectedItem ? 'flex flex-col' : 'hidden lg:flex flex-col items-center justify-center'}
+      `} style={{ background: 'var(--slate-50)' }}>
         {selectedItem ? (
-          <div className="max-w-3xl rounded-2xl p-8"
+          <div className="max-w-3xl w-full mx-auto rounded-2xl p-4 lg:p-8"
             style={{ background: '#ffffff', border: '1px solid var(--slate-100)', boxShadow: '0 2px 12px rgba(2,132,199,0.07)' }}>
             {/* Detail header */}
-            <div className="flex justify-between items-center mb-7 pb-5" style={{ borderBottom: '1px solid var(--slate-100)' }}>
-               <div>
-                 <h2 className="text-2xl font-bold" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-                   {selectedItem.authorHandle}
-                 </h2>
-                 <p className="text-sm uppercase tracking-widest mt-1 flex items-center gap-1.5" style={{ color: 'var(--slate-400)' }}>
-                   {getBrandIcon(selectedItem.socialAccount?.platform, 12)}
-                   {selectedItem.socialAccount?.platform} {selectedItem.type}
-                 </p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-7 pb-5" style={{ borderBottom: '1px solid var(--slate-100)' }}>
+               <div className="flex items-center gap-3">
+                 <button 
+                   onClick={() => setSelectedItem(null)}
+                   className="lg:hidden p-2 -ml-2 rounded-xl text-slate-400 hover:bg-slate-100 transition-colors"
+                 >
+                   <ChevronLeft size={20} />
+                 </button>
+                 <div>
+                   <h2 className="text-xl lg:text-2xl font-bold" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
+                     {selectedItem.authorHandle}
+                   </h2>
+                   <p className="text-[10px] lg:text-sm uppercase tracking-widest mt-1 flex items-center gap-1.5" style={{ color: 'var(--slate-400)' }}>
+                     {getBrandIcon(selectedItem.socialAccount?.platform, 12)}
+                     {selectedItem.socialAccount?.platform} {selectedItem.type}
+                   </p>
+                 </div>
                </div>
                <button onClick={(e) => markAsResolved(selectedItem.id, e)}
-                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5 active:scale-95"
+                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5 active:scale-95"
                  style={{ background: '#10b981', boxShadow: '0 2px 8px rgba(16,185,129,0.3)' }}>
                  <CheckCircle2 size={16} strokeWidth={2.5} /> Resolve Thread
                </button>
@@ -219,11 +235,11 @@ export const Inbox = () => {
                  <h3 className="font-extrabold text-xl flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--brand-900)' }}>
                    <Sparkles size={18} strokeWidth={2} /> Automated Engagement
                  </h3>
-                 <div className="flex gap-2">
+                 <div className="flex flex-wrap gap-2">
                    {aiPills.map(t => (
                      <button key={t}
                        onClick={() => { setTone(t); triggerAI(t); }}
-                       className="px-3 py-1.5 text-xs font-bold capitalize rounded-lg transition-colors border"
+                       className="px-3 py-1.5 text-[10px] md:text-xs font-bold capitalize rounded-lg transition-colors border"
                        style={tone === t
                          ? { background: 'var(--brand-600)', color: '#fff', borderColor: 'var(--brand-700)', boxShadow: '0 1px 3px rgba(2,132,199,0.3)' }
                          : { background: '#fff', color: 'var(--brand-500)', borderColor: 'var(--brand-200)' }
@@ -273,7 +289,7 @@ export const Inbox = () => {
                    ))}
                    <div className="mt-4 flex justify-end">
                       <button disabled={!selectedSuggestion || isPosting} onClick={executeReply}
-                        className="px-8 py-3 rounded-xl font-bold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 flex items-center gap-2 min-w-[200px] justify-center"
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 flex items-center gap-2 min-w-[200px] justify-center"
                         style={{ background: 'var(--brand-600)', boxShadow: '0 2px 8px rgba(2,132,199,0.3)' }}
                         onMouseEnter={e => { if (!isPosting && selectedSuggestion) (e.currentTarget as HTMLElement).style.background = 'var(--brand-700)'; }}
                         onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--brand-600)'}

@@ -53,26 +53,27 @@ export const QuickCommenter = () => {
     : null;
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ background: 'var(--slate-50)', padding: '2rem' }}>
+    <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8" style={{ background: 'var(--slate-50)' }}>
       <div className="max-w-3xl mx-auto">
 
         {/* Page header */}
-        <header className="mb-8 text-center mt-8">
-          <div className="inline-flex items-center justify-center p-3 rounded-2xl mb-4"
+        <header className="mb-8 text-center mt-4 lg:mt-8">
+          <div className="inline-flex items-center justify-center p-2.5 lg:p-3 rounded-2xl mb-4"
             style={{ background: 'var(--brand-100)', color: 'var(--brand-600)' }}>
-            <MessageCircle size={32} strokeWidth={1.5} />
+            <MessageCircle size={24} className="lg:w-8 lg:h-8" strokeWidth={1.5} />
           </div>
-          <h1 className="text-4xl font-extrabold mb-2 tracking-tight"
+          <h1 className="text-2xl lg:text-4xl font-extrabold mb-2 tracking-tight"
             style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
             Quick Commenter
           </h1>
-          <p className="text-lg" style={{ color: 'var(--slate-500)' }}>
+          <p className="text-sm lg:text-lg" style={{ color: 'var(--slate-500)' }}>
             Post comments directly to any Facebook or Instagram link from your connected account.
           </p>
         </header>
 
         {/* Main card */}
-        <div className="rounded-3xl p-8 mb-6"
+        <div className="rounded-2xl lg:rounded-3xl p-5 lg:p-8 mb-6"
+
           style={{
             background: '#ffffff',
             border: '1px solid var(--slate-100)',

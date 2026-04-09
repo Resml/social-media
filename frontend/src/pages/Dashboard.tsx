@@ -43,33 +43,40 @@ export const Dashboard = () => {
   }, [platform]);
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ background: 'var(--slate-50)', padding: '2rem' }}>
-      <div className="max-w-7xl mx-auto">
+    <div className="flex-1 overflow-y-auto" style={{ background: 'var(--slate-50)', padding: '0.75rem' }}>
+      <div className="max-w-7xl mx-auto md:p-4">
 
         {/* Header Ribbon */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <h1 className="text-xl lg:text-2xl font-bold tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
             Analytics Dashboard
           </h1>
           {/* Platform switcher */}
-          <div className="flex p-1 rounded-full gap-1"
-            style={{ background: '#ffffff', border: '1px solid var(--slate-200)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+          <div className="flex p-1 rounded-xl sm:rounded-full gap-1 overflow-x-auto w-full sm:w-auto overflow-y-hidden"
+            style={{ 
+              background: '#ffffff', 
+              border: '1px solid var(--slate-200)', 
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}>
           {platforms.map(p => (
               <button
                 key={p.id}
                 onClick={() => setPlatform(p.id)}
-                className="px-4 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5"
+                className="px-3 lg:px-4 py-2 rounded-lg sm:rounded-full text-[10px] lg:text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap"
                 style={platform === p.id
                   ? { background: 'var(--brand-600)', color: '#fff', boxShadow: '0 1px 4px rgba(2,132,199,0.3)' }
                   : { color: 'var(--slate-500)' }
                 }
               >
-                <p.Icon size={13} />
+                <p.Icon size={12} />
                 {p.label}
               </button>
             ))}
           </div>
         </div>
+
 
         {/* Stat Cards */}
         {summary && (

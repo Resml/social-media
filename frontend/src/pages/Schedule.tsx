@@ -104,13 +104,13 @@ export const Schedule = () => {
   };
 
   return (
-    <div className="flex-1 flex overflow-hidden" style={{ background: 'var(--slate-50)' }}>
+    <div className="flex-1 flex flex-col lg:flex-row overflow-hidden overflow-y-auto" style={{ background: 'var(--slate-50)' }}>
 
       {/* ── Left composer ── */}
-      <div className="w-[460px] shrink-0 flex flex-col h-full overflow-y-auto p-8"
+      <div className="w-full lg:w-[460px] shrink-0 flex flex-col p-4 md:p-6 lg:p-8 lg:h-full lg:overflow-y-auto"
         style={{ background: '#ffffff', borderRight: '1px solid var(--slate-200)' }}>
 
-        <h2 className="text-2xl font-bold mb-8 tracking-tight"
+        <h2 className="text-xl lg:text-2xl font-bold mb-6 lg:mb-8 tracking-tight"
           style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
           Create Deployment
         </h2>
@@ -210,7 +210,7 @@ export const Schedule = () => {
       </div>
 
       {/* ── Right feed ── */}
-      <div className="flex-1 p-8 overflow-y-auto" style={{ background: 'var(--slate-50)' }}>
+      <div className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto" style={{ background: 'var(--slate-50)' }}>
         <h2 className="text-2xl font-bold mb-7 tracking-tight"
           style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
           Scheduled Posts

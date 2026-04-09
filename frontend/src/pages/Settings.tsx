@@ -262,20 +262,28 @@ export const Settings = () => {
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto p-10">
+      <div className="max-w-5xl mx-auto p-4 lg:p-10">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>Settings</h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--slate-500)' }}>Manage your connections, safety constraints, notifications, and action history.</p>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>Settings</h1>
+          <p className="text-xs lg:text-sm mt-1" style={{ color: 'var(--slate-500)' }}>Manage your connections, safety constraints, notifications, and action history.</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 p-1.5 rounded-2xl w-fit" style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.06)' }}>
-          <TabBtn active={activeTab === 'connections'} onClick={() => setActiveTab('connections')}><span className="flex items-center gap-1.5"><Link2 size={13} />Connections</span></TabBtn>
-          <TabBtn active={activeTab === 'safety'} onClick={() => setActiveTab('safety')}><span className="flex items-center gap-1.5"><Shield size={13} />Safety</span></TabBtn>
-          <TabBtn active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')}><span className="flex items-center gap-1.5"><Bell size={13} />Notifications</span></TabBtn>
-          <TabBtn active={activeTab === 'audit'} onClick={() => setActiveTab('audit')}><span className="flex items-center gap-1.5"><ClipboardList size={13} />Audit Log</span></TabBtn>
+        <div className="flex gap-2 mb-8 p-1.5 rounded-2xl w-full sm:w-fit overflow-x-auto overflow-y-hidden" 
+          style={{ 
+            background: '#fff', 
+            border: '1px solid var(--slate-100)', 
+            boxShadow: '0 1px 4px rgba(2,132,199,0.06)',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}>
+          <TabBtn active={activeTab === 'connections'} onClick={() => setActiveTab('connections')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Link2 size={13} />Connections</span></TabBtn>
+          <TabBtn active={activeTab === 'safety'} onClick={() => setActiveTab('safety')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Shield size={13} />Safety</span></TabBtn>
+          <TabBtn active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Bell size={13} />Notifications</span></TabBtn>
+          <TabBtn active={activeTab === 'audit'} onClick={() => setActiveTab('audit')}><span className="flex items-center gap-1.5 whitespace-nowrap"><ClipboardList size={13} />Audit Log</span></TabBtn>
         </div>
+
 
         {/* ── TAB 1: Connections ───────────────────────────────────────────── */}
         {activeTab === 'connections' && (
@@ -292,29 +300,29 @@ export const Settings = () => {
               const expiry = acc.tokenExpiresAt ? new Date(acc.tokenExpiresAt) : null;
               const isExpired = expiry ? expiry < new Date() : false;
               return (
-                <div key={acc.id} className="rounded-2xl p-6 flex items-center justify-between transition-colors"
+                <div key={acc.id} className="rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors"
                   style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.05)' }}
                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--brand-200)'}
                   onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--slate-100)'}
                 >
-                  <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm"
+                  <div className="flex items-center gap-4 sm:gap-5">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shadow-sm shrink-0"
                       style={{ background: 'var(--brand-50)', border: '1px solid var(--brand-100)' }}>
                       <PlatformIcon platform={acc.platform} />
                     </div>
                     <div>
-                      <p className="font-bold text-lg" style={{ color: 'var(--slate-900)' }}>{acc.accountHandle}</p>
-                      <p className="text-xs uppercase tracking-widest font-bold mt-0.5" style={{ color: 'var(--slate-400)' }}>{acc.platform}</p>
+                      <p className="font-bold text-base sm:text-lg" style={{ color: 'var(--slate-900)' }}>{acc.accountHandle}</p>
+                      <p className="text-[10px] uppercase tracking-widest font-bold mt-0.5" style={{ color: 'var(--slate-400)' }}>{acc.platform}</p>
                       <div className="flex items-center gap-2 mt-1.5">
                         <span className={`w-2 h-2 rounded-full ${isExpired ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
-                        <span className={`text-xs font-semibold ${isExpired ? 'text-red-500' : 'text-emerald-600'}`}>
+                        <span className={`text-[10px] sm:text-xs font-semibold ${isExpired ? 'text-red-500' : 'text-emerald-600'}`}>
                           {isExpired ? 'Token expired' : expiry ? `Expires ${expiry.toLocaleDateString()}` : 'Active'}
                         </span>
                       </div>
                     </div>
                   </div>
                   <button onClick={() => handleDisconnect(acc.id, acc.accountHandle)}
-                    className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors"
+                    className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors"
                     style={{ border: '1px solid #fecaca', color: '#ef4444' }}
                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#fef2f2'}
                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ''}
@@ -414,7 +422,7 @@ export const Settings = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
                     {/* Daily Cap */}
                     <div>
                       <div className="flex justify-between items-center mb-2">
@@ -497,7 +505,7 @@ export const Settings = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Toggle types */}
                     <div className="space-y-3">
                       <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--slate-400)' }}>Alert Types</p>
@@ -593,8 +601,8 @@ export const Settings = () => {
               >✕ Clear</button>
             </div>
 
-            {/* Table */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.05)' }}>
+            {/* Audit Log Table - Desktop */}
+            <div className="hidden md:block rounded-2xl overflow-x-auto" style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.05)' }}>
               <table className="w-full text-sm">
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--slate-100)', background: 'var(--slate-50)' }}>
@@ -641,6 +649,45 @@ export const Settings = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Audit Log - Mobile Cards */}
+            <div className="md:hidden space-y-3">
+              {logs.length === 0 ? (
+                <div className="rounded-2xl p-12 text-center" style={{ background: '#fff', border: '1px solid var(--slate-100)', color: 'var(--slate-400)' }}>
+                  <p className="text-3xl mb-2">📋</p>
+                  <p className="font-semibold">No audit entries found.</p>
+                </div>
+              ) : (
+                logs.map((log) => (
+                  <div key={log.id} className="rounded-2xl p-4 space-y-3 transition-colors"
+                    style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.05)' }}
+                  >
+                    <div className="flex justify-between items-center">
+                       <div className="flex items-center gap-2">
+                         <PlatformIcon platform={log.socialAccount.platform} />
+                         <span className="font-bold text-xs" style={{ color: 'var(--slate-800)' }}>{log.socialAccount.accountHandle}</span>
+                       </div>
+                       <span className="text-[10px] font-medium" style={{ color: 'var(--slate-400)' }}>
+                         {new Date(log.executedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                       </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase tracking-wider"
+                         style={{ background: 'var(--brand-50)', color: 'var(--brand-700)', border: '1px solid var(--brand-100)' }}>
+                         {log.actionType}
+                       </span>
+                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase tracking-wider ${log.outcome === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'}`}
+                         style={{ border: '1px solid border-current' }}>
+                         {log.outcome}
+                       </span>
+                    </div>
+                    <div className="text-[10px] font-mono" style={{ color: 'var(--slate-400)' }}>
+                       Target: {log.targetId.substring(0, 16)}…
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Pagination */}

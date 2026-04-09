@@ -51,20 +51,20 @@ export const PostSearch = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ background: 'var(--slate-50)', padding: '2rem' }}>
-      <div className="max-w-7xl mx-auto flex flex-col gap-7 h-full">
+    <div className="flex-1 overflow-y-auto p-4 lg:p-8" style={{ background: 'var(--slate-50)' }}>
+      <div className="max-w-7xl mx-auto flex flex-col gap-6 lg:gap-7 h-full">
 
         {/* Filter Card */}
-        <div className="rounded-2xl p-6 shrink-0"
-          style={{ background: '#ffffff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.06)' }}>
-          <h1 className="text-2xl font-bold mb-6 tracking-tight"
+        <div className="rounded-2xl p-4 lg:p-6 shrink-0"
+          style={{ background: '#ffffff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2, 132, 199, 0.06)' }}>
+          <h1 className="text-xl lg:text-2xl font-bold mb-6 tracking-tight"
             style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
             Post Repository Search
           </h1>
 
-          <div className="flex flex-wrap gap-4 items-end">
+          <div className="flex flex-col lg:flex-row lg:flex-wrap gap-4 items-end">
             {/* Keyword */}
-            <div className="flex-1 min-w-[250px]">
+            <div className="flex-1 min-w-[280px]">
               <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
                 Keyword Query
               </label>
@@ -80,7 +80,7 @@ export const PostSearch = () => {
               </div>
             </div>
             {/* Hashtag */}
-            <div className="w-44">
+            <div className="w-full sm:w-44">
               <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
                 Hashtag Filter
               </label>
@@ -92,7 +92,7 @@ export const PostSearch = () => {
               />
             </div>
             {/* Platform */}
-            <div className="w-40">
+            <div className="w-full sm:w-40">
               <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
                 Platform
               </label>
@@ -104,12 +104,12 @@ export const PostSearch = () => {
               </select>
             </div>
             {/* Date range */}
-            <div className="flex gap-3">
-              <div className="w-36">
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+              <div className="flex-1 lg:w-36">
                 <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>From</label>
                 <input type="date" value={from} onChange={e => setFrom(e.target.value)} style={inputStyle} />
               </div>
-              <div className="w-36">
+              <div className="flex-1 lg:w-36">
                 <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>To</label>
                 <input type="date" value={to} onChange={e => setTo(e.target.value)} style={inputStyle} />
               </div>
@@ -119,25 +119,25 @@ export const PostSearch = () => {
 
         {/* Status bar */}
         <div className="flex items-center px-1">
-          <span className={`text-sm font-bold uppercase tracking-wider${isSearching ? ' animate-pulse' : ''}`}
+          <span className={`text-[10px] lg:text-sm font-bold uppercase tracking-wider${isSearching ? ' animate-pulse' : ''}`}
             style={{ color: isSearching ? 'var(--brand-500)' : 'var(--slate-400)' }}>
             {isSearching ? 'Analyzing Post Database…' : `Retrieved ${total} matching entries`}
           </span>
         </div>
 
         {/* Results grid */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1">
           {results.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-6 pb-10">
                {results.map((r, i) => <PostCard key={`${r.id}-${i}`} post={r} />)}
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center mt-24 opacity-80" style={{ color: 'var(--slate-400)' }}>
-               <span className="text-5xl mb-6">📭</span>
-               <h3 className="text-2xl font-bold mb-2 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-500)' }}>
+            <div className="h-full flex flex-col items-center justify-center py-20 opacity-80" style={{ color: 'var(--slate-400)' }}>
+               <span className="text-4xl lg:text-5xl mb-6">📭</span>
+               <h3 className="text-xl lg:text-2xl font-bold mb-2 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-500)' }}>
                  No posts match criteria
                </h3>
-               <p className="text-sm font-medium">Try generalizing your keywords or date range.</p>
+               <p className="text-xs lg:text-sm font-medium">Try generalizing your keywords or date range.</p>
             </div>
           )}
         </div>

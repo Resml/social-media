@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { api } from '../api/axios';
 import { io } from 'socket.io-client';
 import { NavLink } from 'react-router-dom';
-import { Bell, CheckCheck, Inbox } from 'lucide-react';
+import { Bell, CheckCheck, Inbox, Menu } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
 
 const socket = io('http://localhost:3001');
 
-export const Header = () => {
+export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
    const [notifications, setNotifications] = useState<any[]>([]);
    const [isOpen, setIsOpen] = useState(false);
 
@@ -43,15 +43,21 @@ export const Header = () => {
    };
 
    return (
-      <header className="h-16 flex items-center justify-between px-8 shrink-0 relative z-50"
+      <header className="h-16 flex items-center justify-between px-3 md:px-6 lg:px-8 shrink-0 relative z-50 transition-all"
         style={{
           background: '#ffffff',
           borderBottom: '1px solid var(--slate-200)',
           boxShadow: '0 1px 3px rgba(2, 132, 199, 0.04)',
         }}
       >
-         <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>
+         <div className="flex items-center gap-4">
+            <button 
+              onClick={onMenuClick}
+              className="lg:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors"
+            >
+              <Menu size={20} />
+            </button>
+            <span className="text-[10px] lg:text-xs font-bold uppercase tracking-widest hidden sm:inline-block" style={{ color: 'var(--slate-400)' }}>
               Workspace Hub
             </span>
          </div>
@@ -76,7 +82,7 @@ export const Header = () => {
             </button>
 
             {isOpen && (
-               <div className="absolute right-0 mt-2 w-96 rounded-2xl overflow-hidden flex flex-col"
+               <div className="absolute right-0 sm:right-0 mt-2 w-[calc(100vw-2rem)] sm:w-96 rounded-2xl overflow-hidden flex flex-col"
                  style={{
                    background: '#ffffff',
                    border: '1px solid var(--slate-200)',
