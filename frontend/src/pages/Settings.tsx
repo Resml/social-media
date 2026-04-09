@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../api/axios';
-import { Shield, Bell, Link2, ClipboardList, Save, AlertCircle } from 'lucide-react';
+import { Shield, Bell, Link2, ClipboardList, Save } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 import { FaInstagram, FaFacebookF, FaTwitter, FaGlobe } from 'react-icons/fa';
 
