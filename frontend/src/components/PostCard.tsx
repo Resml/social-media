@@ -16,7 +16,6 @@ export const PostCard = ({ post }: { post: any }) => {
       style={{
         border: '1px solid #ced0d4',
         borderRadius: '8px',
-        borderRadius: '8px',
         boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
       }}
     >
