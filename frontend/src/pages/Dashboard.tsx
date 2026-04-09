@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { api } from '../api/axios';
 import { StatCard } from '../components/StatCard';
 import { EngagementChart, FollowerGrowthChart } from '../components/Charts';
-import { Users, TrendingUp, Eye, AtSign, Globe } from 'lucide-react';
+import { Users, TrendingUp, Eye, AtSign, Globe, ArrowUp } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
+import { haptics } from '../utils/haptics';
 
 export const Dashboard = () => {
   const [platform, setPlatform] = useState('ALL');
@@ -11,6 +12,8 @@ export const Dashboard = () => {
   const [growth, setGrowth] = useState<any[]>([]);
   const [engagement, setEngagement] = useState<any[]>([]);
   const [recentInbox, setRecentInbox] = useState<any[]>([]);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
   
   const platforms = [
     { id: 'ALL',       label: 'All',       Icon: Globe },
@@ -42,8 +45,24 @@ export const Dashboard = () => {
     return () => clearInterval(interval);
   }, [platform]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollRef.current) {
+        setShowScrollTop(scrollRef.current.scrollTop > 400);
+      }
+    };
+    const el = scrollRef.current;
+    if (el) el.addEventListener('scroll', handleScroll);
+    return () => el?.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    haptics.medium();
+  };
+
   return (
-    <div className="flex-1 overflow-y-auto" style={{ background: 'var(--slate-50)', padding: '0.75rem' }}>
+    <div ref={scrollRef} className="flex-1 overflow-y-auto" style={{ background: 'var(--slate-50)', padding: '0.75rem' }}>
       <div className="max-w-7xl mx-auto md:p-4">
 
         {/* Header Ribbon */}
@@ -63,7 +82,7 @@ export const Dashboard = () => {
           {platforms.map(p => (
               <button
                 key={p.id}
-                onClick={() => setPlatform(p.id)}
+                onClick={() => { setPlatform(p.id); haptics.medium(); }}
                 className="px-3 lg:px-4 py-2 rounded-lg sm:rounded-full text-[10px] lg:text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap"
                 style={platform === p.id
                   ? { background: 'var(--brand-600)', color: '#fff', boxShadow: '0 1px 4px rgba(2,132,199,0.3)' }
@@ -151,6 +170,17 @@ export const Dashboard = () => {
             )}
           </div>
         </div>
+
+        {/* Scroll to Top FAB */}
+        {showScrollTop && (
+          <button 
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-white shadow-2xl flex items-center justify-center text-brand-600 border border-slate-100 z-50 transition-all hover:scale-110 active:scale-90"
+            style={{ boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
+          >
+            <ArrowUp size={24} strokeWidth={2.5} />
+          </button>
+        )}
 
       </div>
     </div>

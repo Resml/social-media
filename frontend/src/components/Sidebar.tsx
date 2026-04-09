@@ -13,6 +13,7 @@ import {
   Settings,
   BarChart3,
 } from 'lucide-react';
+import { haptics } from '../utils/haptics';
 
 const socket = io('http://localhost:3001');
 
@@ -86,6 +87,7 @@ export const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
             key={to}
             to={to}
             end={to === '/'}
+            onClick={() => { haptics.success(); onClose(); }}
             className="sidebar-link"
           >
             <span className="flex items-center gap-3">
@@ -104,7 +106,7 @@ export const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
       {/* Settings at bottom */}
       <div className="px-3 pb-5 pt-3" style={{ borderTop: '1px solid var(--slate-200)' }}>
-        <NavLink to="/settings" className="sidebar-link">
+        <NavLink to="/settings" className="sidebar-link" onClick={() => { haptics.success(); onClose(); }}>
           <span className="flex items-center gap-3">
             <Settings size={17} strokeWidth={1.8} />
             Settings

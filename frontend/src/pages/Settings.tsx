@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../api/axios';
-import { Shield, Bell, Link2, ClipboardList, Save } from 'lucide-react';
+import { Shield, Bell, Link2, ClipboardList, Save, AlertCircle } from 'lucide-react';
+import { haptics } from '../utils/haptics';
 import { FaInstagram, FaFacebookF, FaTwitter, FaGlobe } from 'react-icons/fa';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -321,7 +322,7 @@ export const Settings = () => {
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => handleDisconnect(acc.id, acc.accountHandle)}
+                  <button onClick={() => { handleDisconnect(acc.id, acc.accountHandle); haptics.error(); }}
                     className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors"
                     style={{ border: '1px solid #fecaca', color: '#ef4444' }}
                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#fef2f2'}

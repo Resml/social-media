@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import { NavLink } from 'react-router-dom';
 import { Bell, CheckCheck, Inbox, Menu } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
+import { haptics } from '../utils/haptics';
 
 const socket = io('http://localhost:3001');
 
@@ -52,7 +53,7 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
       >
          <div className="flex items-center gap-4">
             <button 
-              onClick={onMenuClick}
+              onClick={() => { onMenuClick(); haptics.medium(); }}
               className="lg:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors"
             >
               <Menu size={20} />
@@ -65,7 +66,7 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
          <div className="relative">
             <button
                id="notification-bell-btn"
-               onClick={() => setIsOpen(!isOpen)}
+               onClick={() => { setIsOpen(!isOpen); haptics.medium(); }}
                className="relative p-2.5 rounded-xl transition-all"
                style={isOpen
                  ? { background: 'var(--brand-50)', color: 'var(--brand-600)' }

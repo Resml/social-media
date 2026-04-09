@@ -5,6 +5,7 @@ import { CheckCircle2, Sparkles, Target, Bot, ChevronLeft } from 'lucide-react';
 
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
 const socket = io('http://localhost:3001');
+import { haptics } from '../utils/haptics';
 
 export const Inbox = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -137,7 +138,7 @@ export const Inbox = () => {
         <div className="flex-1 overflow-y-auto">
           {items.map(item => (
             <div key={item.id}
-              onClick={() => { setSelectedItem(item); setSuggestions([]); setSelectedSuggestion(null); setToastErr(null); if (!item.isRead) markAsRead(item.id); }}
+              onClick={() => { haptics.success(); setSelectedItem(item); setSuggestions([]); setSelectedSuggestion(null); setToastErr(null); if (!item.isRead) markAsRead(item.id); }}
               className="p-4 cursor-pointer transition-colors flex gap-3"
               style={{
                 borderBottom: '1px solid var(--slate-50)',
@@ -187,10 +188,20 @@ export const Inbox = () => {
       </div>
 
       {/* Right panel — detail + AI */}
-      <div className={`
-        flex-1 overflow-y-auto p-4 lg:p-8
-        ${selectedItem ? 'flex flex-col' : 'hidden lg:flex flex-col items-center justify-center'}
-      `} style={{ background: 'var(--slate-50)' }}>
+      <div 
+        className={`
+          flex-1 overflow-y-auto p-4 lg:p-8
+          ${selectedItem ? 'flex flex-col' : 'hidden lg:flex flex-col items-center justify-center'}
+        `} 
+        style={{ background: 'var(--slate-50)' }}
+        onTouchStart={(e) => {
+          (window as any).swipeStartX = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          const deltaX = e.changedTouches[0].clientX - ((window as any).swipeStartX || 0);
+          if (deltaX > 80) setSelectedItem(null); // Swipe right to go back
+        }}
+      >
         {selectedItem ? (
           <div className="max-w-3xl w-full mx-auto rounded-2xl p-4 lg:p-8"
             style={{ background: '#ffffff', border: '1px solid var(--slate-100)', boxShadow: '0 2px 12px rgba(2,132,199,0.07)' }}>
@@ -198,7 +209,7 @@ export const Inbox = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-7 pb-5" style={{ borderBottom: '1px solid var(--slate-100)' }}>
                <div className="flex items-center gap-3">
                  <button 
-                   onClick={() => setSelectedItem(null)}
+                   onClick={() => { setSelectedItem(null); haptics.medium(); }}
                    className="lg:hidden p-2 -ml-2 rounded-xl text-slate-400 hover:bg-slate-100 transition-colors"
                  >
                    <ChevronLeft size={20} />
@@ -213,7 +224,7 @@ export const Inbox = () => {
                    </p>
                  </div>
                </div>
-               <button onClick={(e) => markAsResolved(selectedItem.id, e)}
+               <button onClick={(e) => { markAsResolved(selectedItem.id, e); haptics.success(); }}
                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5 active:scale-95"
                  style={{ background: '#10b981', boxShadow: '0 2px 8px rgba(16,185,129,0.3)' }}>
                  <CheckCircle2 size={16} strokeWidth={2.5} /> Resolve Thread
