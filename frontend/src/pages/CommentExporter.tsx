@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { api } from '../api/axios';
+import { useTranslation } from 'react-i18next';
 
 interface Comment {
   id: string;
@@ -9,6 +10,7 @@ interface Comment {
 }
 
 export const CommentExporter = () => {
+  const { t } = useTranslation();
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -26,7 +28,7 @@ export const CommentExporter = () => {
       setComments(resp.data.data);
       setSource(resp.data.source);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to fetch comments. Make sure the post is public and from a connected account.');
+      setError(err.response?.data?.error || t('commentExporter.errorMsg', 'Failed to fetch comments. Make sure the post is public and from a connected account.'));
     } finally {
       setLoading(false);
     }
@@ -69,10 +71,10 @@ export const CommentExporter = () => {
         <header className="mb-8">
           <h1 className="text-2xl lg:text-3xl font-bold mb-2 tracking-tight"
             style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-            Comment Exporter
+            {t('commentExporter.title', 'Comment Exporter')}
           </h1>
           <p className="text-sm lg:text-base" style={{ color: 'var(--slate-500)' }}>
-            Paste an Instagram or Facebook post link to fetch and download all comments as a CSV.
+            {t('commentExporter.description', 'Paste an Instagram or Facebook post link to fetch and download all comments as a CSV.')}
           </p>
         </header>
 
@@ -122,9 +124,9 @@ export const CommentExporter = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Fetching…
+                  {t('commentExporter.fetching', 'Fetching…')}
                 </span>
-              ) : 'Fetch Comments'}
+              ) : t('commentExporter.fetchComments', 'Fetch Comments')}
             </button>
           </div>
 
@@ -148,7 +150,7 @@ export const CommentExporter = () => {
               <div className="flex items-center gap-3">
                 <span className="px-3 py-1 rounded-full text-xs font-bold"
                   style={{ background: 'var(--brand-100)', color: 'var(--brand-700)' }}>
-                  {comments.length} Comments Found
+                  {t('commentExporter.commentsFound', '{{count}} Comments Found', { count: comments.length })}
                 </span>
                 {source && (
                   <span className={`px-3 py-1 rounded-full text-xs font-bold border`}
@@ -156,7 +158,7 @@ export const CommentExporter = () => {
                       ? { background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
                       : { background: '#fffbeb', color: '#b45309', borderColor: '#fde68a' }
                     }>
-                    {source.includes('Mock') ? '⚠️ MOCK SCRAPER MODE' : `Source: ${source}`}
+                    {source.includes('Mock') ? t('commentExporter.mockScraper', '⚠️ MOCK SCRAPER MODE') : t('commentExporter.source', 'Source: {{source}}', { source })}
                   </span>
                 )}
               </div>
@@ -166,7 +168,7 @@ export const CommentExporter = () => {
                 onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#059669'}
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#10b981'}
               >
-                📥 Download CSV
+                {t('commentExporter.downloadCsv', '📥 Download CSV')}
               </button>
             </div>
 
@@ -175,10 +177,10 @@ export const CommentExporter = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr style={{ background: 'var(--slate-50)' }}>
-                    {['User', 'Comment Text', 'Timestamp'].map(h => (
+                    {['user', 'commentText', 'timestamp'].map(h => (
                       <th key={h} className="px-6 py-4 text-xs font-semibold uppercase tracking-wider"
                         style={{ color: 'var(--slate-400)' }}>
-                        {h}
+                        {t(`commentExporter.${h}`)}
                       </th>
                     ))}
                   </tr>
@@ -219,7 +221,7 @@ export const CommentExporter = () => {
           <div className="flex flex-col items-center justify-center py-24" style={{ color: 'var(--slate-300)' }}>
             <div className="text-5xl mb-4">📑</div>
             <p className="text-lg font-medium" style={{ color: 'var(--slate-400)' }}>
-              Paste a URL above to start exporting data
+              {t('commentExporter.emptyState', 'Paste a URL above to start exporting data')}
             </p>
           </div>
         )}

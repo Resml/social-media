@@ -4,10 +4,12 @@ import { io } from 'socket.io-client';
 import { CheckCircle2, Sparkles, Target, Bot, ChevronLeft } from 'lucide-react';
 
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 const socket = io('http://localhost:3001');
 import { haptics } from '../utils/haptics';
 
 export const Inbox = () => {
+  const { t } = useTranslation();
   const [items, setItems] = useState<any[]>([]);
   const [filter, setFilter] = useState('ALL');
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
@@ -75,7 +77,7 @@ export const Inbox = () => {
        const res = await api.post(`/ai/suggest-reply`, { inboxItemId: selectedItem.id, tone: selectedTone });
        setSuggestions(res.data.suggestions || []);
     } catch (err: any) {
-       setToastErr('API limits reached or server failed to communicate with OpenAI. Try again later.');
+       setToastErr(t('inbox.ai.apiError', 'API limits reached or server failed to communicate with OpenAI. Try again later.'));
     } finally {
        setIsGenerating(false);
     }
@@ -89,8 +91,8 @@ export const Inbox = () => {
       await api.post(`/engagement/reply`, { inboxItemId: selectedItem.id, text: selectedSuggestion });
       await markAsResolved(selectedItem.id);
     } catch (err: any) {
-       const reason = err.response?.data?.error || 'A network error occurred';
-       setToastErr(`Safety Guard Blocked: ${reason}`);
+       const reason = err.response?.data?.error || t('inbox.networkError', 'A network error occurred');
+       setToastErr(`${t('inbox.safetyBlock', 'Safety Guard Blocked')}: ${reason}`);
     } finally {
        setIsPosting(false);
     }
@@ -106,7 +108,7 @@ export const Inbox = () => {
         <div className="absolute top-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-4 rounded-2xl shadow-xl min-w-[320px]"
           style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c' }}>
           <div className="flex-1">
-            <p className="text-xs font-bold uppercase tracking-widest mb-0.5">Policy Restriction</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-0.5">{t('inbox.policyRestriction', 'Policy Restriction')}</p>
             <p className="text-sm">{toastErr}</p>
           </div>
           <button onClick={() => setToastErr(null)} className="font-bold text-lg leading-none opacity-60 hover:opacity-100">×</button>
@@ -130,7 +132,7 @@ export const Inbox = () => {
                 : { background: 'var(--slate-100)', color: 'var(--slate-500)' }
               }
             >
-              {f}
+              {t(`inbox.filter.${f}`, f)}
             </button>
           ))}
         </div>
@@ -181,7 +183,7 @@ export const Inbox = () => {
           ))}
           {items.length === 0 && (
             <div className="h-full flex items-center justify-center text-sm font-medium italic" style={{ color: 'var(--slate-400)' }}>
-              Inbox clear. Waiting for engagements…
+              {t('inbox.emptyState', 'Inbox clear. Waiting for engagements…')}
             </div>
           )}
         </div>
@@ -227,13 +229,13 @@ export const Inbox = () => {
                <button onClick={(e) => { markAsResolved(selectedItem.id, e); haptics.success(); }}
                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5 active:scale-95"
                  style={{ background: '#10b981', boxShadow: '0 2px 8px rgba(16,185,129,0.3)' }}>
-                 <CheckCircle2 size={16} strokeWidth={2.5} /> Resolve Thread
+                 <CheckCircle2 size={16} strokeWidth={2.5} /> {t('inbox.resolveThread', 'Resolve Thread')}
                </button>
             </div>
 
             {/* Content quote */}
             <div className="mb-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>Engagement Content</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>{t('inbox.engagementContent', 'Engagement Content')}</span>
             </div>
             <div className="p-6 rounded-xl text-lg leading-relaxed mb-9 shadow-inner"
               style={{ background: 'var(--slate-50)', border: '1px solid var(--slate-100)', color: 'var(--slate-700)' }}>
@@ -244,21 +246,21 @@ export const Inbox = () => {
             <div className="rounded-2xl p-7" style={{ background: 'var(--brand-50)', border: '1px solid var(--brand-100)' }}>
                <div className="flex items-center justify-between mb-6">
                  <h3 className="font-extrabold text-xl flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--brand-900)' }}>
-                   <Sparkles size={18} strokeWidth={2} /> Automated Engagement
+                   <Sparkles size={18} strokeWidth={2} /> {t('inbox.automatedEngagement', 'Automated Engagement')}
                  </h3>
                  <div className="flex flex-wrap gap-2">
-                   {aiPills.map(t => (
-                     <button key={t}
-                       onClick={() => { setTone(t); triggerAI(t); }}
+                   {aiPills.map(t_opt => (
+                     <button key={t_opt}
+                       onClick={() => { setTone(t_opt); triggerAI(t_opt); }}
                        className="px-3 py-1.5 text-[10px] md:text-xs font-bold capitalize rounded-lg transition-colors border"
-                       style={tone === t
+                       style={tone === t_opt
                          ? { background: 'var(--brand-600)', color: '#fff', borderColor: 'var(--brand-700)', boxShadow: '0 1px 3px rgba(2,132,199,0.3)' }
                          : { background: '#fff', color: 'var(--brand-500)', borderColor: 'var(--brand-200)' }
                        }
                      >
                        <span className="flex items-center gap-1">
-                         {tone === t && <Target size={12} strokeWidth={2.5} />}
-                         {t}
+                         {tone === t_opt && <Target size={12} strokeWidth={2.5} />}
+                         {t(`inbox.tone.${t_opt}`, t_opt)}
                        </span>
                      </button>
                    ))}
@@ -283,7 +285,7 @@ export const Inbox = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                     </svg>
-                    <span className="font-bold">Analyzing Context &amp; Synthesizing Variations…</span>
+                    <span className="font-bold">{t('inbox.ai.analyzing', 'Analyzing Context & Synthesizing Variations…')}</span>
                  </div>
                ) : (
                  <div className="flex flex-col gap-3">
@@ -305,7 +307,7 @@ export const Inbox = () => {
                         onMouseEnter={e => { if (!isPosting && selectedSuggestion) (e.currentTarget as HTMLElement).style.background = 'var(--brand-700)'; }}
                         onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--brand-600)'}
                       >
-                        {isPosting ? 'Executing…' : 'Approve & Post Reply 🚀'}
+                        {isPosting ? t('inbox.ai.executing', 'Executing…') : t('inbox.ai.approvePost', 'Approve & Post Reply 🚀')}
                       </button>
                    </div>
                  </div>
@@ -317,7 +319,7 @@ export const Inbox = () => {
             <svg className="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
             </svg>
-            <span className="font-semibold text-lg tracking-wide" style={{ color: 'var(--slate-400)' }}>Select a thread to view details</span>
+            <span className="font-semibold text-lg tracking-wide" style={{ color: 'var(--slate-400)' }}>{t('inbox.selectThread', 'Select a thread to view details')}</span>
           </div>
         )}
       </div>

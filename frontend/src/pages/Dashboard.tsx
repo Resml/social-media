@@ -5,8 +5,10 @@ import { EngagementChart, FollowerGrowthChart } from '../components/Charts';
 import { Users, TrendingUp, Eye, AtSign, Globe, ArrowUp } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
 import { haptics } from '../utils/haptics';
+import { useTranslation } from 'react-i18next';
 
 export const Dashboard = () => {
+  const { t } = useTranslation();
   const [platform, setPlatform] = useState('ALL');
   const [summary, setSummary] = useState<any>(null);
   const [growth, setGrowth] = useState<any[]>([]);
@@ -16,10 +18,10 @@ export const Dashboard = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   
   const platforms = [
-    { id: 'ALL',       label: 'All',       Icon: Globe },
-    { id: 'INSTAGRAM', label: 'Instagram', Icon: FaInstagram },
-    { id: 'TWITTER',   label: 'Twitter',   Icon: FaTwitter },
-    { id: 'FACEBOOK',  label: 'Facebook',  Icon: FaFacebookF },
+    { id: 'ALL',       label: t('dashboard.platforms.all', 'All'),       Icon: Globe },
+    { id: 'INSTAGRAM', label: t('dashboard.platforms.instagram', 'Instagram'), Icon: FaInstagram },
+    { id: 'TWITTER',   label: t('dashboard.platforms.twitter', 'Twitter'),   Icon: FaTwitter },
+    { id: 'FACEBOOK',  label: t('dashboard.platforms.facebook', 'Facebook'),  Icon: FaFacebookF },
   ];
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export const Dashboard = () => {
         {/* Header Ribbon */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <h1 className="text-xl lg:text-2xl font-bold tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-            Analytics Dashboard
+            {t('dashboard.title', 'Analytics Dashboard')}
           </h1>
           {/* Platform switcher */}
           <div className="flex p-1 rounded-xl sm:rounded-full gap-1 overflow-x-auto w-full sm:w-auto overflow-y-hidden"
@@ -100,10 +102,10 @@ export const Dashboard = () => {
         {/* Stat Cards */}
         {summary && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
-            <StatCard label="Total Followers"  value={summary.totalFollowers.toLocaleString()} delta={summary.followerDelta}    deltaSuffix="%" icon={Users} />
-            <StatCard label="Engagement Rate"  value={`${summary.engagementRate}%`}           delta={summary.engagementDelta}  deltaSuffix="%" icon={TrendingUp} />
-            <StatCard label="Post Impressions" value={summary.postImpressions.toLocaleString()} delta={summary.impressionsDelta} deltaSuffix="%" icon={Eye} />
-            <StatCard label="New Mentions"     value={summary.newMentions}                    delta={summary.mentionsDelta} icon={AtSign} />
+            <StatCard label={t('dashboard.stats.totalFollowers', 'Total Followers')}  value={summary.totalFollowers.toLocaleString()} delta={summary.followerDelta}    deltaSuffix="%" icon={Users} />
+            <StatCard label={t('dashboard.stats.engagementRate', 'Engagement Rate')}  value={`${summary.engagementRate}%`}           delta={summary.engagementDelta}  deltaSuffix="%" icon={TrendingUp} />
+            <StatCard label={t('dashboard.stats.postImpressions', 'Post Impressions')} value={summary.postImpressions.toLocaleString()} delta={summary.impressionsDelta} deltaSuffix="%" icon={Eye} />
+            <StatCard label={t('dashboard.stats.newMentions', 'New Mentions')}     value={summary.newMentions}                    delta={summary.mentionsDelta} icon={AtSign} />
           </div>
         )}
 
@@ -126,12 +128,12 @@ export const Dashboard = () => {
           }}
         >
           <h2 className="font-bold mb-5" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-800)', fontSize: '1rem' }}>
-            Recent Inbox Activity
+            {t('dashboard.recentInbox.title', 'Recent Inbox Activity')}
           </h2>
           <div className="space-y-4">
             {recentInbox.length === 0 ? (
               <div className="text-sm italic" style={{ color: 'var(--slate-400)' }}>
-                No recent activity to show.
+                {t('dashboard.recentInbox.noActivity', 'No recent activity to show.')}
               </div>
             ) : (
               recentInbox.map((item, i, arr) => {

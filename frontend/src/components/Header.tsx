@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import { api } from '../api/axios';
 import { io } from 'socket.io-client';
 import { NavLink } from 'react-router-dom';
-import { Bell, CheckCheck, Inbox, Menu } from 'lucide-react';
+import { Bell, CheckCheck, Inbox, Menu, Languages } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
 import { haptics } from '../utils/haptics';
+import { useTranslation } from 'react-i18next';
 
 const socket = io('http://localhost:3001');
 
 export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
+   const { t, i18n } = useTranslation();
    const [notifications, setNotifications] = useState<any[]>([]);
    const [isOpen, setIsOpen] = useState(false);
+   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
    useEffect(() => {
      fetchNotifs();
@@ -59,14 +62,42 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
               <Menu size={20} />
             </button>
             <span className="text-[10px] lg:text-xs font-bold uppercase tracking-widest hidden sm:inline-block" style={{ color: 'var(--slate-400)' }}>
-              Workspace Hub
+              {t('header.workspaceHub', 'Workspace Hub')}
             </span>
          </div>
 
-         <div className="relative">
+         <div className="flex items-center gap-2">
+            <div className="relative">
+               <button
+                  onClick={() => { setIsLangMenuOpen(!isLangMenuOpen); haptics.medium(); setIsOpen(false); }}
+                  className="flex items-center gap-1.5 p-2 rounded-xl text-xs font-bold transition-all hover:bg-slate-100 text-slate-500"
+               >
+                  <Languages size={18} strokeWidth={1.8} />
+                  <span className="hidden sm:inline">{i18n.language === 'en' ? 'English' : 'मराठी'}</span>
+               </button>
+
+               {isLangMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden py-1">
+                     <button
+                        onClick={() => { i18n.changeLanguage('mr'); setIsLangMenuOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language === 'mr' ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
+                     >
+                        मराठी
+                     </button>
+                     <button
+                        onClick={() => { i18n.changeLanguage('en'); setIsLangMenuOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language === 'en' ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
+                     >
+                        English
+                     </button>
+                  </div>
+               )}
+            </div>
+
+            <div className="relative">
             <button
                id="notification-bell-btn"
-               onClick={() => { setIsOpen(!isOpen); haptics.medium(); }}
+               onClick={() => { setIsOpen(!isOpen); haptics.medium(); setIsLangMenuOpen(false); }}
                className="relative p-2.5 rounded-xl transition-all"
                style={isOpen
                  ? { background: 'var(--brand-50)', color: 'var(--brand-600)' }
@@ -96,14 +127,14 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                      <span className="font-bold tracking-tight flex items-center gap-2"
                        style={{ color: 'var(--slate-800)', fontFamily: 'Outfit, sans-serif' }}>
                        <Bell size={15} strokeWidth={2} style={{ color: 'var(--brand-600)' }} />
-                       Alerts
+                       {t('header.alerts', 'Alerts')}
                      </span>
                      {notifications.length > 0 && (
                        <button onClick={markAllRead}
                          className="text-[10px] uppercase tracking-widest font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 transition-colors"
                          style={{ color: 'var(--brand-600)', background: 'var(--brand-50)' }}>
                          <CheckCheck size={12} />
-                         Mark all read
+                         {t('header.markAllRead', 'Mark all read')}
                        </button>
                      )}
                   </div>
@@ -116,7 +147,7 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                            <Inbox size={22} strokeWidth={1.5} style={{ color: 'var(--slate-400)' }} />
                          </div>
                          <p className="text-sm font-medium" style={{ color: 'var(--slate-400)' }}>
-                           No new engagement alerts.
+                           {t('header.noAlerts', 'No new engagement alerts.')}
                          </p>
                        </div>
                      ) : (
@@ -165,12 +196,13 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                        <NavLink to="/inbox" onClick={() => setIsOpen(false)}
                          className="text-[10px] font-bold uppercase tracking-widest transition-colors"
                          style={{ color: 'var(--brand-600)' }}>
-                         View all in Unified Inbox
+                         {t('header.viewAllInbox', 'View all in Unified Inbox')}
                        </NavLink>
                      </div>
                   )}
                </div>
             )}
+            </div>
          </div>
       </header>
    );

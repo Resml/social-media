@@ -14,20 +14,22 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
+import { useTranslation } from 'react-i18next';
 
 const socket = io('http://localhost:3001');
 
 const navItems = [
-  { to: '/',              label: 'Dashboard',        Icon: LayoutDashboard },
-  { to: '/inbox',         label: 'Unified Inbox',    Icon: Inbox,           isBadge: true },
-  { to: '/search',        label: 'Post Search',      Icon: Search },
-  { to: '/schedule',      label: 'Schedule',         Icon: CalendarClock },
-  { to: '/ai',            label: 'AI Assistant',     Icon: Bot },
-  { to: '/export',        label: 'Comment Exporter', Icon: Download },
-  { to: '/quick-comment', label: 'Quick Commenter',  Icon: MessageSquarePlus },
+  { to: '/',              labelKey: 'sidebar.dashboard',        defaultLabel: 'Dashboard',        Icon: LayoutDashboard },
+  { to: '/inbox',         labelKey: 'sidebar.inbox',            defaultLabel: 'Unified Inbox',    Icon: Inbox,           isBadge: true },
+  { to: '/search',        labelKey: 'sidebar.postSearch',       defaultLabel: 'Post Search',      Icon: Search },
+  { to: '/schedule',      labelKey: 'sidebar.schedule',         defaultLabel: 'Schedule',         Icon: CalendarClock },
+  { to: '/ai',            labelKey: 'sidebar.aiAssistant',      defaultLabel: 'AI Assistant',     Icon: Bot },
+  { to: '/export',        labelKey: 'sidebar.commentExporter',  defaultLabel: 'Comment Exporter', Icon: Download },
+  { to: '/quick-comment', labelKey: 'sidebar.quickCommenter',   defaultLabel: 'Quick Commenter',  Icon: MessageSquarePlus },
 ];
 
 export const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const { t } = useTranslation();
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -70,7 +72,7 @@ export const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           </div>
           <span className="text-lg font-bold tracking-tight"
             style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-            SocialHub
+            {t('sidebar.brandName', 'SocialHub')}
           </span>
         </div>
       </div>
@@ -79,10 +81,10 @@ export const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       <div className="flex-1 px-3 py-4 flex flex-col gap-0.5">
         <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest select-none"
           style={{ color: 'var(--slate-400)' }}>
-          Navigation
+          {t('sidebar.navigation', 'Navigation')}
         </p>
 
-        {navItems.map(({ to, label, Icon, isBadge }) => (
+        {navItems.map(({ to, labelKey, defaultLabel, Icon, isBadge }) => (
           <NavLink
             key={to}
             to={to}
@@ -92,7 +94,7 @@ export const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           >
             <span className="flex items-center gap-3">
               <Icon size={17} strokeWidth={1.8} />
-              {label}
+              {t(labelKey, defaultLabel)}
             </span>
             {isBadge && unreadCount > 0 && (
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full leading-none select-none"
@@ -109,7 +111,7 @@ export const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         <NavLink to="/settings" className="sidebar-link" onClick={() => { haptics.success(); onClose(); }}>
           <span className="flex items-center gap-3">
             <Settings size={17} strokeWidth={1.8} />
-            Settings
+            {t('sidebar.settings', 'Settings')}
           </span>
         </NavLink>
       </div>

@@ -1,0 +1,220 @@
+{
+  "header": {
+    "workspaceHub": "Workspace Hub",
+    "alerts": "Alerts",
+    "markAllRead": "Mark all read",
+    "noAlerts": "No new engagement alerts.",
+    "viewAllInbox": "View all in Unified Inbox"
+  },
+  "sidebar": {
+    "brandName": "SocialHub",
+    "dashboard": "Dashboard",
+    "inbox": "Unified Inbox",
+    "postSearch": "Post Search",
+    "schedule": "Schedule",
+    "aiAssistant": "AI Assistant",
+    "commentExporter": "Comment Exporter",
+    "quickCommenter": "Quick Commenter",
+    "navigation": "Navigation",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Analytics Dashboard",
+    "charts": {
+      "followerGrowth": "Follower Growth (Last 30 Days)",
+      "engagementBreakdown": "Engagement Breakdown"
+    },
+    "platforms": {
+      "all": "All",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "facebook": "Facebook"
+    },
+    "stats": {
+      "totalFollowers": "Total Followers",
+      "engagementRate": "Engagement Rate",
+      "postImpressions": "Post Impressions",
+      "newMentions": "New Mentions"
+    },
+    "recentInbox": {
+      "title": "Recent Inbox Activity",
+      "noActivity": "No recent activity to show."
+    }
+  },
+  "inbox": {
+    "policyRestriction": "Policy Restriction",
+    "filter": {
+        "ALL": "ALL",
+        "COMMENT": "COMMENT",
+        "MENTION": "MENTION",
+        "TAG": "TAG"
+    },
+    "emptyState": "Inbox clear. Waiting for engagements…",
+    "resolveThread": "Resolve Thread",
+    "engagementContent": "Engagement Content",
+    "automatedEngagement": "Automated Engagement",
+    "tone": {
+        "friendly": "friendly",
+        "professional": "professional",
+        "witty": "witty",
+        "empathetic": "empathetic"
+    },
+    "ai": {
+        "generate": "Generate Contextual Replies",
+        "subtitle": "Leveraging GPT-4o analysis",
+        "analyzing": "Analyzing Context & Synthesizing Variations…",
+        "approvePost": "Approve & Post Reply 🚀",
+        "executing": "Executing…",
+        "apiError": "API limits reached or server failed to communicate with OpenAI. Try again later."
+    },
+    "networkError": "A network error occurred",
+    "safetyBlock": "Safety Guard Blocked",
+    "selectThread": "Select a thread to view details"
+  },
+  "schedule": {
+    "createDeployment": "Create Deployment",
+    "targetAccount": "Target Account",
+    "captionContent": "Caption / Content",
+    "captionPlaceholder": "Write your post caption here…",
+    "mediaAttachment": "Media Attachment",
+    "uploadMedia": "Upload Media",
+    "mediaHint": "Images & Video accepted",
+    "uploading": "Uploading…",
+    "ready": "Ready",
+    "scheduledDateTime": "Scheduled Date & Time",
+    "saveDraft": "Save Draft",
+    "queuePost": "Queue Post 🚀",
+    "scheduledPosts": "Scheduled Posts",
+    "cancel": "Cancel",
+    "noPosts": "No scheduled posts yet.",
+    "noPostsHint": "Queue a post from the composer to see it here.",
+    "alerts": {
+      "missingFields": "Missing required fields",
+      "success": "Post successfully set to"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your connections, safety constraints, notifications, and action history.",
+    "loading": "Loading settings…",
+    "saving": "Saving…",
+    "tabs": {
+        "connections": "Connections",
+        "safety": "Safety",
+        "notifications": "Notifications",
+        "auditLog": "Audit Log"
+    },
+    "connections": {
+        "noAccounts": "No accounts connected yet.",
+        "noAccountsHint": "Connect a platform below to get started.",
+        "tokenExpired": "Token expired",
+        "expires": "Expires {{date}}",
+        "active": "Active",
+        "disconnect": "Disconnect",
+        "connectNewAccount": "Connect New Account",
+        "connectApify": "Connect Public Profile (Apify Cloud Proxy)",
+        "apifyHint": "Bypass API blocks on personal profiles by pasting your public Facebook or Instagram URL below. Our backend will use enterprise Apify proxies to securely rip your public timeline without requiring an OAuth Developer token.",
+        "linking": "Linking...",
+        "syncProxy": "Sync via Proxy",
+        "disconnectConfirm": "Disconnect @{{handle}}? All associated data will be removed."
+    },
+    "safety": {
+        "pauseAll": "Pause All Automated Actions",
+        "pauseHint": "Immediately halts all AI replies and engagement posts across every account.",
+        "pauseWarning": "⛔ All automated actions will be blocked until this is turned off.",
+        "dailyCap": "Daily Action Cap",
+        "actionGap": "Min Action Gap",
+        "blackoutStart": "Blackout Start (UTC hour)",
+        "blackoutEnd": "Blackout End (UTC hour)",
+        "saveSettings": "Save Safety Settings"
+    },
+    "notifications": {
+        "alertTypes": "Alert Types",
+        "newComments": "💬 New Comments",
+        "newMentions": "@ New Mentions",
+        "newTags": "🏷️ New Tags",
+        "digestFreq": "Digest Frequency",
+        "digestEmail": "Digest Email",
+        "savePrefs": "Save Notification Preferences",
+        "freqOpts": {
+            "IMMEDIATE": "Immediate",
+            "HOURLY": "Hourly",
+            "DAILY": "Daily",
+            "OFF": "Off"
+        }
+    },
+    "audit": {
+        "allAccounts": "All Accounts",
+        "allActionTypes": "All Action Types",
+        "allOutcomes": "All Outcomes",
+        "clear": "✕ Clear",
+        "tableHeaders": {
+            "date": "Date / Time",
+            "account": "Account",
+            "action": "Action",
+            "targetId": "Target ID",
+            "outcome": "Outcome"
+        },
+        "noEntries": "No audit entries found.",
+        "pagination": "Showing page {{page}} of {{totalPages}} ({{total}} total entries)",
+        "prev": "← Prev",
+        "next": "Next →"
+    }
+  },
+  "postSearch": {
+    "title": "Post Repository Search",
+    "keywordQuery": "Keyword Query",
+    "keywordPlaceholder": "Search captions contextually…",
+    "hashtagFilter": "Hashtag Filter",
+    "platform": "Platform",
+    "allNetworks": "ALL NETWORKS",
+    "from": "From",
+    "to": "To",
+    "analyzing": "Analyzing Post Database…",
+    "retrieved": "Retrieved {{total}} matching entries",
+    "noPosts": "No posts match criteria",
+    "noPostsHint": "Try generalizing your keywords or date range."
+  },
+  "postCard": {
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutes": "{{count}} m",
+      "hours": "{{count}} h",
+      "days": "{{count}} d"
+    },
+    "unknownUser": "Unknown User",
+    "beFirstToLike": "Be the first to like this",
+    "comments": "{{count}} comments",
+    "shares": "{{count}} shares",
+    "like": "Like",
+    "comment": "Comment",
+    "share": "Share"
+  },
+  "quickCommenter": {
+    "title": "Quick Commenter",
+    "description": "Post comments directly to any Facebook or Instagram link from your connected account.",
+    "targetUrl": "Target Post URL",
+    "yourComment": "Your Comment",
+    "placeholder": "Write your genuine response here…",
+    "publishing": "Publishing to Meta…",
+    "sendComment": "Send Comment",
+    "error": "Error",
+    "success": "Success!",
+    "disclaimer": "⚠️ Comments are posted securely using the official Meta Graph API via the account connected in Settings."
+  },
+  "commentExporter": {
+    "title": "Comment Exporter",
+    "description": "Paste an Instagram or Facebook post link to fetch and download all comments as a CSV.",
+    "fetching": "Fetching…",
+    "fetchComments": "Fetch Comments",
+    "commentsFound": "{{count}} Comments Found",
+    "source": "Source: {{source}}",
+    "mockScraper": "⚠️ MOCK SCRAPER MODE",
+    "downloadCsv": "📥 Download CSV",
+    "user": "User",
+    "commentText": "Comment Text",
+    "timestamp": "Timestamp",
+    "emptyState": "Paste a URL above to start exporting data",
+    "errorMsg": "Failed to fetch comments. Make sure the post is public and from a connected account."
+  }
+}

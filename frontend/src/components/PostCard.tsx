@@ -1,14 +1,16 @@
 import { ThumbsUp, MessageSquare, Share2, MoreHorizontal, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const PostCard = ({ post }: { post: any }) => {
+  const { t } = useTranslation();
   const getInitials = (name?: string) => name ? name.substring(0, 2).toUpperCase() : 'U';
 
   const timeAgo = (dateStr: string) => {
     const s = Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 1000);
-    if (s < 60) return 'Just now';
-    if (s < 3600) return `${Math.floor(s / 60)} m`;
-    if (s < 86400) return `${Math.floor(s / 3600)} h`;
-    return `${Math.floor(s / 86400)} d`;
+    if (s < 60) return t('postCard.timeAgo.justNow', 'Just now');
+    if (s < 3600) return t('postCard.timeAgo.minutes', '{{count}} m', { count: Math.floor(s / 60) });
+    if (s < 86400) return t('postCard.timeAgo.hours', '{{count}} h', { count: Math.floor(s / 3600) });
+    return t('postCard.timeAgo.days', '{{count}} d', { count: Math.floor(s / 86400) });
   };
 
   return (
@@ -27,7 +29,7 @@ export const PostCard = ({ post }: { post: any }) => {
         </div>
         <div className="flex-1 leading-tight">
           <div className="font-semibold text-sm text-[var(--slate-900)]">
-            {post.accountHandle || 'Unknown User'}
+            {post.accountHandle || t('postCard.unknownUser', 'Unknown User')}
           </div>
           <div className="flex items-center gap-1 mt-0.5 text-[13px]" style={{ color: '#65676B' }}>
             <span>{timeAgo(post.publishedAt)}</span>
@@ -65,12 +67,12 @@ export const PostCard = ({ post }: { post: any }) => {
                <span>{post.metrics?.likes.toLocaleString()}</span>
              </>
           ) : (
-             <span>Be the first to like this</span>
+             <span>{t('postCard.beFirstToLike', 'Be the first to like this')}</span>
           )}
         </div>
         <div className="flex gap-3">
-           {post.metrics?.comments > 0 && <span className="cursor-pointer hover:underline">{post.metrics?.comments.toLocaleString()} comments</span>}
-           {post.metrics?.shares > 0 && <span className="cursor-pointer hover:underline">{post.metrics?.shares.toLocaleString()} shares</span>}
+           {post.metrics?.comments > 0 && <span className="cursor-pointer hover:underline">{t('postCard.comments', '{{count}} comments', { count: post.metrics.comments.toLocaleString() })}</span>}
+           {post.metrics?.shares > 0 && <span className="cursor-pointer hover:underline">{t('postCard.shares', '{{count}} shares', { count: post.metrics.shares.toLocaleString() })}</span>}
         </div>
       </div>
 
@@ -78,15 +80,15 @@ export const PostCard = ({ post }: { post: any }) => {
       <div className="flex items-center justify-between px-2 py-1 text-[15px] font-semibold" style={{ color: '#65676b' }}>
         <button className="flex flex-1 items-center justify-center gap-2 py-2 rounded-[4px] hover:bg-slate-100 transition-colors">
           <ThumbsUp size={20} strokeWidth={2} />
-          <span>Like</span>
+          <span>{t('postCard.like', 'Like')}</span>
         </button>
         <button className="flex flex-1 items-center justify-center gap-2 py-2 rounded-[4px] hover:bg-slate-100 transition-colors">
           <MessageSquare size={20} strokeWidth={2} />
-          <span>Comment</span>
+          <span>{t('postCard.comment', 'Comment')}</span>
         </button>
         <button className="flex flex-1 items-center justify-center gap-2 py-2 rounded-[4px] hover:bg-slate-100 transition-colors">
           <Share2 size={20} strokeWidth={2} />
-          <span>Share</span>
+          <span>{t('postCard.share', 'Share')}</span>
         </button>
       </div>
     </div>

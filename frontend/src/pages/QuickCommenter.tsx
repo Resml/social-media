@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { api } from '../api/axios';
 import { MessageCircle, Send, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const QuickCommenter = () => {
+  const { t } = useTranslation();
   const [url, setUrl] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,10 +18,10 @@ export const QuickCommenter = () => {
     setSuccess(null);
     try {
       const resp = await api.post('/engagement/quick-comment', { url, message });
-      setSuccess(`Comment officially posted! (ID: ${resp.data.commentId})`);
+      setSuccess(`${t('quickCommenter.success', 'Success!')} (ID: ${resp.data.commentId})`);
       setMessage('');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to post comment. Ensure the link is valid and your account has permissions.');
+      setError(err.response?.data?.error || t('quickCommenter.error', 'Error'));
     } finally {
       setLoading(false);
     }
@@ -64,10 +66,10 @@ export const QuickCommenter = () => {
           </div>
           <h1 className="text-2xl lg:text-4xl font-extrabold mb-2 tracking-tight"
             style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-            Quick Commenter
+            {t('quickCommenter.title', 'Quick Commenter')}
           </h1>
           <p className="text-sm lg:text-lg" style={{ color: 'var(--slate-500)' }}>
-            Post comments directly to any Facebook or Instagram link from your connected account.
+            {t('quickCommenter.description', 'Post comments directly to any Facebook or Instagram link from your connected account.')}
           </p>
         </header>
 
@@ -84,7 +86,7 @@ export const QuickCommenter = () => {
           <div className="mb-6">
             <label className="block text-xs font-bold uppercase tracking-widest mb-2"
               style={{ color: 'var(--slate-500)' }}>
-              Target Post URL
+              {t('quickCommenter.targetUrl', 'Target Post URL')}
             </label>
             <div className="relative">
               <input
@@ -109,11 +111,11 @@ export const QuickCommenter = () => {
           <div className="mb-8">
             <label className="block text-xs font-bold uppercase tracking-widest mb-2"
               style={{ color: 'var(--slate-500)' }}>
-              Your Comment
+              {t('quickCommenter.yourComment', 'Your Comment')}
             </label>
             <textarea
               rows={4}
-              placeholder="Write your genuine response here…"
+              placeholder={t('quickCommenter.placeholder', 'Write your genuine response here…')}
               style={{ ...inputBase, resize: 'none' } as React.CSSProperties}
               value={message}
               onChange={e => setMessage(e.target.value)}
@@ -141,12 +143,12 @@ export const QuickCommenter = () => {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Publishing to Meta…
+                {t('quickCommenter.publishing', 'Publishing to Meta…')}
               </>
             ) : (
               <>
                 <Send size={18} strokeWidth={2} />
-                Send Comment
+                {t('quickCommenter.sendComment', 'Send Comment')}
               </>
             )}
           </button>
@@ -156,7 +158,7 @@ export const QuickCommenter = () => {
             <div className="mt-5 p-4 rounded-2xl text-sm flex items-start gap-3"
               style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c' }}>
               <AlertCircle size={17} strokeWidth={2} className="shrink-0 mt-0.5" />
-              <div><strong>Error:</strong> {error}</div>
+              <div><strong>{t('quickCommenter.error', 'Error')}:</strong> {error}</div>
             </div>
           )}
 
@@ -166,14 +168,14 @@ export const QuickCommenter = () => {
               style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d' }}>
               <div className="absolute left-0 top-0 w-1 h-full" style={{ background: '#10b981' }} />
               <CheckCircle2 size={17} strokeWidth={2} className="shrink-0 mt-0.5" />
-              <div><strong className="block mb-0.5">Success!</strong>{success}</div>
+              <div><strong className="block mb-0.5">{t('quickCommenter.success', 'Success!')}</strong>{success}</div>
             </div>
           )}
         </div>
 
         {/* Disclaimer */}
         <div className="text-center text-xs" style={{ color: 'var(--slate-400)' }}>
-          ⚠️ Comments are posted securely using the official Meta Graph API via the account connected in Settings.
+          {t('quickCommenter.disclaimer', '⚠️ Comments are posted securely using the official Meta Graph API via the account connected in Settings.')}
         </div>
       </div>
     </div>

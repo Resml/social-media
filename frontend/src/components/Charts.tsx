@@ -1,6 +1,9 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
-export const FollowerGrowthChart = ({ data }: { data: any[] }) => (
+export const FollowerGrowthChart = ({ data }: { data: any[] }) => {
+  const { t } = useTranslation();
+  return (
   <div className="rounded-2xl p-5 h-80"
     style={{
       background: '#fff',
@@ -10,7 +13,7 @@ export const FollowerGrowthChart = ({ data }: { data: any[] }) => (
   >
     <div className="font-bold mb-4"
       style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-700)', fontSize: '0.9rem' }}>
-      Follower Growth (Last 30 Days)
+      {t('dashboard.charts.followerGrowth', 'Follower Growth (Last 30 Days)')}
     </div>
     <ResponsiveContainer width="100%" height="80%">
       <LineChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -26,9 +29,12 @@ export const FollowerGrowthChart = ({ data }: { data: any[] }) => (
       </LineChart>
     </ResponsiveContainer>
   </div>
-);
+  );
+};
 
-export const EngagementChart = ({ data }: { data: any[] }) => (
+export const EngagementChart = ({ data }: { data: any[] }) => {
+  const { t } = useTranslation();
+  return (
   <div className="rounded-2xl p-5 h-80 flex flex-col"
     style={{
       background: '#fff',
@@ -38,7 +44,7 @@ export const EngagementChart = ({ data }: { data: any[] }) => (
   >
     <div className="font-bold mb-2"
       style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-700)', fontSize: '0.9rem' }}>
-      Engagement Breakdown
+      {t('dashboard.charts.engagementBreakdown', 'Engagement Breakdown')}
     </div>
     <div className="flex-1">
       <ResponsiveContainer width="100%" height="100%">
@@ -56,4 +62,5 @@ export const EngagementChart = ({ data }: { data: any[] }) => (
       </ResponsiveContainer>
     </div>
   </div>
-);
+  );
+};

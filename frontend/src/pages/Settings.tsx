@@ -3,6 +3,7 @@ import { api } from '../api/axios';
 import { Shield, Bell, Link2, ClipboardList, Save } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 import { FaInstagram, FaFacebookF, FaTwitter, FaGlobe } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface SafetyPrefs {
@@ -93,6 +94,7 @@ const OutcomeBadge = ({ outcome }: { outcome: string }) => {
 
 // ─── Main Settings Page ───────────────────────────────────────────────────────
 export const Settings = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'connections' | 'safety' | 'notifications' | 'audit'>('connections');
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -187,7 +189,7 @@ export const Settings = () => {
   }, [fetchSettings]);
 
   const handleDisconnect = async (accountId: string, handle: string) => {
-    if (!confirm(`Disconnect @${handle}? All associated data will be removed.`)) return;
+    if (!confirm(t('settings.connections.disconnectConfirm', `Disconnect @${handle}? All associated data will be removed.`, { handle }))) return;
     try {
       await api.delete(`/settings/accounts/${accountId}`);
       showToast('success', `@${handle} disconnected.`);
@@ -247,7 +249,7 @@ export const Settings = () => {
       <div className="flex-1 flex items-center justify-center" style={{ background: 'var(--slate-50)' }}>
         <div className="flex flex-col items-center gap-4" style={{ color: 'var(--brand-400)' }}>
           <svg className="animate-spin h-10 w-10" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>
-          <span className="font-semibold text-sm" style={{ color: 'var(--brand-600)' }}>Loading settings…</span>
+          <span className="font-semibold text-sm" style={{ color: 'var(--brand-600)' }}>{t('settings.loading', 'Loading settings…')}</span>
         </div>
       </div>
     );
@@ -266,8 +268,8 @@ export const Settings = () => {
       <div className="max-w-5xl mx-auto p-4 lg:p-10">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>Settings</h1>
-          <p className="text-xs lg:text-sm mt-1" style={{ color: 'var(--slate-500)' }}>Manage your connections, safety constraints, notifications, and action history.</p>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>{t('settings.title', 'Settings')}</h1>
+          <p className="text-xs lg:text-sm mt-1" style={{ color: 'var(--slate-500)' }}>{t('settings.description', 'Manage your connections, safety constraints, notifications, and action history.')}</p>
         </div>
 
         {/* Tabs */}
@@ -279,10 +281,10 @@ export const Settings = () => {
             scrollbarWidth: 'none',
             msOverflowStyle: 'none'
           }}>
-          <TabBtn active={activeTab === 'connections'} onClick={() => setActiveTab('connections')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Link2 size={13} />Connections</span></TabBtn>
-          <TabBtn active={activeTab === 'safety'} onClick={() => setActiveTab('safety')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Shield size={13} />Safety</span></TabBtn>
-          <TabBtn active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Bell size={13} />Notifications</span></TabBtn>
-          <TabBtn active={activeTab === 'audit'} onClick={() => setActiveTab('audit')}><span className="flex items-center gap-1.5 whitespace-nowrap"><ClipboardList size={13} />Audit Log</span></TabBtn>
+          <TabBtn active={activeTab === 'connections'} onClick={() => setActiveTab('connections')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Link2 size={13} />{t('settings.tabs.connections', 'Connections')}</span></TabBtn>
+          <TabBtn active={activeTab === 'safety'} onClick={() => setActiveTab('safety')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Shield size={13} />{t('settings.tabs.safety', 'Safety')}</span></TabBtn>
+          <TabBtn active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')}><span className="flex items-center gap-1.5 whitespace-nowrap"><Bell size={13} />{t('settings.tabs.notifications', 'Notifications')}</span></TabBtn>
+          <TabBtn active={activeTab === 'audit'} onClick={() => setActiveTab('audit')}><span className="flex items-center gap-1.5 whitespace-nowrap"><ClipboardList size={13} />{t('settings.tabs.auditLog', 'Audit Log')}</span></TabBtn>
         </div>
 
 
@@ -292,8 +294,8 @@ export const Settings = () => {
             {settings?.socialAccounts.length === 0 && (
               <div className="rounded-2xl border-2 border-dashed p-12 text-center" style={{ borderColor: 'var(--slate-200)', color: 'var(--slate-400)' }}>
                 <p className="text-4xl mb-3">🔌</p>
-                <p className="font-semibold" style={{ color: 'var(--slate-500)' }}>No accounts connected yet.</p>
-                <p className="text-sm mt-1">Connect a platform below to get started.</p>
+                <p className="font-semibold" style={{ color: 'var(--slate-500)' }}>{t('settings.connections.noAccounts', 'No accounts connected yet.')}</p>
+                <p className="text-sm mt-1">{t('settings.connections.noAccountsHint', 'Connect a platform below to get started.')}</p>
               </div>
             )}
 
@@ -317,7 +319,7 @@ export const Settings = () => {
                       <div className="flex items-center gap-2 mt-1.5">
                         <span className={`w-2 h-2 rounded-full ${isExpired ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
                         <span className={`text-[10px] sm:text-xs font-semibold ${isExpired ? 'text-red-500' : 'text-emerald-600'}`}>
-                          {isExpired ? 'Token expired' : expiry ? `Expires ${expiry.toLocaleDateString()}` : 'Active'}
+                          {isExpired ? t('settings.connections.tokenExpired', 'Token expired') : expiry ? t('settings.connections.expires', 'Expires {{date}}', { date: expiry.toLocaleDateString() }) : t('settings.connections.active', 'Active')}
                         </span>
                       </div>
                     </div>
@@ -328,7 +330,7 @@ export const Settings = () => {
                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#fef2f2'}
                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ''}
                   >
-                    Disconnect
+                    {t('settings.connections.disconnect', 'Disconnect')}
                   </button>
                 </div>
               );
@@ -336,7 +338,7 @@ export const Settings = () => {
 
             {/* Connect New Account */}
             <div className="rounded-2xl p-6" style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.05)' }}>
-              <h3 className="font-bold text-sm uppercase tracking-widest mb-4" style={{ color: 'var(--slate-500)' }}>Connect New Account</h3>
+              <h3 className="font-bold text-sm uppercase tracking-widest mb-4" style={{ color: 'var(--slate-500)' }}>{t('settings.connections.connectNewAccount', 'Connect New Account')}</h3>
               <div className="flex gap-3">
                 {['INSTAGRAM', 'TWITTER', 'FACEBOOK'].map((platform) => (
                   <a key={platform} href={`http://localhost:3001/auth/${platform.toLowerCase()}`}
@@ -354,9 +356,9 @@ export const Settings = () => {
 
             {/* Connect Public Profile (Apify Proxy) */}
             <div className="rounded-2xl p-6 mt-4" style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.05)' }}>
-              <h3 className="font-bold text-sm uppercase tracking-widest mb-2" style={{ color: 'var(--slate-500)' }}>Connect Public Profile (Apify Cloud Proxy)</h3>
+              <h3 className="font-bold text-sm uppercase tracking-widest mb-2" style={{ color: 'var(--slate-500)' }}>{t('settings.connections.connectApify', 'Connect Public Profile (Apify Cloud Proxy)')}</h3>
               <p className="text-xs text-slate-500 mb-4 leading-relaxed max-w-2xl">
-                Bypass API blocks on personal profiles by pasting your public Facebook or Instagram URL below. Our backend will use enterprise Apify proxies to securely rip your public timeline without requiring an OAuth Developer token.
+                {t('settings.connections.apifyHint', 'Bypass API blocks on personal profiles by pasting your public Facebook or Instagram URL below. Our backend will use enterprise Apify proxies to securely rip your public timeline without requiring an OAuth Developer token.')}
               </p>
               <div className="flex gap-3 max-w-xl">
                 <input 
@@ -377,7 +379,7 @@ export const Settings = () => {
                   onMouseEnter={e => { if(!saving) (e.currentTarget as HTMLElement).style.background = 'var(--brand-500)'}}
                   onMouseLeave={e => { if(!saving) (e.currentTarget as HTMLElement).style.background = 'var(--brand-600)'}}
                 >
-                  {saving ? 'Linking...' : 'Sync via Proxy'}
+                  {saving ? t('settings.connections.linking', 'Linking...') : t('settings.connections.syncProxy', 'Sync via Proxy')}
                 </button>
               </div>
             </div>
@@ -390,8 +392,8 @@ export const Settings = () => {
             {/* Global Pause Toggle */}
             <div className="rounded-2xl p-7 flex items-center justify-between" style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.05)' }}>
               <div>
-                <h3 className="font-bold text-lg" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>Pause All Automated Actions</h3>
-                <p className="text-sm mt-1" style={{ color: 'var(--slate-500)' }}>Immediately halts all AI replies and engagement posts across every account.</p>
+                <h3 className="font-bold text-lg" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>{t('settings.safety.pauseAll', 'Pause All Automated Actions')}</h3>
+                <p className="text-sm mt-1" style={{ color: 'var(--slate-500)' }}>{t('settings.safety.pauseHint', 'Immediately halts all AI replies and engagement posts across every account.')}</p>
               </div>
               <button onClick={() => setGlobalPause(!globalPause)}
                 className="relative w-14 h-7 rounded-full transition-colors duration-300"
@@ -403,7 +405,7 @@ export const Settings = () => {
 
             {globalPause && (
               <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-3 text-red-700 text-sm font-semibold flex items-center gap-2">
-                ⛔ All automated actions will be blocked until this is turned off.
+                {t('settings.safety.pauseWarning', '⛔ All automated actions will be blocked until this is turned off.')}
               </div>
             )}
 
@@ -427,7 +429,7 @@ export const Settings = () => {
                     {/* Daily Cap */}
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <label className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>Daily Action Cap</label>
+                        <label className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>{t('settings.safety.dailyCap', 'Daily Action Cap')}</label>
                         <span className="font-bold text-sm" style={{ color: 'var(--brand-600)' }}>{prefs.dailyCap}</span>
                       </div>
                       <input type="range" min={10} max={15} value={prefs.dailyCap}
@@ -440,7 +442,7 @@ export const Settings = () => {
                     {/* Gap Seconds */}
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <label className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>Min Action Gap</label>
+                        <label className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>{t('settings.safety.actionGap', 'Min Action Gap')}</label>
                         <span className="font-bold text-sm" style={{ color: 'var(--brand-600)' }}>{prefs.gapSeconds}s</span>
                       </div>
                       <input type="range" min={60} max={120} step={10} value={prefs.gapSeconds}
@@ -452,7 +454,7 @@ export const Settings = () => {
 
                     {/* Blackout Start */}
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>Blackout Start (UTC hour)</label>
+                      <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>{t('settings.safety.blackoutStart', 'Blackout Start (UTC hour)')}</label>
                       <input type="number" min={0} max={23} value={prefs.blackoutStart}
                         onChange={e => update('blackoutStart', Number(e.target.value))}
                         className="w-full rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
@@ -462,7 +464,7 @@ export const Settings = () => {
 
                     {/* Blackout End */}
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>Blackout End (UTC hour)</label>
+                      <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>{t('settings.safety.blackoutEnd', 'Blackout End (UTC hour)')}</label>
                       <input type="number" min={0} max={23} value={prefs.blackoutEnd}
                         onChange={e => update('blackoutEnd', Number(e.target.value))}
                         className="w-full rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
@@ -482,7 +484,7 @@ export const Settings = () => {
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--brand-600)'}
               >
                 <Save size={15} />
-                {saving ? 'Saving…' : 'Save Safety Settings'}
+                {saving ? t('settings.saving', 'Saving…') : t('settings.safety.saveSettings', 'Save Safety Settings')}
               </button>
             </div>
           </div>
@@ -509,8 +511,8 @@ export const Settings = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Toggle types */}
                     <div className="space-y-3">
-                      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--slate-400)' }}>Alert Types</p>
-                      {([['notifyComments', '💬 New Comments'], ['notifyMentions', '@ New Mentions'], ['notifyTags', '🏷️ New Tags']] as const).map(([key, label]) => (
+                      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--slate-400)' }}>{t('settings.notifications.alertTypes', 'Alert Types')}</p>
+                      {([['notifyComments', t('settings.notifications.newComments', '💬 New Comments')], ['notifyMentions', t('settings.notifications.newMentions', '@ New Mentions')], ['notifyTags', t('settings.notifications.newTags', '🏷️ New Tags')]] as const).map(([key, label]) => (
                         <label key={key} className="flex items-center gap-3 cursor-pointer">
                           <div onClick={() => update(key, !prefs[key])}
                             className="w-11 h-6 rounded-full transition-colors duration-200 relative cursor-pointer"
@@ -525,19 +527,19 @@ export const Settings = () => {
 
                     <div className="space-y-5">
                       <div>
-                        <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>Digest Frequency</label>
+                        <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>{t('settings.notifications.digestFreq', 'Digest Frequency')}</label>
                         <select value={prefs.frequency} onChange={e => update('frequency', e.target.value)}
                           className="w-full rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
                           style={{ border: '1px solid var(--slate-200)', color: 'var(--slate-800)', background: '#fff' }}
                         >
-                          <option value="IMMEDIATE">Immediate</option>
-                          <option value="HOURLY">Hourly</option>
-                          <option value="DAILY">Daily</option>
-                          <option value="OFF">Off</option>
+                          <option value="IMMEDIATE">{t('settings.notifications.freqOpts.IMMEDIATE', 'Immediate')}</option>
+                          <option value="HOURLY">{t('settings.notifications.freqOpts.HOURLY', 'Hourly')}</option>
+                          <option value="DAILY">{t('settings.notifications.freqOpts.DAILY', 'Daily')}</option>
+                          <option value="OFF">{t('settings.notifications.freqOpts.OFF', 'Off')}</option>
                         </select>
                       </div>
                       <div>
-                        <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>Digest Email</label>
+                        <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>{t('settings.notifications.digestEmail', 'Digest Email')}</label>
                         <input type="email" value={prefs.email} onChange={e => update('email', e.target.value)}
                           placeholder={settings?.email ?? 'your@email.com'}
                           className="w-full rounded-xl px-4 py-2.5 text-sm font-semibold outline-none"
@@ -558,7 +560,7 @@ export const Settings = () => {
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--brand-600)'}
               >
                 <Save size={15} />
-                {saving ? 'Saving…' : 'Save Notification Preferences'}
+                {saving ? t('settings.saving', 'Saving…') : t('settings.notifications.savePrefs', 'Save Notification Preferences')}
               </button>
             </div>
           </div>
@@ -570,9 +572,9 @@ export const Settings = () => {
             {/* Filter Bar */}
             <div className="rounded-2xl p-5 flex flex-wrap gap-3" style={{ background: '#fff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2,132,199,0.05)' }}>
               {[
-                { key: 'accountId', options: [{ value: '', label: 'All Accounts' }, ...(settings?.socialAccounts.map(acc => ({ value: acc.id, label: `${acc.accountHandle} (${acc.platform})` })) ?? [])] },
-                { key: 'actionType', options: [{ value: '', label: 'All Action Types' }, ...['COMMENT','REPLY','LIKE','FOLLOW'].map(t => ({ value: t, label: t }))] },
-                { key: 'outcome', options: [{ value: '', label: 'All Outcomes' }, ...['SUCCESS','REJECTED','FAILED'].map(o => ({ value: o, label: o }))] },
+                { key: 'accountId', options: [{ value: '', label: t('settings.audit.allAccounts', 'All Accounts') }, ...(settings?.socialAccounts.map(acc => ({ value: acc.id, label: `${acc.accountHandle} (${acc.platform})` })) ?? [])] },
+                { key: 'actionType', options: [{ value: '', label: t('settings.audit.allActionTypes', 'All Action Types') }, ...['COMMENT','REPLY','LIKE','FOLLOW'].map(a_opt => ({ value: a_opt, label: a_opt }))] },
+                { key: 'outcome', options: [{ value: '', label: t('settings.audit.allOutcomes', 'All Outcomes') }, ...['SUCCESS','REJECTED','FAILED'].map(o => ({ value: o, label: o }))] },
               ].map(({ key, options }) => (
                 <select key={key}
                   value={(auditFilters as any)[key]}
@@ -599,7 +601,7 @@ export const Settings = () => {
                 style={{ color: 'var(--slate-400)' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--brand-600)'; (e.currentTarget as HTMLElement).style.background = 'var(--brand-50)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--slate-400)'; (e.currentTarget as HTMLElement).style.background = ''; }}
-              >✕ Clear</button>
+              >{t('settings.audit.clear', '✕ Clear')}</button>
             </div>
 
             {/* Audit Log Table - Desktop */}
@@ -607,8 +609,10 @@ export const Settings = () => {
               <table className="w-full text-sm">
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--slate-100)', background: 'var(--slate-50)' }}>
-                    {['Date / Time', 'Account', 'Action', 'Target ID', 'Outcome'].map(h => (
-                      <th key={h} className="px-5 py-3.5 text-left text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>{h}</th>
+                    {['date', 'account', 'action', 'targetId', 'outcome'].map(h => (
+                      <th key={h} className="px-5 py-3.5 text-left text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>
+                        {t(`settings.audit.tableHeaders.${h}`, h)}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -617,7 +621,7 @@ export const Settings = () => {
                     <tr>
                       <td colSpan={5} className="text-center py-16" style={{ color: 'var(--slate-400)' }}>
                         <p className="text-3xl mb-2">📋</p>
-                        <p className="font-semibold">No audit entries found.</p>
+                        <p className="font-semibold">{t('settings.audit.noEntries', 'No audit entries found.')}</p>
                       </td>
                     </tr>
                   ) : logs.map((log) => (
@@ -657,7 +661,7 @@ export const Settings = () => {
               {logs.length === 0 ? (
                 <div className="rounded-2xl p-12 text-center" style={{ background: '#fff', border: '1px solid var(--slate-100)', color: 'var(--slate-400)' }}>
                   <p className="text-3xl mb-2">📋</p>
-                  <p className="font-semibold">No audit entries found.</p>
+                  <p className="font-semibold">{t('settings.audit.noEntries', 'No audit entries found.')}</p>
                 </div>
               ) : (
                 logs.map((log) => (
@@ -695,7 +699,7 @@ export const Settings = () => {
             {auditTotalPages > 1 && (
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold" style={{ color: 'var(--slate-400)' }}>
-                  Showing page {auditPage} of {auditTotalPages} ({auditTotal} total entries)
+                  {t('settings.audit.pagination', 'Showing page {{page}} of {{totalPages}} ({{total}} total entries)', { page: auditPage, totalPages: auditTotalPages, total: auditTotal })}
                 </p>
                 <div className="flex gap-2">
                   <button disabled={auditPage <= 1} onClick={() => setAuditPage(p => p - 1)}
@@ -703,13 +707,13 @@ export const Settings = () => {
                     style={{ border: '1px solid var(--slate-200)', color: 'var(--slate-600)' }}
                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--slate-50)'}
                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ''}
-                  >← Prev</button>
+                  >{t('settings.audit.prev', '← Prev')}</button>
                   <button disabled={auditPage >= auditTotalPages} onClick={() => setAuditPage(p => p + 1)}
                     className="px-4 py-2 rounded-xl text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     style={{ border: '1px solid var(--slate-200)', color: 'var(--slate-600)' }}
                     onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--slate-50)'}
                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ''}
-                  >Next →</button>
+                  >{t('settings.audit.next', 'Next →')}</button>
                 </div>
               </div>
             )}

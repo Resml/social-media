@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../api/axios';
 import { ImagePlus } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 export const Schedule = () => {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState<any[]>([]);
   const [content, setContent] = useState('');
   const [date, setDate] = useState('');
@@ -40,7 +42,7 @@ export const Schedule = () => {
   };
 
   const handleCreatePost = async (status: string = 'QUEUED') => {
-    if (!accountId || !content || !date) return alert('Missing required fields');
+    if (!accountId || !content || !date) return alert(t('schedule.alerts.missingFields', 'Missing required fields'));
     try {
       if (draftId) {
         await api.put(`/schedule/${draftId}`, { content, scheduledAt: date, status, mediaUrls: mediaUrl ? [mediaUrl] : [] });
@@ -49,7 +51,7 @@ export const Schedule = () => {
       }
       setContent(''); setDate(''); setMediaFile(null); setMediaUrl(null); setDraftId(null);
       fetchPosts();
-      alert(`Post successfully set to ${status}!`);
+      alert(`${t('schedule.alerts.success', 'Post successfully set to')} ${status}!`);
     } catch(err) { console.error('Error saving:', err); }
   };
 
@@ -112,13 +114,13 @@ export const Schedule = () => {
 
         <h2 className="text-xl lg:text-2xl font-bold mb-6 lg:mb-8 tracking-tight"
           style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-          Create Deployment
+          {t('schedule.createDeployment', 'Create Deployment')}
         </h2>
 
         {/* Account select */}
         <div className="mb-5">
           <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-            Target Account
+            {t('schedule.targetAccount', 'Target Account')}
           </label>
           <select value={accountId} onChange={e => setAccountId(e.target.value)}
             style={{ ...inputBase, cursor: 'pointer', fontWeight: 600, color: 'var(--slate-700)' }}
@@ -132,11 +134,11 @@ export const Schedule = () => {
         {/* Caption */}
         <div className="mb-5">
           <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-            Caption / Content
+            {t('schedule.captionContent', 'Caption / Content')}
           </label>
           <textarea value={content} onChange={e => setContent(e.target.value)} rows={6}
             style={{ ...inputBase, resize: 'none' } as React.CSSProperties}
-            placeholder="Write your post caption here…"
+            placeholder={t('schedule.captionPlaceholder', 'Write your post caption here…')}
             onFocus={handleFocus as any} onBlur={handleBlur as any}
           />
         </div>
@@ -144,7 +146,7 @@ export const Schedule = () => {
         {/* Media upload */}
         <div className="mb-5">
           <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-            Media Attachment
+            {t('schedule.mediaAttachment', 'Media Attachment')}
           </label>
           <div className="border-2 border-dashed rounded-xl p-7 flex flex-col items-center justify-center relative transition-colors group cursor-pointer"
             style={{ borderColor: 'var(--slate-300)' }}
@@ -153,24 +155,24 @@ export const Schedule = () => {
           >
             <ImagePlus size={36} strokeWidth={1.5} className="mb-3 group-hover:scale-110 transition-transform" />
             <span className="text-sm font-semibold" style={{ color: 'var(--brand-600)' }}>
-              {mediaFile ? mediaFile.name : 'Upload Media'}
+              {mediaFile ? mediaFile.name : t('schedule.uploadMedia', 'Upload Media')}
             </span>
             <span className="text-[10px] uppercase tracking-widest mt-1" style={{ color: 'var(--slate-400)' }}>
-              Images &amp; Video accepted
+              {t('schedule.mediaHint', 'Images & Video accepted')}
             </span>
             <input type="file" accept="image/*,video/*" onChange={handleMediaUpload}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
           </div>
           {isUploading && (
             <div className="text-xs mt-2 font-bold text-center animate-pulse" style={{ color: 'var(--brand-500)' }}>
-              Uploading…
+              {t('schedule.uploading', 'Uploading…')}
             </div>
           )}
           {mediaUrl && !isUploading && (
             <div className="mt-3 overflow-hidden rounded-xl h-32 relative">
               <img src={mediaUrl} className="w-full h-full object-cover" alt="preview" />
               <div className="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-widest text-white" style={{ background: '#10b981' }}>
-                Ready
+                {t('schedule.ready', 'Ready')}
               </div>
             </div>
           )}
@@ -179,7 +181,7 @@ export const Schedule = () => {
         {/* Scheduled date */}
         <div className="mb-8">
           <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-            Scheduled Date &amp; Time
+            {t('schedule.scheduledDateTime', 'Scheduled Date & Time')}
           </label>
           <input type="datetime-local" value={date} onChange={e => setDate(e.target.value)}
             style={{ ...inputBase, cursor: 'pointer', fontWeight: 600, color: 'var(--slate-700)' }}
@@ -195,7 +197,7 @@ export const Schedule = () => {
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--brand-50)'}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#fff'}
           >
-            Save Draft
+            {t('schedule.saveDraft', 'Save Draft')}
           </button>
           <button onClick={() => handleCreatePost('QUEUED')}
             disabled={isUploading || !content || !date}
@@ -204,7 +206,7 @@ export const Schedule = () => {
             onMouseEnter={e => { if (!isUploading && content && date) (e.currentTarget as HTMLElement).style.background = 'var(--brand-700)'; }}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--brand-600)'}
           >
-            Queue Post 🚀
+            {t('schedule.queuePost', 'Queue Post 🚀')}
           </button>
         </div>
       </div>
@@ -213,7 +215,7 @@ export const Schedule = () => {
       <div className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto" style={{ background: 'var(--slate-50)' }}>
         <h2 className="text-2xl font-bold mb-7 tracking-tight"
           style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-          Scheduled Posts
+          {t('schedule.scheduledPosts', 'Scheduled Posts')}
         </h2>
 
         <div className="space-y-4">
@@ -268,7 +270,7 @@ export const Schedule = () => {
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#fef2f2'; (e.currentTarget as HTMLElement).style.borderColor = '#fecaca'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.borderColor = 'transparent'; }}
                 >
-                  Cancel
+                  {t('schedule.cancel', 'Cancel')}
                 </button>
               )}
             </div>
@@ -278,9 +280,9 @@ export const Schedule = () => {
             <div className="text-center py-20 flex flex-col items-center" style={{ color: 'var(--slate-400)' }}>
               <span className="text-5xl mb-4">🗓️</span>
               <p className="font-bold text-lg" style={{ color: 'var(--slate-500)', fontFamily: 'Outfit, sans-serif' }}>
-                No scheduled posts yet.
+                {t('schedule.noPosts', 'No scheduled posts yet.')}
               </p>
-              <p className="text-sm mt-1">Queue a post from the composer to see it here.</p>
+              <p className="text-sm mt-1">{t('schedule.noPostsHint', 'Queue a post from the composer to see it here.')}</p>
             </div>
           )}
         </div>

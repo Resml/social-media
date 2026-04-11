@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/axios';
 import { PostCard } from '../components/PostCard';
+import { useTranslation } from 'react-i18next';
 
 export const PostSearch = () => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [hashtag, setHashtag] = useState('');
   const [platform, setPlatform] = useState('ALL');
@@ -59,20 +61,20 @@ export const PostSearch = () => {
           style={{ background: '#ffffff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2, 132, 199, 0.06)' }}>
           <h1 className="text-xl lg:text-2xl font-bold mb-6 tracking-tight"
             style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-            Post Repository Search
+            {t('postSearch.title', 'Post Repository Search')}
           </h1>
 
           <div className="flex flex-col lg:flex-row lg:flex-wrap gap-4 items-end">
             {/* Keyword */}
             <div className="flex-1 min-w-[280px]">
               <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-                Keyword Query
+                {t('postSearch.keywordQuery', 'Keyword Query')}
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-2.5" style={{ color: 'var(--slate-400)' }}>🔍</span>
                 <input
                   type="text" value={query} onChange={e => setQuery(e.target.value)}
-                  placeholder="Search captions contextually…"
+                  placeholder={t('postSearch.keywordPlaceholder', 'Search captions contextually…')}
                   style={{ ...inputStyle, paddingLeft: '2.25rem' }}
                   onFocus={e => { (e.target as HTMLInputElement).style.borderColor = 'var(--brand-400)'; (e.target as HTMLInputElement).style.boxShadow = '0 0 0 3px var(--brand-100)'; }}
                   onBlur={e  => { (e.target as HTMLInputElement).style.borderColor = 'var(--slate-200)'; (e.target as HTMLInputElement).style.boxShadow = 'none'; }}
@@ -82,7 +84,7 @@ export const PostSearch = () => {
             {/* Hashtag */}
             <div className="w-full sm:w-44">
               <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-                Hashtag Filter
+                {t('postSearch.hashtagFilter', 'Hashtag Filter')}
               </label>
               <input type="text" value={hashtag} onChange={e => setHashtag(e.target.value)}
                 placeholder="#milestone"
@@ -94,10 +96,10 @@ export const PostSearch = () => {
             {/* Platform */}
             <div className="w-full sm:w-40">
               <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-                Platform
+                {t('postSearch.platform', 'Platform')}
               </label>
               <select value={platform} onChange={e => setPlatform(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                <option value="ALL">ALL NETWORKS</option>
+                <option value="ALL">{t('postSearch.allNetworks', 'ALL NETWORKS')}</option>
                 <option value="INSTAGRAM">INSTAGRAM</option>
                 <option value="TWITTER">TWITTER</option>
                 <option value="FACEBOOK">FACEBOOK</option>
@@ -106,11 +108,11 @@ export const PostSearch = () => {
             {/* Date range */}
             <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
               <div className="flex-1 lg:w-36">
-                <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>From</label>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>{t('postSearch.from', 'From')}</label>
                 <input type="date" value={from} onChange={e => setFrom(e.target.value)} style={inputStyle} />
               </div>
               <div className="flex-1 lg:w-36">
-                <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>To</label>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>{t('postSearch.to', 'To')}</label>
                 <input type="date" value={to} onChange={e => setTo(e.target.value)} style={inputStyle} />
               </div>
             </div>
@@ -121,7 +123,7 @@ export const PostSearch = () => {
         <div className="flex items-center px-1">
           <span className={`text-[10px] lg:text-sm font-bold uppercase tracking-wider${isSearching ? ' animate-pulse' : ''}`}
             style={{ color: isSearching ? 'var(--brand-500)' : 'var(--slate-400)' }}>
-            {isSearching ? 'Analyzing Post Database…' : `Retrieved ${total} matching entries`}
+            {isSearching ? t('postSearch.analyzing', 'Analyzing Post Database…') : t('postSearch.retrieved', 'Retrieved {{total}} matching entries', { total })}
           </span>
         </div>
 
@@ -135,9 +137,9 @@ export const PostSearch = () => {
             <div className="h-full flex flex-col items-center justify-center py-20 opacity-80" style={{ color: 'var(--slate-400)' }}>
                <span className="text-4xl lg:text-5xl mb-6">📭</span>
                <h3 className="text-xl lg:text-2xl font-bold mb-2 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-500)' }}>
-                 No posts match criteria
+                 {t('postSearch.noPosts', 'No posts match criteria')}
                </h3>
-               <p className="text-xs lg:text-sm font-medium">Try generalizing your keywords or date range.</p>
+               <p className="text-xs lg:text-sm font-medium">{t('postSearch.noPostsHint', 'Try generalizing your keywords or date range.')}</p>
             </div>
           )}
         </div>
