@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import { Plus, X, TrendingUp, DollarSign, Eye, MousePointer } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Ad {
   id: string; month: string; campaign: string; spend: number;
   reach: number; clicks: number; platform: string; status: 'active'|'ended'; notes: string;
 }
 
-const INITIAL: Ad[] = [
-  { id:'1', month:'May 2025',    campaign:'Ward development awareness',      spend:500,  reach:18400, clicks:740,  platform:'Facebook', status:'active', notes:'Running well' },
-  { id:'2', month:'April 2025',  campaign:'Community event promotion',       spend:400,  reach:12300, clicks:510,  platform:'Facebook', status:'ended',  notes:'Good reach' },
-  { id:'3', month:'March 2025',  campaign:'Voter registration drive',        spend:600,  reach:22100, clicks:890,  platform:'Facebook', status:'ended',  notes:'High engagement' },
-  { id:'4', month:'February 2025', campaign:'Festival greetings sponsored', spend:300,  reach:8900,  clicks:310,  platform:'Facebook', status:'ended',  notes:'' },
-];
 
 const inputStyle: React.CSSProperties = {
   width:'100%', padding:'0.65rem 0.9rem', borderRadius:'0.65rem',
@@ -20,7 +15,14 @@ const inputStyle: React.CSSProperties = {
 };
 
 export const AdTracker = () => {
-  const [ads, setAds]           = useState<Ad[]>(INITIAL);
+  const { t } = useTranslation();
+
+  const [ads, setAds] = useState<Ad[]>(() => [
+    { id:'1', month:String(t('adTracker.mockData.campaign1.month', 'May 2025')), campaign:String(t('adTracker.mockData.campaign1.campaign', 'Ward development awareness')), spend:500, reach:18400, clicks:740, platform:'Facebook', status:'active', notes:String(t('adTracker.mockData.campaign1.notes', 'Running well')) },
+    { id:'2', month:String(t('adTracker.mockData.campaign2.month', 'April 2025')), campaign:String(t('adTracker.mockData.campaign2.campaign', 'Community event promotion')), spend:400, reach:12300, clicks:510, platform:'Facebook', status:'ended', notes:String(t('adTracker.mockData.campaign2.notes', 'Good reach')) },
+    { id:'3', month:String(t('adTracker.mockData.campaign3.month', 'March 2025')), campaign:String(t('adTracker.mockData.campaign3.campaign', 'Voter registration drive')), spend:600, reach:22100, clicks:890, platform:'Facebook', status:'ended', notes:String(t('adTracker.mockData.campaign3.notes', 'High engagement')) },
+    { id:'4', month:String(t('adTracker.mockData.campaign4.month', 'February 2025')), campaign:String(t('adTracker.mockData.campaign4.campaign', 'Festival greetings sponsored')), spend:300, reach:8900, clicks:310, platform:'Facebook', status:'ended', notes:String(t('adTracker.mockData.campaign4.notes', '')) },
+  ]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Omit<Ad,'id'>>({
     month:'', campaign:'', spend:0, reach:0, clicks:0, platform:'Facebook', status:'active', notes:''
@@ -39,10 +41,10 @@ export const AdTracker = () => {
   const avgCPC      = totalClicks>0 ? (totalSpend/totalClicks).toFixed(2) : '—';
 
   const statItems = [
-    { label:'Total Spent',  value:`₹${totalSpend.toLocaleString()}`, Icon: DollarSign,   color:'var(--brand-800)', bg:'var(--brand-100)' },
-    { label:'Total Reach',  value:totalReach.toLocaleString(),         Icon: Eye,          color:'var(--brand-700)', bg:'var(--brand-50)'  },
-    { label:'Total Clicks', value:totalClicks.toLocaleString(),        Icon: MousePointer, color:'var(--brand-600)', bg:'var(--brand-50)'  },
-    { label:'Avg. CPC',     value:`₹${avgCPC}`,                        Icon: TrendingUp,   color:'var(--brand-900)', bg:'var(--brand-100)' },
+    { label:t('adTracker.stats.totalSpent', 'Total Spent'),  value:`₹${totalSpend.toLocaleString()}`, Icon: DollarSign,   color:'var(--brand-800)', bg:'var(--brand-100)' },
+    { label:t('adTracker.stats.totalReach', 'Total Reach'),  value:totalReach.toLocaleString(),         Icon: Eye,          color:'var(--brand-700)', bg:'var(--brand-50)'  },
+    { label:t('adTracker.stats.totalClicks', 'Total Clicks'), value:totalClicks.toLocaleString(),        Icon: MousePointer, color:'var(--brand-600)', bg:'var(--brand-50)'  },
+    { label:t('adTracker.stats.avgCPC', 'Avg. CPC'),     value:`₹${avgCPC}`,                        Icon: TrendingUp,   color:'var(--brand-900)', bg:'var(--brand-100)' },
   ];
 
   return (
@@ -56,14 +58,14 @@ export const AdTracker = () => {
               <TrendingUp size={20} color="#fff" strokeWidth={2}/>
             </div>
             <div>
-              <h1 className="text-2xl font-black" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>Ad Tracker</h1>
-              <p className="text-sm" style={{color:'var(--slate-500)'}}>Track monthly paid campaigns · Document goal: 1 paid ad per month</p>
+              <h1 className="text-2xl font-black" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{t('adTracker.title', 'Ad Tracker')}</h1>
+              <p className="text-sm" style={{color:'var(--slate-500)'}}>{t('adTracker.subtitle', 'Track monthly paid campaigns · Document goal: 1 paid ad per month')}</p>
             </div>
           </div>
           <button onClick={()=>setShowForm(true)}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95"
             style={{background:'var(--brand-600)', boxShadow:'0 2px 8px rgba(2,132,199,0.25)'}}>
-            <Plus size={16}/> Add Campaign
+            <Plus size={16}/> {t('adTracker.addCampaign', 'Add Campaign')}
           </button>
         </div>
 
@@ -94,9 +96,11 @@ export const AdTracker = () => {
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full"
                         style={{background:ad.status==='active'?'var(--brand-100)':'var(--slate-100)', color:ad.status==='active'?'var(--brand-700)':'var(--slate-500)'}}>
-                        {ad.status==='active'?'Active':'Ended'}
+                        {ad.status==='active'?t('adTracker.status.active', 'Active'):t('adTracker.status.ended', 'Ended')}
                       </span>
-                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full" style={{background:'var(--brand-50)',color:'var(--brand-700)'}}>{ad.platform}</span>
+                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full" style={{background:'var(--brand-50)',color:'var(--brand-700)'}}>
+                        {ad.platform === 'Facebook' ? t('dashboard.platforms.facebook', 'Facebook') : ad.platform === 'Instagram' ? t('dashboard.platforms.instagram', 'Instagram') : t('liveTracker.form.both', 'Both')}
+                      </span>
                       <span className="text-[11px]" style={{color:'var(--slate-400)'}}>{ad.month}</span>
                     </div>
                     <h3 className="font-bold" style={{color:'var(--slate-900)'}}>{ad.campaign}</h3>
@@ -106,10 +110,10 @@ export const AdTracker = () => {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    {label:'Spend',   value:`₹${ad.spend.toLocaleString()}`,  Icon:DollarSign},
-                    {label:'Reach',   value:ad.reach.toLocaleString(),          Icon:Eye},
-                    {label:'Clicks',  value:ad.clicks.toLocaleString(),         Icon:MousePointer},
-                    {label:'CPC',     value:`₹${cpc}`,                          Icon:TrendingUp},
+                    {label:t('adTracker.card.spend', 'Spend'),   value:`₹${ad.spend.toLocaleString()}`,  Icon:DollarSign},
+                    {label:t('adTracker.card.reach', 'Reach'),   value:ad.reach.toLocaleString(),          Icon:Eye},
+                    {label:t('adTracker.card.clicks', 'Clicks'),  value:ad.clicks.toLocaleString(),         Icon:MousePointer},
+                    {label:t('adTracker.card.cpc', 'CPC'),     value:`₹${cpc}`,                          Icon:TrendingUp},
                   ].map(m=>{
                     const MIcon=m.Icon;
                     return (
@@ -127,7 +131,7 @@ export const AdTracker = () => {
             );
           })}
           {ads.length===0&&(
-            <div className="text-center py-16 text-slate-400"><TrendingUp size={48} className="mx-auto mb-4 opacity-30"/><p className="font-bold">No campaigns yet.</p></div>
+            <div className="text-center py-16 text-slate-400"><TrendingUp size={48} className="mx-auto mb-4 opacity-30"/><p className="font-bold">{t('adTracker.noCampaigns', 'No campaigns yet.')}</p></div>
           )}
         </div>
       </div>
@@ -136,31 +140,33 @@ export const AdTracker = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{background:'rgba(15,23,42,0.5)', backdropFilter:'blur(4px)'}}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>Add Campaign</h3>
+              <h3 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{t('adTracker.form.title', 'Add Campaign')}</h3>
               <button onClick={()=>setShowForm(false)} className="p-2 rounded-xl hover:bg-slate-100"><X size={18}/></button>
             </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Month</label>
-                  <input style={inputStyle} placeholder="e.g. May 2025" value={form.month} onChange={e=>setForm(f=>({...f,month:e.target.value}))}/></div>
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Platform</label>
+                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('adTracker.form.month', 'Month')}</label>
+                  <input style={inputStyle} placeholder={String(t('adTracker.form.monthPlaceholder', 'e.g. May 2025'))} value={form.month} onChange={e=>setForm(f=>({...f,month:e.target.value}))}/></div>
+                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('adTracker.form.platform', 'Platform')}</label>
                   <select style={{...inputStyle,cursor:'pointer'}} value={form.platform} onChange={e=>setForm(f=>({...f,platform:e.target.value}))}>
-                    <option>Facebook</option><option>Instagram</option><option>Both</option></select></div>
+                    <option value="Facebook">{t('dashboard.platforms.facebook', 'Facebook')}</option>
+                    <option value="Instagram">{t('dashboard.platforms.instagram', 'Instagram')}</option>
+                    <option value="Both">{t('liveTracker.form.both', 'Both')}</option></select></div>
               </div>
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Campaign Name</label>
-                <input style={inputStyle} placeholder="Campaign description…" value={form.campaign} onChange={e=>setForm(f=>({...f,campaign:e.target.value}))}/></div>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('adTracker.form.campaignName', 'Campaign Name')}</label>
+                <input style={inputStyle} placeholder={String(t('adTracker.form.campaignPlaceholder', 'Campaign description…'))} value={form.campaign} onChange={e=>setForm(f=>({...f,campaign:e.target.value}))}/></div>
               <div className="grid grid-cols-3 gap-3">
                 {(['spend','reach','clicks'] as const).map(field=>(
-                  <div key={field}><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{field}</label>
+                  <div key={field}><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t(`adTracker.form.${field}`, field)}</label>
                     <input type="number" style={inputStyle} value={(form as any)[field]} onChange={e=>setForm(f=>({...f,[field]:+e.target.value}))} min={0}/></div>
                 ))}
               </div>
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Notes</label>
-                <input style={inputStyle} placeholder="Any notes…" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/></div>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('adTracker.form.notes', 'Notes')}</label>
+                <input style={inputStyle} placeholder={String(t('adTracker.form.notesPlaceholder', 'Any notes…'))} value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/></div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={()=>setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border hover:bg-slate-50" style={{borderColor:'var(--slate-200)',color:'var(--slate-600)'}}>Cancel</button>
-              <button onClick={addAd} className="flex-1 py-3 rounded-xl font-bold text-sm text-white hover:opacity-90 active:scale-95" style={{background:'var(--brand-600)'}}>Add Campaign</button>
+              <button onClick={()=>setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border hover:bg-slate-50" style={{borderColor:'var(--slate-200)',color:'var(--slate-600)'}}>{t('adTracker.form.cancel', 'Cancel')}</button>
+              <button onClick={addAd} className="flex-1 py-3 rounded-xl font-bold text-sm text-white hover:opacity-90 active:scale-95" style={{background:'var(--brand-600)'}}>{t('adTracker.form.submit', 'Add Campaign')}</button>
             </div>
           </div>
         </div>

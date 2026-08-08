@@ -21,7 +21,7 @@ export const AIAssistant = () => {
   const [contentType, setContentType] = useState<ContentType>('Social Media Caption');
   const [tone, setTone] = useState<ToneType>('Enthusiastic');
   const [aiLanguage, setAiLanguage] = useState<LanguageType>(
-    i18n.language === 'mr' ? 'Marathi' : 'English'
+    i18n.language.startsWith('mr') ? 'Marathi' : 'English'
   );
 
   const [generatedContent, setGeneratedContent] = useState('');
@@ -140,12 +140,12 @@ export const AIAssistant = () => {
                       value={contentType}
                       onChange={(e) => setContentType(e.target.value as ContentType)}
                     >
-                      <option value="Social Media Caption">Caption</option>
-                      <option value="Speech">Speech</option>
-                      <option value="Press Release">Press Release</option>
-                      <option value="Article">Article</option>
-                      <option value="Letter/Notice">Letter/Notice</option>
-                      <option value="Email">Email</option>
+                      <option value="Social Media Caption">{String(t('ai.types.Social Media Caption', 'Caption'))}</option>
+                      <option value="Speech">{String(t('ai.types.Speech', 'Speech'))}</option>
+                      <option value="Press Release">{String(t('ai.types.Press Release', 'Press Release'))}</option>
+                      <option value="Article">{String(t('ai.types.Article', 'Article'))}</option>
+                      <option value="Letter/Notice">{String(t('ai.types.Letter/Notice', 'Letter/Notice'))}</option>
+                      <option value="Email">{String(t('ai.types.Email', 'Email'))}</option>
                     </select>
                   </div>
 
@@ -158,12 +158,12 @@ export const AIAssistant = () => {
                       value={tone}
                       onChange={(e) => setTone(e.target.value as ToneType)}
                     >
-                      <option value="Enthusiastic">Enthusiastic</option>
-                      <option value="Professional">Professional</option>
-                      <option value="Formal">Formal</option>
-                      <option value="Witty">Witty</option>
-                      <option value="Emotional">Emotional</option>
-                      <option value="Urgent">Urgent</option>
+                      <option value="Enthusiastic">{String(t('ai.tones.Enthusiastic', 'Enthusiastic'))}</option>
+                      <option value="Professional">{String(t('ai.tones.Professional', 'Professional'))}</option>
+                      <option value="Formal">{String(t('ai.tones.Formal', 'Formal'))}</option>
+                      <option value="Witty">{String(t('ai.tones.Witty', 'Witty'))}</option>
+                      <option value="Emotional">{String(t('ai.tones.Emotional', 'Emotional'))}</option>
+                      <option value="Urgent">{String(t('ai.tones.Urgent', 'Urgent'))}</option>
                     </select>
                   </div>
                 </div>
@@ -177,9 +177,9 @@ export const AIAssistant = () => {
                     value={aiLanguage}
                     onChange={(e) => setAiLanguage(e.target.value as LanguageType)}
                   >
-                    <option value="English">English</option>
-                    <option value="Marathi">मराठी (Marathi)</option>
-                    <option value="Hindi">हिंदी (Hindi)</option>
+                    <option value="English">{String(t('ai.languages.English', 'English'))}</option>
+                    <option value="Marathi">{String(t('ai.languages.Marathi', 'मराठी (Marathi)'))}</option>
+                    <option value="Hindi">{String(t('ai.languages.Hindi', 'हिंदी (Hindi)'))}</option>
                   </select>
                 </div>
 
@@ -302,7 +302,7 @@ export const AIAssistant = () => {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">
-                      {item.contentType}
+                      {String(t(`ai.types.${item.contentType}`, item.contentType))}
                     </span>
                     <span className="text-[10px] text-slate-400 flex items-center gap-1">
                       <Clock size={10} />

@@ -10,7 +10,7 @@ interface Comment {
 }
 
 export const CommentExporter = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -36,14 +36,19 @@ export const CommentExporter = () => {
 
   const exportToCSV = () => {
     if (comments.length === 0) return;
-    const headers = ['Comment ID', 'Username', 'Comment Text', 'Timestamp'];
+    const headers = [
+      String(t('commentExporter.csvId', 'Comment ID')), 
+      String(t('commentExporter.user', 'User')), 
+      String(t('commentExporter.commentText', 'Comment Text')), 
+      String(t('commentExporter.timestamp', 'Timestamp'))
+    ];
     const csvRows = [
       headers.join(','),
       ...comments.map(c => [
         c.id,
         `"${c.username.replace(/"/g, '""')}"`,
         `"${c.text.replace(/"/g, '""')}"`,
-        new Date(c.timestamp).toLocaleString()
+        new Date(c.timestamp).toLocaleString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')
       ].join(','))
     ];
     const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
@@ -194,7 +199,7 @@ export const CommentExporter = () => {
                     >
                       <td className="px-6 py-4 font-semibold" style={{ color: 'var(--slate-900)' }}>@{comment.username}</td>
                       <td className="px-6 py-4 text-sm max-w-md truncate" style={{ color: 'var(--slate-500)' }}>{comment.text}</td>
-                      <td className="px-6 py-4 text-xs" style={{ color: 'var(--slate-400)' }}>{new Date(comment.timestamp).toLocaleString()}</td>
+                      <td className="px-6 py-4 text-xs" style={{ color: 'var(--slate-400)' }}>{new Date(comment.timestamp).toLocaleString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -207,7 +212,7 @@ export const CommentExporter = () => {
                 <div key={comment.id} className="p-4 space-y-2">
                   <div className="flex justify-between items-start">
                     <span className="font-bold text-sm" style={{ color: 'var(--slate-900)' }}>@{comment.username}</span>
-                    <span className="text-[10px]" style={{ color: 'var(--slate-400)' }}>{new Date(comment.timestamp).toLocaleString()}</span>
+                    <span className="text-[10px]" style={{ color: 'var(--slate-400)' }}>{new Date(comment.timestamp).toLocaleString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')}</span>
                   </div>
                   <p className="text-sm" style={{ color: 'var(--slate-600)' }}>{comment.text}</p>
                 </div>

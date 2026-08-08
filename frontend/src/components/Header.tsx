@@ -80,7 +80,7 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                   <div className="absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden py-1">
                      <button
                         onClick={() => { i18n.changeLanguage('mr'); setIsLangMenuOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language === 'mr' ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language.startsWith('mr') ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
                      >
                         मराठी
                      </button>

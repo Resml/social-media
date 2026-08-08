@@ -1,6 +1,7 @@
 import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface StatCardProps {
   label: string;
@@ -11,7 +12,12 @@ interface StatCardProps {
 }
 
 export const StatCard: React.FC<StatCardProps> = ({ label, value, delta, deltaSuffix = '', icon: Icon }) => {
-  const isPositive = delta >= 0;
+  const { t } = useTranslation();
+  const parsedDelta = Number(delta);
+  const validDelta = isNaN(parsedDelta) || parsedDelta === null ? 0 : parsedDelta;
+  const isPositive = validDelta >= 0;
+  const displayValue = (String(value).includes('NaN') || String(value).includes('null') || String(value).includes('undefined')) ? '0' : value;
+
   return (
     <div className="rounded-2xl p-5 flex flex-col transition-shadow hover:shadow-md"
       style={{
@@ -32,11 +38,11 @@ export const StatCard: React.FC<StatCardProps> = ({ label, value, delta, deltaSu
         )}
       </div>
       <div className="text-2xl font-bold" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-        {value}
+        {displayValue}
       </div>
       <div className={`text-xs mt-2 font-semibold flex items-center gap-1 ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
         {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-        <span>{Math.abs(delta)}{deltaSuffix} this week</span>
+        <span>{Math.abs(validDelta)}{deltaSuffix} {t('dashboard.thisWeek', 'this week')}</span>
       </div>
     </div>
   );

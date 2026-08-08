@@ -76,7 +76,7 @@ export const QuickCommenter = () => {
   const handleGenerateAI = async (profile: TargetProfile) => {
     setGenerating(prev => ({ ...prev, [profile.id]: true }));
     try {
-      const lang = i18n.language === 'mr' ? 'Marathi' : 'English';
+      const lang = i18n.language.startsWith('mr') ? 'Marathi' : 'English';
       const suggestion = await AIService.generateQuickComment(profile.name, profile.facebookId, lang as any);
       setComments(prev => ({ ...prev, [profile.id]: suggestion }));
       toast.success(t('ai.suggestSuccess', 'AI suggestion generated!'));
@@ -187,7 +187,7 @@ export const QuickCommenter = () => {
               <input
                 type="text"
                 className="ns-input"
-                placeholder="Paste Facebook or Instagram Post URL here..."
+                placeholder={String(t('quickCommenter.urlPlaceholder', 'Paste Facebook or Instagram Post URL here...'))}
                 value={manualUrl}
                 onChange={(e) => setManualUrl(e.target.value)}
               />
@@ -234,14 +234,14 @@ export const QuickCommenter = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-bold text-slate-900 truncate">{profile.name}</h3>
+                      <h3 className="font-bold text-slate-900 truncate">{String(t(`quickCommenter.mockProfiles.${profile.id}.name`, profile.name))}</h3>
                       <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">
-                        {profile.platform}
+                        {String(t(`dashboard.platforms.${profile.platform.toLowerCase()}`, profile.platform))}
                       </span>
                     </div>
                     <p className="text-xs text-slate-500 font-mono mb-2 truncate">@{profile.facebookId}</p>
                     <div className="bg-slate-50 rounded-lg p-2 border border-slate-100 italic text-[11px] text-slate-600 line-clamp-1">
-                      "{profile.lastPost}"
+                      "{String(t(`quickCommenter.mockProfiles.${profile.id}.post`, profile.lastPost))}"
                     </div>
                   </div>
                 </div>

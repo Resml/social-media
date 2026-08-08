@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, X, Kanban, CheckCircle2, Circle, Clock, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Priority = 'high' | 'medium' | 'low';
 type TaskStatus = 'todo' | 'inprogress' | 'done';
@@ -24,15 +25,6 @@ const COLUMNS: { id: TaskStatus; label: string; Icon: React.FC<any>; accent: str
   { id:'done',       label:'Done',        Icon: CheckCircle2, accent:'var(--brand-700)' },
 ];
 
-const INITIAL_TASKS: Task[] = [
-  { id:'1', title:'Ambedkar Jayanti graphic',   category:'Birthday Post',  assignee:'Harshal Vora',  priority:'high',   status:'done',       dueDate:'2025-04-14' },
-  { id:'2', title:'Water scarcity reel',         category:'Social Issue',   assignee:'Dr. Amol Pawar', priority:'high',   status:'inprogress', dueDate:'2025-05-15' },
-  { id:'3', title:'Ward development poll',       category:'Poll',           assignee:'Sagar',          priority:'medium', status:'inprogress', dueDate:'2025-05-16' },
-  { id:'4', title:'Google Meet → FB Live',      category:'Live Video',     assignee:'Dr. Amol Pawar', priority:'high',   status:'todo',       dueDate:'2025-05-20' },
-  { id:'5', title:'Monthly paid ad May',         category:'Campaign',       assignee:'Sagar',          priority:'medium', status:'todo',       dueDate:'2025-05-25' },
-  { id:'6', title:'Repost road work update',    category:'Repost',         assignee:'Harshal Vora',  priority:'low',    status:'todo',       dueDate:'2025-05-28' },
-];
-
 const inputStyle: React.CSSProperties = {
   width:'100%', padding:'0.65rem 0.9rem', borderRadius:'0.65rem',
   border:'1px solid var(--slate-200)', background:'var(--slate-50)',
@@ -42,7 +34,16 @@ const inputStyle: React.CSSProperties = {
 const avatar = (name: string) => name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
 
 export const TeamTasks = () => {
-  const [tasks, setTasks]       = useState<Task[]>(INITIAL_TASKS);
+  const { t } = useTranslation();
+
+  const [tasks, setTasks] = useState<Task[]>(() => [
+    { id:'1', title:String(t('teamTasks.mockData.task1', 'Ambedkar Jayanti graphic')), category:'Birthday Post', assignee:'Harshal Vora', priority:'high', status:'done', dueDate:'2025-04-14' },
+    { id:'2', title:String(t('teamTasks.mockData.task2', 'Water scarcity reel')), category:'Social Issue', assignee:'Dr. Amol Pawar', priority:'high', status:'inprogress', dueDate:'2025-05-15' },
+    { id:'3', title:String(t('teamTasks.mockData.task3', 'Ward development poll')), category:'Poll', assignee:'Sagar', priority:'medium', status:'inprogress', dueDate:'2025-05-16' },
+    { id:'4', title:String(t('teamTasks.mockData.task4', 'Google Meet → FB Live')), category:'Live Video', assignee:'Dr. Amol Pawar', priority:'high', status:'todo', dueDate:'2025-05-20' },
+    { id:'5', title:String(t('teamTasks.mockData.task5', 'Monthly paid ad May')), category:'Campaign', assignee:'Sagar', priority:'medium', status:'todo', dueDate:'2025-05-25' },
+    { id:'6', title:String(t('teamTasks.mockData.task6', 'Repost road work update')), category:'Repost', assignee:'Harshal Vora', priority:'low', status:'todo', dueDate:'2025-05-28' },
+  ]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Omit<Task,'id'>>({ title:'', category:CATEGORIES[0], assignee:TEAM[0], priority:'medium', status:'todo', dueDate:'' });
 
@@ -63,14 +64,14 @@ export const TeamTasks = () => {
               <Kanban size={20} color="#fff" strokeWidth={2}/>
             </div>
             <div>
-              <h1 className="text-2xl font-black" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>Team Tasks</h1>
-              <p className="text-sm" style={{color:'var(--slate-500)'}}>Assign and track post tasks across your team</p>
+              <h1 className="text-2xl font-black" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{t('teamTasks.title', 'Team Tasks')}</h1>
+              <p className="text-sm" style={{color:'var(--slate-500)'}}>{t('teamTasks.subtitle', 'Assign and track post tasks across your team')}</p>
             </div>
           </div>
           <button onClick={()=>setShowForm(true)}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95"
             style={{background:'var(--brand-600)', boxShadow:'0 2px 8px rgba(2,132,199,0.25)'}}>
-            <Plus size={16}/> Add Task
+            <Plus size={16}/> {t('teamTasks.addTask', 'Add Task')}
           </button>
         </div>
 
@@ -85,8 +86,8 @@ export const TeamTasks = () => {
                   {avatar(m.name)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm truncate" style={{color:'var(--slate-900)'}}>{m.name}</p>
-                  <p className="text-xs mb-1.5" style={{color:'var(--slate-500)'}}>{m.done}/{m.total} tasks done</p>
+                  <p className="font-bold text-sm truncate" style={{color:'var(--slate-900)'}}>{t(`teamTasks.team.${m.name}`, m.name)}</p>
+                  <p className="text-xs mb-1.5" style={{color:'var(--slate-500)'}}>{t('teamTasks.stats.tasksDone', '{{done}}/{{total}} tasks done', { done: m.done, total: m.total })}</p>
                   <div className="h-1.5 rounded-full overflow-hidden" style={{background:'var(--slate-100)'}}>
                     <div className="h-full rounded-full transition-all" style={{width:`${pct}%`, background:'var(--brand-500)'}}/>
                   </div>
@@ -106,7 +107,7 @@ export const TeamTasks = () => {
               <div key={col.id}>
                 <div className="flex items-center gap-2 mb-3 px-1">
                   <ColIcon size={16} style={{color:col.accent}}/>
-                  <h3 className="font-bold text-sm" style={{color:'var(--slate-700)'}}>{col.label}</h3>
+                  <h3 className="font-bold text-sm" style={{color:'var(--slate-700)'}}>{t(`teamTasks.columns.${col.id}`, col.label)}</h3>
                   <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full" style={{background:'var(--slate-100)',color:'var(--slate-600)'}}>{colTasks.length}</span>
                 </div>
                 <div className="flex flex-col gap-3 min-h-[180px]">
@@ -119,10 +120,10 @@ export const TeamTasks = () => {
                           <button onClick={()=>deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-400 shrink-0"><X size={14}/></button>
                         </div>
                         <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'var(--brand-50)',color:'var(--brand-700)'}}>{task.category}</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:'var(--brand-50)',color:'var(--brand-700)'}}>{t(`teamTasks.categories.${task.category}`, task.category)}</span>
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1" style={{background:pr.bg,color:pr.color}}>
                             <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{background:pr.dot}}/>
-                            {pr.label}
+                            {t(`teamTasks.priority.${task.priority}`, pr.label)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -130,7 +131,7 @@ export const TeamTasks = () => {
                             <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style={{background:'var(--brand-600)'}}>
                               {avatar(task.assignee)}
                             </div>
-                            <span className="text-xs" style={{color:'var(--slate-500)'}}>{task.assignee.split(' ')[0]}</span>
+                            <span className="text-xs" style={{color:'var(--slate-500)'}}>{t(`teamTasks.team.${task.assignee}`, task.assignee).split(' ')[0]}</span>
                           </div>
                           {task.dueDate&&<p className="text-[10px] font-medium" style={{color:'var(--slate-400)'}}>{task.dueDate}</p>}
                         </div>
@@ -140,7 +141,7 @@ export const TeamTasks = () => {
                             <button key={c.id} onClick={()=>moveTask(task.id,c.id)}
                               className="flex-1 flex items-center justify-center gap-1 text-[10px] font-bold py-1 rounded-lg transition-colors hover:opacity-80"
                               style={{background:'var(--brand-50)',color:'var(--brand-700)'}}>
-                              <ChevronRight size={10}/>{c.label}
+                              <ChevronRight size={10}/>{t(`teamTasks.columns.${c.id}`, c.label)}
                             </button>
                           ))}
                         </div>
@@ -148,7 +149,7 @@ export const TeamTasks = () => {
                     );
                   })}
                   {colTasks.length===0&&(
-                    <div className="text-sm text-center py-10 rounded-xl border-2 border-dashed" style={{color:'var(--slate-400)',borderColor:'var(--slate-200)'}}>No tasks here</div>
+                    <div className="text-sm text-center py-10 rounded-xl border-2 border-dashed" style={{color:'var(--slate-400)',borderColor:'var(--slate-200)'}}>{t('teamTasks.noTasks', 'No tasks here')}</div>
                   )}
                 </div>
               </div>
@@ -161,31 +162,31 @@ export const TeamTasks = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{background:'rgba(15,23,42,0.5)', backdropFilter:'blur(4px)'}}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>Add Task</h3>
+              <h3 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{t('teamTasks.form.title', 'Add Task')}</h3>
               <button onClick={()=>setShowForm(false)} className="p-2 rounded-xl hover:bg-slate-100"><X size={18}/></button>
             </div>
             <div className="space-y-4">
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Task Title</label>
-                <input style={inputStyle} placeholder="What needs to be done?" value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))}/></div>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('teamTasks.form.taskTitle', 'Task Title')}</label>
+                <input style={inputStyle} placeholder={String(t('teamTasks.form.taskPlaceholder', 'What needs to be done?'))} value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))}/></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Category</label>
+                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('teamTasks.form.category', 'Category')}</label>
                   <select style={{...inputStyle,cursor:'pointer'}} value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))}>
-                    {CATEGORIES.map(c=><option key={c}>{c}</option>)}</select></div>
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Priority</label>
+                    {CATEGORIES.map(c=><option key={c} value={c}>{t(`teamTasks.categories.${c}`, c)}</option>)}</select></div>
+                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('teamTasks.form.priority', 'Priority')}</label>
                   <select style={{...inputStyle,cursor:'pointer'}} value={form.priority} onChange={e=>setForm(f=>({...f,priority:e.target.value as Priority}))}>
-                    <option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
+                    <option value="high">{t('teamTasks.priority.high', 'High')}</option><option value="medium">{t('teamTasks.priority.medium', 'Medium')}</option><option value="low">{t('teamTasks.priority.low', 'Low')}</option></select></div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Assign To</label>
+                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('teamTasks.form.assignTo', 'Assign To')}</label>
                   <select style={{...inputStyle,cursor:'pointer'}} value={form.assignee} onChange={e=>setForm(f=>({...f,assignee:e.target.value}))}>
-                    {TEAM.map(m=><option key={m}>{m}</option>)}</select></div>
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Due Date</label>
+                    {TEAM.map(m=><option key={m} value={m}>{t(`teamTasks.team.${m}`, m)}</option>)}</select></div>
+                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('teamTasks.form.dueDate', 'Due Date')}</label>
                   <input type="date" style={{...inputStyle,cursor:'pointer'}} value={form.dueDate} onChange={e=>setForm(f=>({...f,dueDate:e.target.value}))}/></div>
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={()=>setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border hover:bg-slate-50" style={{borderColor:'var(--slate-200)',color:'var(--slate-600)'}}>Cancel</button>
-              <button onClick={addTask} className="flex-1 py-3 rounded-xl font-bold text-sm text-white hover:opacity-90 active:scale-95" style={{background:'var(--brand-600)'}}>Add Task</button>
+              <button onClick={()=>setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border hover:bg-slate-50" style={{borderColor:'var(--slate-200)',color:'var(--slate-600)'}}>{t('teamTasks.form.cancel', 'Cancel')}</button>
+              <button onClick={addTask} className="flex-1 py-3 rounded-xl font-bold text-sm text-white hover:opacity-90 active:scale-95" style={{background:'var(--brand-600)'}}>{t('teamTasks.form.submit', 'Add Task')}</button>
             </div>
           </div>
         </div>

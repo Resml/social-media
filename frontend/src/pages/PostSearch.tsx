@@ -54,11 +54,11 @@ export const PostSearch = () => {
         {/* Page Header */}
         <div className="mb-6">
           <div className="flex items-center gap-2 text-[12px] text-[#65676B] mb-1">
-             <span className="hover:underline cursor-pointer">Professional dashboard</span>
+             <span className="hover:underline cursor-pointer">{t('postSearch.breadcrumbs.dashboard', 'Professional dashboard')}</span>
              <span>›</span>
-             <span className="hover:underline cursor-pointer text-[#050505] font-medium">Content</span>
+             <span className="hover:underline cursor-pointer text-[#050505] font-medium">{t('postSearch.breadcrumbs.content', 'Content')}</span>
           </div>
-          <h1 className="text-[24px] font-bold text-[#050505]">Content</h1>
+          <h1 className="text-[24px] font-bold text-[#050505]">{t('postSearch.headerContent', 'Content')}</h1>
         </div>
 
         {/* Content Card */}
@@ -66,7 +66,7 @@ export const PostSearch = () => {
           
           {/* Section Header */}
           <div className="p-4 border-b border-[#ced0d4]">
-            <h2 className="text-[20px] font-bold text-[#050505] mb-4">Content Library</h2>
+            <h2 className="text-[20px] font-bold text-[#050505] mb-4">{t('postSearch.subtitle', 'Content Library')}</h2>
             
             {/* Tabs */}
             <div className="flex gap-4 border-b border-transparent">
@@ -93,8 +93,8 @@ export const PostSearch = () => {
                 <Video size={18} />
              </div>
              <div className="flex-1">
-                <p className="text-[14px] font-bold text-[#050505]">Videos you post on Facebook are now reels</p>
-                <p className="text-[13px] text-[#65676B]">You can still view your previously posted videos, but they will be combined under the reels filter.</p>
+                <p className="text-[14px] font-bold text-[#050505]">{t('postSearch.reelsAlert.title', 'Videos you post on Facebook are now reels')}</p>
+                <p className="text-[13px] text-[#65676B]">{t('postSearch.reelsAlert.desc', 'You can still view your previously posted videos, but they will be combined under the reels filter.')}</p>
              </div>
              <button className="text-[#65676B] hover:bg-black/5 p-1 rounded-full">✕</button>
           </div>
@@ -105,7 +105,7 @@ export const PostSearch = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#65676B]" size={16} />
               <input
                 type="text"
-                placeholder="Search for posts"
+                placeholder={t('postSearch.searchPlaceholder', 'Search for posts')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-1.5 bg-[#F0F2F5] border-transparent focus:bg-white focus:border-[#1877f2] focus:ring-1 focus:ring-[#1877f2] rounded-full text-[14px] outline-none transition-all"
@@ -115,30 +115,30 @@ export const PostSearch = () => {
             <div className="flex items-center gap-2">
               <button className="flex items-center gap-1.5 bg-[#1877f2] hover:bg-[#166fe5] text-white px-4 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
                 <Plus size={18} strokeWidth={3} />
-                <span>Create</span>
+                <span>{t('postSearch.actions.create', 'Create')}</span>
                 <ChevronDown size={14} />
               </button>
 
               <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
                 <Filter size={16} />
-                <span>Filters</span>
+                <span>{t('postSearch.actions.filters', 'Filters')}</span>
                 <ChevronDown size={14} />
               </button>
 
               <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
                 <Columns size={16} />
-                <span>Columns</span>
+                <span>{t('postSearch.actions.columns', 'Columns')}</span>
                 <ChevronDown size={14} />
               </button>
 
               <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
-                <span>Last 28 days: Mar 16 - Apr 13</span>
+                <span>{t('postSearch.actions.dateRange', 'Last 28 days: Mar 16 - Apr 13')}</span>
                 <ChevronDown size={14} />
               </button>
 
               <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors ml-auto">
                 <Download size={16} />
-                <span>Export data</span>
+                <span>{t('postSearch.actions.export', 'Export data')}</span>
                 <ChevronDown size={14} />
               </button>
             </div>
@@ -147,7 +147,7 @@ export const PostSearch = () => {
           {/* Selection Info */}
           <div className="px-4 py-2 border-b border-[#ced0d4] bg-white">
              <span className="text-[12px] text-[#65676B] font-medium">
-               {selectedIds.length}/{results.length} posts selected
+               {selectedIds.length}/{results.length} {t('postSearch.postsSelected', 'posts selected')}
              </span>
           </div>
 
@@ -194,7 +194,7 @@ export const PostSearch = () => {
               <div className="p-20 flex flex-col items-center justify-center text-[#65676B]">
                 <div className="text-5xl mb-4">📭</div>
                 <h3 className="text-xl font-bold mb-1 text-[#050505]">
-                  {activeTab === 'PUBLISHED' ? t('postSearch.noPosts') : `No ${activeTab.toLowerCase()} posts found`}
+                  {activeTab === 'PUBLISHED' ? t('postSearch.noPosts') : t('postSearch.noPostsTab', 'No {{tab}} posts found', { tab: t(`postSearch.tabs.${activeTab.toLowerCase()}`) })}
                 </h3>
                 <p className="text-[14px]">{t('postSearch.noPostsHint')}</p>
               </div>

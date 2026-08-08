@@ -4,58 +4,12 @@ import {
   ChevronDown, ChevronUp, User, BarChart2, FileText,
   MessageSquare, TrendingUp, ShieldAlert
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface CheckItem { id: string; label: string; tip?: string; selfDone: boolean; compDone: boolean; }
 interface Section  { id: string; title: string; Icon: React.FC<any>; items: CheckItem[]; open: boolean; }
 
-const INITIAL_SECTIONS: Section[] = [
-  {
-    id: 'profile', title: 'Profile Completeness', Icon: User, open: true,
-    items: [
-      { id:'p1', label:'Profile info fully filled (bio, location, contact)', tip:'स्वत: बद्दल सर्व माहिती भरा', selfDone:false, compDone:false },
-      { id:'p2', label:'Profile photo & cover image — professional quality',  selfDone:false, compDone:false },
-      { id:'p3', label:'Check-ins enabled & used',                            selfDone:false, compDone:false },
-      { id:'p4', label:'Recommendations present on page',                     selfDone:false, compDone:false },
-      { id:'p5', label:'Interests & likes filled completely',                 selfDone:false, compDone:false },
-    ]
-  },
-  {
-    id: 'reach', title: 'Reach & Followers', Icon: TrendingUp, open: true,
-    items: [
-      { id:'r1', label:'Follower count (note & compare)',           selfDone:false, compDone:false },
-      { id:'r2', label:'Page likes count',                          selfDone:false, compDone:false },
-      { id:'r3', label:'Constituency / Ward connections count', tip:'मतदारसंघातील लोकं किती जोडले आहेत', selfDone:false, compDone:false },
-    ]
-  },
-  {
-    id: 'content', title: 'Content Audit (Last 2 Months)', Icon: FileText, open: true,
-    items: [
-      { id:'c1', label:'Number of Events posted',             selfDone:false, compDone:false },
-      { id:'c2', label:'Number of Paid Ads run',              selfDone:false, compDone:false },
-      { id:'c3', label:'Number of Images posted',             selfDone:false, compDone:false },
-      { id:'c4', label:'Number of Articles / Long-form posts',selfDone:false, compDone:false },
-      { id:'c5', label:'Number of Videos posted',             selfDone:false, compDone:false },
-      { id:'c6', label:'Number of Live Videos',               selfDone:false, compDone:false },
-      { id:'c7', label:'Are images readable & high quality?', selfDone:false, compDone:false },
-      { id:'c8', label:'Facebook Group created?', tip:'किमान 30 मेंबर असावेत', selfDone:false, compDone:false },
-      { id:'c9', label:'Posting consistency — daily or regular?', selfDone:false, compDone:false },
-      { id:'c10',label:"Others' good posts shared?",          selfDone:false, compDone:false },
-    ]
-  },
-  {
-    id: 'engagement', title: 'Engagement Analysis', Icon: MessageSquare, open: false,
-    items: [
-      { id:'e1', label:'Topics posted & response rate per topic',          selfDone:false, compDone:false },
-      { id:'e2', label:'Likes, Comments, Shares breakdown by topic',       selfDone:false, compDone:false },
-      { id:'e3', label:'Content quality assessment',                       selfDone:false, compDone:false },
-      { id:'e4', label:'Which age group responds most?',    tip:'कोणत्या वयोगटातील लोकं जास्त प्रतिसाद देतात', selfDone:false, compDone:false },
-      { id:'e5', label:'Which area / location responds most?', tip:'कोणत्या भागातील लोकं जास्त प्रतिसाद देतात', selfDone:false, compDone:false },
-      { id:'e6', label:"Women's response percentage",       tip:'महिलांचे प्रमाण किती', selfDone:false, compDone:false },
-      { id:'e7', label:'Response to issue-based vs development posts',     selfDone:false, compDone:false },
-      { id:'e8', label:'Development work posts — engagement rate',         selfDone:false, compDone:false },
-    ]
-  },
-];
+// Sections will be initialized inside component
 
 const COMPETITORS = ['Competitor 1', 'Competitor 2'];
 
@@ -72,7 +26,56 @@ const scoreBg = (pct: number) =>
   pct >= 80 ? 'var(--brand-50)' : pct >= 50 ? 'var(--brand-50)' : 'var(--slate-100)';
 
 export const ProfileAudit = () => {
-  const [sections, setSections] = useState<Section[]>(INITIAL_SECTIONS);
+  const { t } = useTranslation();
+  
+  const [sections, setSections] = useState<Section[]>(() => [
+    {
+      id: 'profile', title: String(t('profileAudit.sections.profile.title', 'Profile Completeness')), Icon: User, open: true,
+      items: [
+        { id:'p1', label:String(t('profileAudit.sections.profile.p1', 'Profile info fully filled (bio, location, contact)')), tip:'स्वत: बद्दल सर्व माहिती भरा', selfDone:false, compDone:false },
+        { id:'p2', label:String(t('profileAudit.sections.profile.p2', 'Profile photo & cover image — professional quality')),  selfDone:false, compDone:false },
+        { id:'p3', label:String(t('profileAudit.sections.profile.p3', 'Check-ins enabled & used')),                            selfDone:false, compDone:false },
+        { id:'p4', label:String(t('profileAudit.sections.profile.p4', 'Recommendations present on page')),                     selfDone:false, compDone:false },
+        { id:'p5', label:String(t('profileAudit.sections.profile.p5', 'Interests & likes filled completely')),                 selfDone:false, compDone:false },
+      ]
+    },
+    {
+      id: 'reach', title: String(t('profileAudit.sections.reach.title', 'Reach & Followers')), Icon: TrendingUp, open: true,
+      items: [
+        { id:'r1', label:String(t('profileAudit.sections.reach.r1', 'Follower count (note & compare)')),           selfDone:false, compDone:false },
+        { id:'r2', label:String(t('profileAudit.sections.reach.r2', 'Page likes count')),                          selfDone:false, compDone:false },
+        { id:'r3', label:String(t('profileAudit.sections.reach.r3', 'Constituency / Ward connections count')), tip:'मतदारसंघातील लोकं किती जोडले आहेत', selfDone:false, compDone:false },
+      ]
+    },
+    {
+      id: 'content', title: String(t('profileAudit.sections.content.title', 'Content Audit (Last 2 Months)')), Icon: FileText, open: true,
+      items: [
+        { id:'c1', label:String(t('profileAudit.sections.content.c1', 'Number of Events posted')),             selfDone:false, compDone:false },
+        { id:'c2', label:String(t('profileAudit.sections.content.c2', 'Number of Paid Ads run')),              selfDone:false, compDone:false },
+        { id:'c3', label:String(t('profileAudit.sections.content.c3', 'Number of Images posted')),             selfDone:false, compDone:false },
+        { id:'c4', label:String(t('profileAudit.sections.content.c4', 'Number of Articles / Long-form posts')),selfDone:false, compDone:false },
+        { id:'c5', label:String(t('profileAudit.sections.content.c5', 'Number of Videos posted')),             selfDone:false, compDone:false },
+        { id:'c6', label:String(t('profileAudit.sections.content.c6', 'Number of Live Videos')),               selfDone:false, compDone:false },
+        { id:'c7', label:String(t('profileAudit.sections.content.c7', 'Are images readable & high quality?')), selfDone:false, compDone:false },
+        { id:'c8', label:String(t('profileAudit.sections.content.c8', 'Facebook Group created?')), tip:'किमान 30 मेंबर असावेत', selfDone:false, compDone:false },
+        { id:'c9', label:String(t('profileAudit.sections.content.c9', 'Posting consistency — daily or regular?')), selfDone:false, compDone:false },
+        { id:'c10',label:String(t('profileAudit.sections.content.c10', "Others' good posts shared?")),          selfDone:false, compDone:false },
+      ]
+    },
+    {
+      id: 'engagement', title: String(t('profileAudit.sections.engagement.title', 'Engagement Analysis')), Icon: MessageSquare, open: false,
+      items: [
+        { id:'e1', label:String(t('profileAudit.sections.engagement.e1', 'Topics posted & response rate per topic')),          selfDone:false, compDone:false },
+        { id:'e2', label:String(t('profileAudit.sections.engagement.e2', 'Likes, Comments, Shares breakdown by topic')),       selfDone:false, compDone:false },
+        { id:'e3', label:String(t('profileAudit.sections.engagement.e3', 'Content quality assessment')),                       selfDone:false, compDone:false },
+        { id:'e4', label:String(t('profileAudit.sections.engagement.e4', 'Which age group responds most?')),    tip:'कोणत्या वयोगटातील लोकं जास्त प्रतिसाद देतात', selfDone:false, compDone:false },
+        { id:'e5', label:String(t('profileAudit.sections.engagement.e5', 'Which area / location responds most?')), tip:'कोणत्या भागातील लोकं जास्त प्रतिसाद देतात', selfDone:false, compDone:false },
+        { id:'e6', label:String(t('profileAudit.sections.engagement.e6', "Women's response percentage")),       tip:'महिलांचे प्रमाण किती', selfDone:false, compDone:false },
+        { id:'e7', label:String(t('profileAudit.sections.engagement.e7', 'Response to issue-based vs development posts')),     selfDone:false, compDone:false },
+        { id:'e8', label:String(t('profileAudit.sections.engagement.e8', 'Development work posts — engagement rate')),         selfDone:false, compDone:false },
+      ]
+    },
+  ]);
   const [competitor, setCompetitor] = useState(COMPETITORS[0]);
   const [notes, setNotes]           = useState<Record<string, string>>({});
   const [activeTab, setActiveTab]   = useState<'self' | 'compare'>('self');
@@ -108,26 +111,26 @@ export const ProfileAudit = () => {
               <ClipboardList size={20} color="#fff" strokeWidth={2}/>
             </div>
             <div>
-              <h1 className="text-2xl font-black" style={{ fontFamily:'Outfit,sans-serif', color:'var(--slate-900)' }}>Profile & Competitor Audit</h1>
-              <p className="text-sm" style={{ color:'var(--slate-500)' }}>2-month analysis checklist — your profile vs competitor's Facebook</p>
+              <h1 className="text-2xl font-black" style={{ fontFamily:'Outfit,sans-serif', color:'var(--slate-900)' }}>{t('profileAudit.title', 'Profile & Competitor Audit')}</h1>
+              <p className="text-sm" style={{ color:'var(--slate-500)' }}>{t('profileAudit.subtitle', "2-month analysis checklist — your profile vs competitor's Facebook")}</p>
             </div>
           </div>
           <button onClick={resetAll}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm border transition-colors hover:bg-slate-50"
             style={{ borderColor:'var(--slate-200)', color:'var(--slate-500)' }}>
-            <RefreshCw size={14}/> Reset All
+            <RefreshCw size={14}/> {t('profileAudit.resetAll', 'Reset All')}
           </button>
         </div>
 
         {/* Score Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           {[
-            { label:'Your Profile Score', pct:selfPct, count:`${selfTotal}/${total}`, desc:'items completed' },
-            { label:'Competitor Score',   pct:compPct, count:`${compTotal}/${total}`, desc:'items checked',
+            { label:t('profileAudit.cards.yourScore', 'Your Profile Score'), pct:selfPct, count:`${selfTotal}/${total}`, desc:t('profileAudit.cards.itemsCompleted', 'items completed') },
+            { label:t('profileAudit.cards.compScore', 'Competitor Score'),   pct:compPct, count:`${compTotal}/${total}`, desc:t('profileAudit.cards.itemsChecked', 'items checked'),
               extra: (
                 <select style={{ ...inputStyle, width:'auto', fontSize:'0.75rem', padding:'0.3rem 0.6rem' }}
                   value={competitor} onChange={e => setCompetitor(e.target.value)}>
-                  {COMPETITORS.map(c => <option key={c}>{c}</option>)}
+                  {COMPETITORS.map(c => <option key={c} value={c}>{t(`profileAudit.competitors.${c}`, c)}</option>)}
                 </select>
               )
             },
@@ -160,8 +163,8 @@ export const ProfileAudit = () => {
               : <ShieldAlert size={20} style={{ color:'var(--brand-600)', flexShrink:0 }}/>}
             <p className="font-bold text-sm" style={{ color:'var(--brand-800)' }}>
               {selfPct > compPct
-                ? `You are ahead by ${selfPct - compPct}% — keep it up!`
-                : `Competitor is ahead by ${compPct - selfPct}% — need to catch up!`}
+                ? t('profileAudit.advantage.ahead', 'You are ahead by {{pct}}% — keep it up!', { pct: selfPct - compPct })
+                : t('profileAudit.advantage.behind', 'Competitor is ahead by {{pct}}% — need to catch up!', { pct: compPct - selfPct })}
             </p>
           </div>
         )}
@@ -173,8 +176,8 @@ export const ProfileAudit = () => {
               className="flex items-center gap-2 px-5 py-2 rounded-lg font-bold text-sm transition-all"
               style={{ background:activeTab===tab?'var(--brand-600)':'transparent', color:activeTab===tab?'#fff':'var(--slate-600)' }}>
               {tab === 'self'
-                ? <><User size={14}/> My Profile</>
-                : <><BarChart2 size={14}/> Side-by-Side</>}
+                ? <><User size={14}/> {t('profileAudit.tabs.myProfile', 'My Profile')}</>
+                : <><BarChart2 size={14}/> {t('profileAudit.tabs.sideBySide', 'Side-by-Side')}</>}
             </button>
           ))}
         </div>
@@ -193,8 +196,8 @@ export const ProfileAudit = () => {
                       <SIcon size={17} strokeWidth={2}/>
                     </div>
                     <div>
-                      <h3 className="font-bold" style={{ color:'var(--slate-900)' }}>{section.title}</h3>
-                      <p className="text-xs" style={{ color:'var(--slate-500)' }}>{doneCnt}/{section.items.length} done</p>
+                      <h3 className="font-bold" style={{ color:'var(--slate-900)' }}>{t(`profileAudit.sections.${section.id}.title`, section.title)}</h3>
+                      <p className="text-xs" style={{ color:'var(--slate-500)' }}>{t('profileAudit.section.done', '{{done}}/{{total}} done', { done: doneCnt, total: section.items.length })}</p>
                     </div>
                   </div>
                   {section.open
@@ -207,8 +210,8 @@ export const ProfileAudit = () => {
                     {activeTab === 'compare' && (
                       <div className="grid grid-cols-[1fr_auto_auto] gap-4 py-2 mb-1">
                         <div/>
-                        <div className="text-xs font-bold text-center w-20" style={{ color:'var(--brand-600)' }}>You</div>
-                        <div className="text-xs font-bold text-center w-20" style={{ color:'var(--slate-500)' }}>{competitor}</div>
+                        <div className="text-xs font-bold text-center w-20" style={{ color:'var(--brand-600)' }}>{t('profileAudit.section.you', 'You')}</div>
+                        <div className="text-xs font-bold text-center w-20" style={{ color:'var(--slate-500)' }}>{t(`profileAudit.competitors.${competitor}`, competitor)}</div>
                       </div>
                     )}
                     <div className="space-y-1">
@@ -223,14 +226,14 @@ export const ProfileAudit = () => {
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium"
                                   style={{ color:item.selfDone?'var(--slate-400)':'var(--slate-900)', textDecoration:item.selfDone?'line-through':'none' }}>
-                                  {item.label}
+                                  {t(`profileAudit.sections.${section.id}.${item.id}`, item.label)}
                                 </p>
                                 {item.tip && <p className="text-xs mt-0.5" style={{ color:'var(--slate-400)' }}>{item.tip}</p>}
                               </div>
                             </button>
                           ) : (
                             <div className="grid grid-cols-[1fr_auto_auto] gap-4 items-center p-3 rounded-xl hover:bg-slate-50">
-                              <p className="text-sm font-medium" style={{ color:'var(--slate-800)' }}>{item.label}</p>
+                              <p className="text-sm font-medium" style={{ color:'var(--slate-800)' }}>{t(`profileAudit.sections.${section.id}.${item.id}`, item.label)}</p>
                               <button onClick={() => toggleItem(section.id, item.id, 'selfDone')} className="w-20 flex justify-center">
                                 {item.selfDone
                                   ? <CheckSquare size={20} style={{ color:'var(--brand-600)' }}/>
@@ -246,7 +249,7 @@ export const ProfileAudit = () => {
                           {activeTab === 'self' && item.selfDone && (
                             <div className="ml-9 mb-1">
                               <input style={{ ...inputStyle, fontSize:'0.78rem' }}
-                                placeholder="Add note or data point…"
+                                placeholder={String(t('profileAudit.notePlaceholder', 'Add note or data point…'))}
                                 value={notes[item.id] || ''}
                                 onChange={e => setNotes(n => ({ ...n, [item.id]:e.target.value }))}/>
                             </div>
@@ -267,7 +270,7 @@ export const ProfileAudit = () => {
             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background:'var(--brand-50)', color:'var(--brand-600)' }}>
               <BarChart2 size={14} strokeWidth={2}/>
             </div>
-            Audit Summary
+            {t('profileAudit.summary.title', 'Audit Summary')}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {sections.map(s => {
@@ -277,13 +280,13 @@ export const ProfileAudit = () => {
                 <div key={s.id} className="p-4 rounded-xl border" style={{ borderColor:'var(--slate-100)', background:scoreBg(pct) }}>
                   <div className="flex items-center gap-2 mb-3">
                     <SIcon size={14} style={{ color:'var(--brand-600)' }}/>
-                    <p className="text-sm font-bold truncate" style={{ color:'var(--slate-700)' }}>{s.title}</p>
+                    <p className="text-sm font-bold truncate" style={{ color:'var(--slate-700)' }}>{t(`profileAudit.sections.${s.id}.title`, s.title)}</p>
                   </div>
                   <div className="h-2 rounded-full overflow-hidden mb-1.5" style={{ background:'var(--slate-200)' }}>
                     <div className="h-full rounded-full transition-all"
                       style={{ width:`${pct}%`, background:'var(--brand-500)' }}/>
                   </div>
-                  <p className="text-xs font-bold" style={{ color:scoreColor(pct) }}>{pct}% complete</p>
+                  <p className="text-xs font-bold" style={{ color:scoreColor(pct) }}>{t('profileAudit.summary.complete', '{{pct}}% complete', { pct })}</p>
                 </div>
               );
             })}

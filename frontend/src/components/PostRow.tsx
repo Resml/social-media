@@ -8,12 +8,13 @@ interface PostRowProps {
 }
 
 export const PostRow = ({ post, isSelected, onSelect }: PostRowProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' at ' + 
-           date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const locale = i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US';
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' }) + ` ${t('postRow.at', 'at')} ` + 
+           date.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit', hour12: true });
   };
 
   const truncate = (text: string, length: number) => {

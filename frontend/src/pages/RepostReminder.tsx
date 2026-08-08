@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, X, RefreshCw, Clock, CheckCircle, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface RepostItem {
   id: string; content: string; originalDate: string;
@@ -24,6 +25,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 export const RepostReminder = () => {
+  const { t, i18n } = useTranslation();
   const [items, setItems]       = useState<RepostItem[]>(INITIAL);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm]         = useState({ content:'', originalDate:'', platform:'Facebook', category:CATEGORIES[0] });
@@ -47,14 +49,14 @@ export const RepostReminder = () => {
               <RefreshCw size={20} color="#fff" strokeWidth={2}/>
             </div>
             <div>
-              <h1 className="text-2xl font-black" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>Repost Reminder</h1>
-              <p className="text-sm" style={{color:'var(--slate-500)'}}>Track posts eligible for repost — minimum 15-day gap required</p>
+              <h1 className="text-2xl font-black" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{t('repostReminder.title', 'Repost Reminder')}</h1>
+              <p className="text-sm" style={{color:'var(--slate-500)'}}>{t('repostReminder.subtitle', 'Track posts eligible for repost — minimum 15-day gap required')}</p>
             </div>
           </div>
           <button onClick={()=>setShowForm(true)}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95"
             style={{background:'var(--brand-600)', boxShadow:'0 2px 8px rgba(2,132,199,0.25)'}}>
-            <Plus size={16}/> Add Post
+            <Plus size={16}/> {t('repostReminder.addPostBtn', 'Add Post')}
           </button>
         </div>
 
@@ -62,9 +64,9 @@ export const RepostReminder = () => {
         <div className="flex items-start gap-3 p-4 rounded-2xl mb-6" style={{background:'var(--brand-50)', border:'1px solid var(--brand-100)'}}>
           <Info size={18} className="shrink-0 mt-0.5" style={{color:'var(--brand-600)'}}/>
           <div>
-            <p className="font-bold text-sm" style={{color:'var(--brand-800)'}}>15-Day Repost Rule (from the document)</p>
+            <p className="font-bold text-sm" style={{color:'var(--brand-800)'}}>{t('repostReminder.ruleTitle', '15-Day Repost Rule (from the document)')}</p>
             <p className="text-xs mt-0.5" style={{color:'var(--brand-700)'}}>
-              Facebook shows posts to only 5–7% of followers. Repost important content after at least 15 days to reach more people.
+              {t('repostReminder.ruleDesc', 'Facebook shows posts to only 5–7% of followers. Repost important content after at least 15 days to reach more people.')}
             </p>
           </div>
         </div>
@@ -72,9 +74,9 @@ export const RepostReminder = () => {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           {[
-            {label:'Eligible to Repost', value:eligibleCount,                              Icon:CheckCircle, color:'var(--brand-700)', bg:'var(--brand-50)'},
-            {label:'Too Soon',            value:items.filter(tooSoon).length,               Icon:Clock,       color:'var(--slate-600)', bg:'var(--slate-100)'},
-            {label:'Already Reposted',    value:items.filter(x=>x.repostedDate).length,    Icon:RefreshCw,   color:'var(--brand-500)', bg:'var(--brand-50)'},
+            {label: String(t('repostReminder.stats.eligible', 'Eligible to Repost')), value:eligibleCount,                              Icon:CheckCircle, color:'var(--brand-700)', bg:'var(--brand-50)'},
+            {label: String(t('repostReminder.stats.tooSoon', 'Too Soon')),            value:items.filter(tooSoon).length,               Icon:Clock,       color:'var(--slate-600)', bg:'var(--slate-100)'},
+            {label: String(t('repostReminder.stats.alreadyReposted', 'Already Reposted')),    value:items.filter(x=>x.repostedDate).length,    Icon:RefreshCw,   color:'var(--brand-500)', bg:'var(--brand-50)'},
           ].map(s=>{
             const SIcon=s.Icon;
             return (
@@ -93,7 +95,7 @@ export const RepostReminder = () => {
         {eligibleCount>0&&(
           <div className="mb-5">
             <h3 className="font-bold mb-3 flex items-center gap-2" style={{color:'var(--brand-700)'}}>
-              <CheckCircle size={16}/> Ready to Repost ({eligibleCount})
+              <CheckCircle size={16}/> {t('repostReminder.sections.ready', { count: eligibleCount, defaultValue: 'Ready to Repost ({{count}})' })}
             </h3>
             <div className="space-y-3">
               {items.filter(eligible).map(item=>(
@@ -104,13 +106,13 @@ export const RepostReminder = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm" style={{color:'var(--slate-900)'}}>{item.content}</p>
-                      <p className="text-xs mt-1" style={{color:'var(--slate-500)'}}>Originally posted: {item.originalDate} · {daysSince(item.originalDate)} days ago · {item.platform} · {item.category}</p>
+                      <p className="text-xs mt-1" style={{color:'var(--slate-500)'}}>{t('repostReminder.item.originallyPosted', { date: new Date(item.originalDate).toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US') })} · {t('repostReminder.item.daysAgo', { days: daysSince(item.originalDate) })} · {String(t(`dashboard.platforms.${item.platform.toLowerCase()}`, item.platform))} · {String(t(`repostReminder.categories.${item.category}`, item.category))}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <button onClick={()=>markReposted(item.id)}
                         className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl text-white transition-all hover:opacity-90 active:scale-95"
                         style={{background:'var(--brand-600)'}}>
-                        <RefreshCw size={12}/> Repost Now
+                        <RefreshCw size={12}/> {t('repostReminder.item.repostNow', 'Repost Now')}
                       </button>
                       <button onClick={()=>setItems(p=>p.filter(x=>x.id!==item.id))} className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-400"><X size={14}/></button>
                     </div>
@@ -125,7 +127,7 @@ export const RepostReminder = () => {
         {items.filter(tooSoon).length>0&&(
           <div className="mb-5">
             <h3 className="font-bold mb-3 flex items-center gap-2" style={{color:'var(--slate-600)'}}>
-              <Clock size={16}/> Waiting — Too Soon ({items.filter(tooSoon).length})
+              <Clock size={16}/> {t('repostReminder.sections.waiting', { count: items.filter(tooSoon).length, defaultValue: 'Waiting — Too Soon ({{count}})' })}
             </h3>
             <div className="space-y-3">
               {items.filter(tooSoon).map(item=>(
@@ -136,11 +138,11 @@ export const RepostReminder = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm" style={{color:'var(--slate-900)'}}>{item.content}</p>
-                      <p className="text-xs mt-1" style={{color:'var(--slate-500)'}}>{item.originalDate} · {daysSince(item.originalDate)} days ago · {item.platform}</p>
+                      <p className="text-xs mt-1" style={{color:'var(--slate-500)'}}>{new Date(item.originalDate).toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')} · {t('repostReminder.item.daysAgo', { days: daysSince(item.originalDate) })} · {String(t(`dashboard.platforms.${item.platform.toLowerCase()}`, item.platform))}</p>
                     </div>
                     <div className="text-center shrink-0">
                       <div className="font-black text-xl" style={{color:'var(--brand-600)'}}>{daysLeft(item)}</div>
-                      <div className="text-[10px] font-bold" style={{color:'var(--slate-500)'}}>days left</div>
+                      <div className="text-[10px] font-bold" style={{color:'var(--slate-500)'}}>{t('repostReminder.item.daysLeft', 'days left')}</div>
                     </div>
                     <button onClick={()=>setItems(p=>p.filter(x=>x.id!==item.id))} className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-400"><X size={14}/></button>
                   </div>
@@ -154,7 +156,7 @@ export const RepostReminder = () => {
         {items.filter(x=>x.repostedDate).length>0&&(
           <div>
             <h3 className="font-bold mb-3 flex items-center gap-2" style={{color:'var(--slate-500)'}}>
-              <RefreshCw size={16}/> Already Reposted
+              <RefreshCw size={16}/> {t('repostReminder.sections.reposted', 'Already Reposted')}
             </h3>
             <div className="space-y-2">
               {items.filter(x=>x.repostedDate).map(item=>(
@@ -162,7 +164,7 @@ export const RepostReminder = () => {
                   <RefreshCw size={16} style={{color:'var(--slate-400)', flexShrink:0}}/>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm truncate" style={{color:'var(--slate-700)'}}>{item.content}</p>
-                    <p className="text-xs" style={{color:'var(--slate-400)'}}>Reposted: {item.repostedDate}</p>
+                    <p className="text-xs" style={{color:'var(--slate-400)'}}>{t('repostReminder.item.repostedDate', { date: new Date(item.repostedDate!).toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US') })}</p>
                   </div>
                   <button onClick={()=>setItems(p=>p.filter(x=>x.id!==item.id))} className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-400"><X size={14}/></button>
                 </div>
@@ -176,26 +178,26 @@ export const RepostReminder = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{background:'rgba(15,23,42,0.5)', backdropFilter:'blur(4px)'}}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>Add Post to Tracker</h3>
+              <h3 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{t('repostReminder.form.title', 'Add Post to Tracker')}</h3>
               <button onClick={()=>setShowForm(false)} className="p-2 rounded-xl hover:bg-slate-100"><X size={18}/></button>
             </div>
             <div className="space-y-4">
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Post Content</label>
-                <textarea style={{...inputStyle,resize:'none'} as React.CSSProperties} rows={3} placeholder="Paste your post content…" value={form.content} onChange={e=>setForm(f=>({...f,content:e.target.value}))}/></div>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('repostReminder.form.content', 'Post Content')}</label>
+                <textarea style={{...inputStyle,resize:'none'} as React.CSSProperties} rows={3} placeholder={String(t('repostReminder.form.contentPlaceholder', 'Paste your post content…'))} value={form.content} onChange={e=>setForm(f=>({...f,content:e.target.value}))}/></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Original Post Date</label>
+                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('repostReminder.form.originalDate', 'Original Post Date')}</label>
                   <input type="date" style={{...inputStyle,cursor:'pointer'}} value={form.originalDate} onChange={e=>setForm(f=>({...f,originalDate:e.target.value}))}/></div>
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Platform</label>
+                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('repostReminder.form.platform', 'Platform')}</label>
                   <select style={{...inputStyle,cursor:'pointer'}} value={form.platform} onChange={e=>setForm(f=>({...f,platform:e.target.value}))}>
-                    <option>Facebook</option><option>Instagram</option><option>Twitter</option></select></div>
+                    <option value="Facebook">{String(t('dashboard.platforms.facebook', 'Facebook'))}</option><option value="Instagram">{String(t('dashboard.platforms.instagram', 'Instagram'))}</option><option value="Twitter">{String(t('dashboard.platforms.twitter', 'Twitter'))}</option></select></div>
               </div>
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Category</label>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('repostReminder.form.category', 'Category')}</label>
                 <select style={{...inputStyle,cursor:'pointer'}} value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))}>
-                  {CATEGORIES.map(c=><option key={c}>{c}</option>)}</select></div>
+                  {CATEGORIES.map(c=><option key={c} value={c}>{String(t(`repostReminder.categories.${c}`, c))}</option>)}</select></div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={()=>setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border hover:bg-slate-50" style={{borderColor:'var(--slate-200)',color:'var(--slate-600)'}}>Cancel</button>
-              <button onClick={addItem} className="flex-1 py-3 rounded-xl font-bold text-sm text-white hover:opacity-90 active:scale-95" style={{background:'var(--brand-600)'}}>Add to Tracker</button>
+              <button onClick={()=>setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border hover:bg-slate-50" style={{borderColor:'var(--slate-200)',color:'var(--slate-600)'}}>{t('repostReminder.form.cancel', 'Cancel')}</button>
+              <button onClick={addItem} className="flex-1 py-3 rounded-xl font-bold text-sm text-white hover:opacity-90 active:scale-95" style={{background:'var(--brand-600)'}}>{t('repostReminder.form.submit', 'Add to Tracker')}</button>
             </div>
           </div>
         </div>

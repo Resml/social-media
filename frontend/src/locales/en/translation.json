@@ -16,13 +16,33 @@
     "commentExporter": "Comment Exporter",
     "quickCommenter": "Quick Commenter",
     "navigation": "Navigation",
+    "overview": "Overview",
+    "content": "Content Management",
+    "tools": "Grow & Engage",
+    "organization": "Organization",
+    "analysis": "Analysis & Content",
+    "reposts": "Repost Reminder",
+    "polls": "Poll Manager",
+    "liveTracker": "Live Tracker",
+    "ads": "Ad Tracker",
+    "teamTasks": "Team Tasks",
+    "network": "Network Builder",
+    "groups": "Groups Manager",
+    "profileAudit": "Profile Audit",
+    "articles": "Article Planner",
+    "videos": "Video Tracker",
+    "contentCalendar": "Content Calendar",
     "settings": "Settings"
   },
   "dashboard": {
     "title": "Analytics Dashboard",
     "charts": {
       "followerGrowth": "Follower Growth (Last 30 Days)",
-      "engagementBreakdown": "Engagement Breakdown"
+      "engagementBreakdown": "Engagement Breakdown",
+      "followers": "Followers",
+      "likes": "Likes",
+      "comments": "Comments",
+      "shares": "Shares"
     },
     "platforms": {
       "all": "All",
@@ -39,33 +59,67 @@
     "recentInbox": {
       "title": "Recent Inbox Activity",
       "noActivity": "No recent activity to show."
+    },
+    "professionalDashboard": "Professional Dashboard",
+    "trackPerformance": "Track your performance and manage your content library.",
+    "syncing": "Syncing...",
+    "syncContent": "Sync Content",
+    "performance": "Performance",
+    "last7Days": "Last 7 days",
+    "thisWeek": "this week",
+    "contentMixFormula": "Content Mix Formula",
+    "fromStrategyDoc": "From your strategy doc",
+    "algorithmTips": "Algorithm Tips — From Your Strategy Document",
+    "mix": {
+      "personal": "Personal Posts",
+      "personalTip": "Gets highest likes, shares & comments",
+      "motivational": "Motivational",
+      "motivationalTip": "Inspiration and leadership content",
+      "educational": "Educational",
+      "educationalTip": "Informative, awareness content",
+      "entertainment": "Entertainment",
+      "entertainmentTip": "Cultural, fun, engaging content"
+    },
+    "tips": {
+      "postDaily": "Post 2–3 times daily",
+      "postDailyDetail": "Stay consistent — daily activity boosts reach significantly.",
+      "useImages": "Use images in every post",
+      "useImagesDetail": "Image posts get 2× more engagement than text-only posts.",
+      "hashtags": "2–3 hashtags only",
+      "hashtagsDetail": "Using too many hashtags reduces reach. Stick to 2–3 relevant ones.",
+      "repost": "Repost after 15 days",
+      "repostDetail": "Facebook shows posts to only 5–7% of followers. Repost important content.",
+      "goLive": "Go Live as often as possible",
+      "goLiveDetail": "Live videos get higher priority in the algorithm and build trust.",
+      "comment": "Comment on others' posts",
+      "commentDetail": "Engaging with others increases your own post visibility in the feed."
     }
   },
   "inbox": {
     "policyRestriction": "Policy Restriction",
     "filter": {
-        "ALL": "ALL",
-        "COMMENT": "COMMENT",
-        "MENTION": "MENTION",
-        "TAG": "TAG"
+      "ALL": "ALL",
+      "COMMENT": "COMMENT",
+      "MENTION": "MENTION",
+      "TAG": "TAG"
     },
     "emptyState": "Inbox clear. Waiting for engagements…",
     "resolveThread": "Resolve Thread",
     "engagementContent": "Engagement Content",
     "automatedEngagement": "Automated Engagement",
     "tone": {
-        "friendly": "friendly",
-        "professional": "professional",
-        "witty": "witty",
-        "empathetic": "empathetic"
+      "friendly": "friendly",
+      "professional": "professional",
+      "witty": "witty",
+      "empathetic": "empathetic"
     },
     "ai": {
-        "generate": "Generate Contextual Replies",
-        "subtitle": "Leveraging GPT-4o analysis",
-        "analyzing": "Analyzing Context & Synthesizing Variations…",
-        "approvePost": "Approve & Post Reply 🚀",
-        "executing": "Executing…",
-        "apiError": "API limits reached or server failed to communicate with OpenAI. Try again later."
+      "generate": "Generate Contextual Replies",
+      "subtitle": "Leveraging GPT-4o analysis",
+      "analyzing": "Analyzing Context & Synthesizing Variations…",
+      "approvePost": "Approve & Post Reply 🚀",
+      "executing": "Executing…",
+      "apiError": "API limits reached or server failed to communicate with OpenAI. Try again later."
     },
     "networkError": "A network error occurred",
     "safetyBlock": "Safety Guard Blocked",
@@ -89,7 +143,28 @@
     "searchHistory": "Search history...",
     "noHistory": "No history yet",
     "successGenerated": "Content generated successfully!",
-    "copied": "Copied to clipboard!"
+    "copied": "Copied to clipboard!",
+    "types": {
+      "Social Media Caption": "Caption",
+      "Speech": "Speech",
+      "Press Release": "Press Release",
+      "Article": "Article",
+      "Letter/Notice": "Letter/Notice",
+      "Email": "Email"
+    },
+    "tones": {
+      "Enthusiastic": "Enthusiastic",
+      "Professional": "Professional",
+      "Formal": "Formal",
+      "Witty": "Witty",
+      "Emotional": "Emotional",
+      "Urgent": "Urgent"
+    },
+    "languages": {
+      "English": "English",
+      "Marathi": "मराठी (Marathi)",
+      "Hindi": "हिंदी (Hindi)"
+    }
   },
   "schedule": {
     "createDeployment": "Create Deployment",
@@ -111,6 +186,18 @@
     "alerts": {
       "missingFields": "Missing required fields",
       "success": "Post successfully set to"
+    },
+    "hashtagWarning": {
+      "detected": "{{count}} hashtag detected",
+      "detected_plural": "{{count}} hashtags detected",
+      "tooMany": "— Document says: use only 2–3 hashtags!",
+      "good": "— Good! Keep it at 2–3 max"
+    },
+    "status": {
+      "published": "Published",
+      "failed": "Failed",
+      "queued": "Queued",
+      "draft": "Draft"
     }
   },
   "settings": {
@@ -119,66 +206,167 @@
     "loading": "Loading settings…",
     "saving": "Saving…",
     "tabs": {
-        "connections": "Connections",
-        "safety": "Safety",
-        "notifications": "Notifications",
-        "auditLog": "Audit Log"
+      "connections": "Connections",
+      "safety": "Safety",
+      "notifications": "Notifications",
+      "auditLog": "Audit Log"
     },
     "connections": {
-        "noAccounts": "No accounts connected yet.",
-        "noAccountsHint": "Connect a platform below to get started.",
-        "tokenExpired": "Token expired",
-        "expires": "Expires {{date}}",
-        "active": "Active",
-        "disconnect": "Disconnect",
-        "connectNewAccount": "Connect New Account",
-        "connectApify": "Connect Public Profile (Apify Cloud Proxy)",
-        "apifyHint": "Bypass API blocks on personal profiles by pasting your public Facebook or Instagram URL below. Our backend will use enterprise Apify proxies to securely rip your public timeline without requiring an OAuth Developer token.",
-        "linking": "Linking...",
-        "syncProxy": "Sync via Proxy",
-        "disconnectConfirm": "Disconnect @{{handle}}? All associated data will be removed."
+      "noAccounts": "No accounts connected yet.",
+      "noAccountsHint": "Connect a platform below to get started.",
+      "tokenExpired": "Token expired",
+      "expires": "Expires {{date}}",
+      "active": "Active",
+      "disconnect": "Disconnect",
+      "connectNewAccount": "Connect New Account",
+      "connectApify": "Connect Public Profile (Apify Cloud Proxy)",
+      "apifyHint": "Bypass API blocks on personal profiles by pasting your public Facebook or Instagram URL below. Our backend will use enterprise Apify proxies to securely rip your public timeline without requiring an OAuth Developer token.",
+      "linking": "Linking...",
+      "syncProxy": "Sync via Proxy",
+      "disconnectConfirm": "Disconnect @{{handle}}? All associated data will be removed."
     },
     "safety": {
-        "pauseAll": "Pause All Automated Actions",
-        "pauseHint": "Immediately halts all AI replies and engagement posts across every account.",
-        "pauseWarning": "⛔ All automated actions will be blocked until this is turned off.",
-        "dailyCap": "Daily Action Cap",
-        "actionGap": "Min Action Gap",
-        "blackoutStart": "Blackout Start (UTC hour)",
-        "blackoutEnd": "Blackout End (UTC hour)",
-        "saveSettings": "Save Safety Settings"
+      "pauseAll": "Pause All Automated Actions",
+      "pauseHint": "Immediately halts all AI replies and engagement posts across every account.",
+      "pauseWarning": "⛔ All automated actions will be blocked until this is turned off.",
+      "dailyCap": "Daily Action Cap",
+      "actionGap": "Min Action Gap",
+      "blackoutStart": "Blackout Start (UTC hour)",
+      "blackoutEnd": "Blackout End (UTC hour)",
+      "saveSettings": "Save Safety Settings"
     },
     "notifications": {
-        "alertTypes": "Alert Types",
-        "newComments": "💬 New Comments",
-        "newMentions": "@ New Mentions",
-        "newTags": "🏷️ New Tags",
-        "digestFreq": "Digest Frequency",
-        "digestEmail": "Digest Email",
-        "savePrefs": "Save Notification Preferences",
-        "freqOpts": {
-            "IMMEDIATE": "Immediate",
-            "HOURLY": "Hourly",
-            "DAILY": "Daily",
-            "OFF": "Off"
-        }
+      "alertTypes": "Alert Types",
+      "newComments": "💬 New Comments",
+      "newMentions": "@ New Mentions",
+      "newTags": "🏷️ New Tags",
+      "digestFreq": "Digest Frequency",
+      "digestEmail": "Digest Email",
+      "savePrefs": "Save Notification Preferences",
+      "freqOpts": {
+        "IMMEDIATE": "Immediate",
+        "HOURLY": "Hourly",
+        "DAILY": "Daily",
+        "OFF": "Off"
+      }
     },
     "audit": {
-        "allAccounts": "All Accounts",
-        "allActionTypes": "All Action Types",
-        "allOutcomes": "All Outcomes",
-        "clear": "✕ Clear",
-        "tableHeaders": {
-            "date": "Date / Time",
-            "account": "Account",
-            "action": "Action",
-            "targetId": "Target ID",
-            "outcome": "Outcome"
-        },
-        "noEntries": "No audit entries found.",
-        "pagination": "Showing page {{page}} of {{totalPages}} ({{total}} total entries)",
-        "prev": "← Prev",
-        "next": "Next →"
+      "allAccounts": "All Accounts",
+      "allActionTypes": "All Action Types",
+      "allOutcomes": "All Outcomes",
+      "clear": "✕ Clear",
+      "tableHeaders": {
+        "date": "Date / Time",
+        "account": "Account",
+        "action": "Action",
+        "targetId": "Target ID",
+        "outcome": "Outcome"
+      },
+      "noEntries": "No audit entries found.",
+      "pagination": "Showing page {{page}} of {{totalPages}} ({{total}} total entries)",
+      "prev": "← Prev",
+      "next": "Next →"
+    }
+  },
+  "calendar": {
+    "title": "Content Calendar",
+    "subtitle": "Plan daily posts by category and assign to team members",
+    "addEntryBtn": "Add Entry",
+    "thisMonthsEntries": "This Month's Entries",
+    "noEntries": "No entries this month. Click a date to add one.",
+    "addEntryModalTitle": "Add Entry — {{month}} {{date}}",
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "Post title or topic…",
+      "category": "Category",
+      "assignTo": "Assign To",
+      "status": "Status",
+      "cancel": "Cancel",
+      "submit": "Add to Calendar"
+    },
+    "status": {
+      "draft": "Draft",
+      "ready": "Ready",
+      "posted": "Posted"
+    },
+    "categories": {
+      "birthday": "Birthday / Anniversary",
+      "festival": "Festival / National Day",
+      "social": "Social Issue",
+      "poll": "Poll / Reaction",
+      "campaign": "Campaign / Ad",
+      "repost": "Repost",
+      "live": "Live Video"
+    },
+    "months": {
+      "0": "January",
+      "1": "February",
+      "2": "March",
+      "3": "April",
+      "4": "May",
+      "5": "June",
+      "6": "July",
+      "7": "August",
+      "8": "September",
+      "9": "October",
+      "10": "November",
+      "11": "December"
+    },
+    "days": {
+      "0": "Sun",
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
+    },
+    "team": {
+      "Harshal Vora": "Harshal Vora",
+      "Dr. Amol Pawar": "Dr. Amol Pawar",
+      "Sagar": "Sagar"
+    }
+  },
+  "repostReminder": {
+    "title": "Repost Reminder",
+    "subtitle": "Track posts eligible for repost — minimum 15-day gap required",
+    "addPostBtn": "Add Post",
+    "ruleTitle": "15-Day Repost Rule (from the document)",
+    "ruleDesc": "Facebook shows posts to only 5–7% of followers. Repost important content after at least 15 days to reach more people.",
+    "stats": {
+      "eligible": "Eligible to Repost",
+      "tooSoon": "Too Soon",
+      "alreadyReposted": "Already Reposted"
+    },
+    "sections": {
+      "ready": "Ready to Repost ({{count}})",
+      "waiting": "Waiting — Too Soon ({{count}})",
+      "reposted": "Already Reposted"
+    },
+    "item": {
+      "originallyPosted": "Originally posted: {{date}}",
+      "daysAgo": "{{days}} days ago",
+      "repostNow": "Repost Now",
+      "daysLeft": "days left",
+      "repostedDate": "Reposted: {{date}}"
+    },
+    "form": {
+      "title": "Add Post to Tracker",
+      "content": "Post Content",
+      "contentPlaceholder": "Paste your post content…",
+      "originalDate": "Original Post Date",
+      "platform": "Platform",
+      "category": "Category",
+      "cancel": "Cancel",
+      "submit": "Add to Tracker"
+    },
+    "categories": {
+      "Birthday Post": "Birthday Post",
+      "Festival": "Festival",
+      "Social Issue": "Social Issue",
+      "Campaign": "Campaign",
+      "Live Recap": "Live Recap",
+      "General": "General"
     }
   },
   "postSearch": {
@@ -194,24 +382,37 @@
     "retrieved": "Retrieved {{total}} matching entries",
     "noPosts": "No posts match criteria",
     "noPostsHint": "Try generalizing your keywords or date range.",
+    "breadcrumbs": {
+      "dashboard": "Professional dashboard",
+      "content": "Content"
+    },
+    "headerContent": "Content",
+    "subtitle": "Content Library",
+    "reelsAlert": {
+      "title": "Videos you post on Facebook are now reels",
+      "desc": "You can still view your previously posted videos, but they will be combined under the reels filter."
+    },
+    "searchPlaceholder": "Search for posts",
+    "postsSelected": "posts selected",
+    "noPostsTab": "No {{tab}} posts found",
     "tabs": {
-        "published": "Published",
-        "scheduled": "Scheduled",
-        "drafts": "Drafts"
+      "published": "Published",
+      "scheduled": "Scheduled",
+      "drafts": "Drafts"
     },
     "table": {
-        "preview": "Preview",
-        "views": "Views",
-        "viewers": "Viewers",
-        "interactions": "Interactions",
-        "netFollows": "Net follows",
-        "impressions": "Impressions"
+      "preview": "Preview",
+      "views": "Views",
+      "viewers": "Viewers",
+      "interactions": "Interactions",
+      "impressions": "Impressions"
     },
     "actions": {
-        "create": "Create",
-        "filters": "Filters",
-        "columns": "Columns",
-        "export": "Export data"
+      "create": "Create",
+      "filters": "Filters",
+      "columns": "Columns",
+      "dateRange": "Last 28 days: Mar 16 - Apr 13",
+      "export": "Export data"
     }
   },
   "postCard": {
@@ -229,6 +430,9 @@
     "comment": "Comment",
     "share": "Share"
   },
+  "postRow": {
+    "at": "at"
+  },
   "quickCommenter": {
     "title": "Quick Commenter",
     "description": "Post comments directly to any Facebook or Instagram link from your connected account.",
@@ -244,7 +448,50 @@
     "noAccounts": "No accounts connected",
     "suggestSuccess": "AI suggestion generated!",
     "manualInput": "Direct Link Comment",
-    "targetProfiles": "Frequent Targets"
+    "targetProfiles": "Frequent Targets",
+    "urlPlaceholder": "Paste Facebook or Instagram Post URL here...",
+    "mockProfiles": {
+      "1": {
+        "name": "Rahul Sharma",
+        "post": "Just finished a great workout!"
+      },
+      "2": {
+        "name": "Anjali Patil",
+        "post": "Beautiful sunset in Mumbai."
+      },
+      "3": {
+        "name": "Vikram Singh",
+        "post": "Excited for the new project launch."
+      },
+      "4": {
+        "name": "Sneha Gupta",
+        "post": "Had an amazing dinner tonight."
+      },
+      "5": {
+        "name": "Amit Verma",
+        "post": "Weekend vibes!"
+      },
+      "6": {
+        "name": "Priya Reddy",
+        "post": "Exploring the mountains."
+      },
+      "7": {
+        "name": "Sandeep K.",
+        "post": "Congratulations to the team!"
+      },
+      "8": {
+        "name": "Meera Das",
+        "post": "Book club meeting was fun."
+      },
+      "9": {
+        "name": "Rohan Mehta",
+        "post": "New car alert!"
+      },
+      "10": {
+        "name": "Kavita Iyer",
+        "post": "Teaching my kids Marathi today."
+      }
+    }
   },
   "commentExporter": {
     "title": "Comment Exporter",
@@ -255,10 +502,610 @@
     "source": "Source: {{source}}",
     "mockScraper": "⚠️ MOCK SCRAPER MODE",
     "downloadCsv": "📥 Download CSV",
+    "csvId": "Comment ID",
     "user": "User",
     "commentText": "Comment Text",
     "timestamp": "Timestamp",
     "emptyState": "Paste a URL above to start exporting data",
     "errorMsg": "Failed to fetch comments. Make sure the post is public and from a connected account."
+  },
+  "pollManager": {
+    "title": "Poll Manager",
+    "description": "Create and track audience engagement polls",
+    "createPoll": "Create Poll",
+    "stats": {
+      "totalPolls": "Total Polls",
+      "activePolls": "Active Polls",
+      "totalVotes": "Total Votes"
+    },
+    "pollStatus": {
+      "active": "Active",
+      "closed": "Closed"
+    },
+    "pollCard": {
+      "totalVotes": "total votes",
+      "close": "Close",
+      "reopen": "Reopen"
+    },
+    "form": {
+      "createTitle": "Create Poll",
+      "question": "Question",
+      "questionPlaceholder": "Ask your audience…",
+      "platform": "Platform",
+      "options": "Options (min 2, max 4)",
+      "optionPlaceholder": "Option {{num}}",
+      "addOption": "+ Add Option",
+      "cancel": "Cancel",
+      "submit": "Create Poll"
+    },
+    "mockData": {
+      "poll1": {
+        "question": "Which ward development work should we prioritize?",
+        "opta": "Road repair",
+        "optb": "Water supply",
+        "optc": "Street lights"
+      },
+      "poll2": {
+        "question": "Are you satisfied with our work this year?",
+        "opta": "Very satisfied",
+        "optb": "Somewhat satisfied",
+        "optc": "Not satisfied"
+      },
+      "poll3": {
+        "question": "Which social issue concerns you most?",
+        "opta": "Unemployment",
+        "optb": "Education",
+        "optc": "Health"
+      }
+    }
+  },
+  "liveTracker": {
+    "title": "Live Video Tracker",
+    "description": "Schedule and track Facebook Live and Google Meet sessions",
+    "scheduleLive": "Schedule Live",
+    "goal": {
+      "title": "Monthly Live Goal",
+      "subtitle": "{{progress}}% of monthly target · Document says: maximize live videos"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "live": "Live Now",
+      "done": "Done",
+      "cancelled": "Cancelled"
+    },
+    "card": {
+      "via": "via",
+      "min": "min",
+      "markLive": "Mark Live",
+      "markDone": "Mark Done",
+      "cancel": "Cancel",
+      "endLive": "End Live — Mark Done"
+    },
+    "form": {
+      "createTitle": "Schedule Live Session",
+      "topic": "Topic",
+      "topicPlaceholder": "What will you talk about?",
+      "platform": "Platform",
+      "both": "Both",
+      "via": "Via",
+      "viaOptions": {
+        "direct": "Direct",
+        "googleMeet": "Google Meet"
+      },
+      "dateTime": "Date & Time",
+      "duration": "Duration (min)",
+      "notes": "Notes",
+      "notesPlaceholder": "Any notes…",
+      "cancel": "Cancel",
+      "submit": "Schedule Live"
+    },
+    "mockData": {
+      "session1": {
+        "topic": "Ward development progress update",
+        "notes": "Good turnout"
+      },
+      "session2": {
+        "topic": "Water crisis: open discussion",
+        "notes": ""
+      },
+      "session3": {
+        "topic": "Social cultural event highlights",
+        "notes": ""
+      },
+      "session4": {
+        "topic": "Road work inspection live",
+        "notes": "Shared to group"
+      },
+      "l1": {
+        "topic": "Ward development progress update",
+        "notes": "Good turnout"
+      },
+      "l2": {
+        "topic": "Water crisis: open discussion"
+      },
+      "l3": {
+        "topic": "Social cultural event highlights"
+      },
+      "l4": {
+        "topic": "Road work inspection live",
+        "notes": "Shared to group"
+      }
+    }
+  },
+  "adTracker": {
+    "title": "Ad Tracker",
+    "subtitle": "Track monthly paid campaigns · Document goal: 1 paid ad per month",
+    "addCampaign": "Add Campaign",
+    "stats": {
+      "totalSpent": "Total Spent",
+      "totalReach": "Total Reach",
+      "totalClicks": "Total Clicks",
+      "avgCPC": "Avg. CPC"
+    },
+    "status": {
+      "active": "Active",
+      "ended": "Ended"
+    },
+    "card": {
+      "spend": "Spend",
+      "reach": "Reach",
+      "clicks": "Clicks",
+      "cpc": "CPC"
+    },
+    "noCampaigns": "No campaigns yet.",
+    "form": {
+      "title": "Add Campaign",
+      "month": "Month",
+      "monthPlaceholder": "e.g. May 2025",
+      "platform": "Platform",
+      "campaignName": "Campaign Name",
+      "campaignPlaceholder": "Campaign description…",
+      "spend": "Spend",
+      "reach": "Reach",
+      "clicks": "Clicks",
+      "notes": "Notes",
+      "notesPlaceholder": "Any notes…",
+      "cancel": "Cancel",
+      "submit": "Add Campaign"
+    },
+    "mockData": {
+      "campaign1": {
+        "month": "May 2025",
+        "campaign": "Ward development awareness",
+        "notes": "Running well"
+      },
+      "campaign2": {
+        "month": "April 2025",
+        "campaign": "Community event promotion",
+        "notes": "Good reach"
+      },
+      "campaign3": {
+        "month": "March 2025",
+        "campaign": "Voter registration drive",
+        "notes": "High engagement"
+      },
+      "campaign4": {
+        "month": "February 2025",
+        "campaign": "Festival greetings sponsored",
+        "notes": ""
+      }
+    }
+  },
+  "teamTasks": {
+    "title": "Team Tasks",
+    "subtitle": "Assign and track post tasks across your team",
+    "addTask": "Add Task",
+    "stats": {
+      "tasksDone": "{{done}}/{{total}} tasks done"
+    },
+    "columns": {
+      "todo": "To Do",
+      "inprogress": "In Progress",
+      "done": "Done"
+    },
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "categories": {
+      "Birthday Post": "Birthday Post",
+      "Festival Post": "Festival Post",
+      "Social Issue": "Social Issue",
+      "Poll": "Poll",
+      "Live Video": "Live Video",
+      "Campaign": "Campaign",
+      "Repost": "Repost",
+      "General": "General"
+    },
+    "noTasks": "No tasks here",
+    "form": {
+      "title": "Add Task",
+      "taskTitle": "Task Title",
+      "taskPlaceholder": "What needs to be done?",
+      "category": "Category",
+      "priority": "Priority",
+      "assignTo": "Assign To",
+      "dueDate": "Due Date",
+      "cancel": "Cancel",
+      "submit": "Add Task"
+    },
+    "mockData": {
+      "task1": "Ambedkar Jayanti graphic",
+      "task2": "Water scarcity reel",
+      "task3": "Ward development poll",
+      "task4": "Google Meet → FB Live",
+      "task5": "Monthly paid ad May",
+      "task6": "Repost road work update"
+    },
+    "team": {
+      "Harshal Vora": "Harshal Vora",
+      "Dr. Amol Pawar": "Dr. Amol Pawar",
+      "Sagar": "Sagar"
+    }
+  },
+  "networkBuilder": {
+    "title": "Network Builder",
+    "subtitle": "Build and manage supporters, influencers and voter network",
+    "addContact": "Add Contact",
+    "searchPlaceholder": "Search by name, location or interest…",
+    "clear": "Clear",
+    "noContacts": "No contacts found.",
+    "form": {
+      "title": "Add Contact",
+      "fullName": "Full Name",
+      "namePlaceholder": "Name…",
+      "location": "Location / Ward",
+      "locationPlaceholder": "Ward / Area…",
+      "interest": "Interest",
+      "platform": "Platform",
+      "phone": "Phone",
+      "phonePlaceholder": "Phone number…",
+      "tag": "Tag",
+      "note": "Note",
+      "notePlaceholder": "Any notes…",
+      "cancel": "Cancel",
+      "submit": "Add Contact"
+    },
+    "tags": {
+      "Supporter": "Supporter",
+      "Influencer": "Influencer",
+      "Voter": "Voter",
+      "Activist": "Activist",
+      "Opponent": "Opponent",
+      "Neutral": "Neutral"
+    },
+    "interests": {
+      "Politics": "Politics",
+      "Social Work": "Social Work",
+      "Culture": "Culture",
+      "Sports": "Sports",
+      "Education": "Education",
+      "Health": "Health",
+      "Environment": "Environment",
+      "Youth": "Youth",
+      "Women Empowerment": "Women Empowerment",
+      "Business": "Business"
+    },
+    "platforms": {
+      "Facebook": "Facebook",
+      "Instagram": "Instagram",
+      "WhatsApp": "WhatsApp",
+      "None": "None"
+    },
+    "mockData": {
+      "contact1": {
+        "name": "Ramesh Patil",
+        "location": "Ward 12",
+        "note": "Active volunteer"
+      },
+      "contact2": {
+        "name": "Sunita Deshmukh",
+        "location": "Ward 14",
+        "note": "School principal, 5k followers"
+      },
+      "contact3": {
+        "name": "Anil Kadam",
+        "location": "Ward 12",
+        "note": "Youth group leader"
+      },
+      "contact4": {
+        "name": "Priya Shinde",
+        "location": "Ward 15",
+        "note": ""
+      },
+      "contact5": {
+        "name": "Vijay Mane",
+        "location": "Ward 12",
+        "note": "Cricket club organizer"
+      }
+    }
+  },
+  "groupsManager": {
+    "title": "Groups Manager",
+    "subtitle": "Manage Facebook groups — minimum 30 members per group required",
+    "addGroup": "Add Group",
+    "ruleTitle": "Goal (from document):",
+    "ruleText": "Create Facebook groups with at least 30 members. Join relevant political/social groups as a member to network and spread content.",
+    "stats": {
+      "totalGroups": "Total Groups",
+      "activeGroups": "Active Groups",
+      "memberGoal": "30+ Member Goal",
+      "totalReach": "Total Reach"
+    },
+    "list": {
+      "members": "members",
+      "goalMet": "Goal met",
+      "needMore": "Need {{count}} more",
+      "active": "Active",
+      "inactive": "Inactive",
+      "target": "Target: {{count}} members minimum",
+      "meta": "Admin: {{admin}} · {{platform}} · {{category}} · Joined {{date}}"
+    },
+    "form": {
+      "title": "Add Group",
+      "groupName": "Group Name",
+      "groupNamePlaceholder": "Group name…",
+      "platform": "Platform",
+      "category": "Category",
+      "memberCount": "Member Count",
+      "admin": "Admin",
+      "joinedDate": "Joined Date",
+      "notes": "Notes",
+      "notesPlaceholder": "Any notes…",
+      "cancel": "Cancel",
+      "submit": "Add Group"
+    },
+    "categories": {
+      "Community": "Community",
+      "Youth": "Youth",
+      "Events": "Events",
+      "Political": "Political",
+      "Women": "Women",
+      "Religious": "Religious",
+      "Sports": "Sports",
+      "Business": "Business",
+      "Charity": "Charity"
+    },
+    "platforms": {
+      "Facebook": "Facebook",
+      "WhatsApp": "WhatsApp",
+      "Telegram": "Telegram"
+    },
+    "mockData": {
+      "group1": {
+        "name": "Ward 12 Vikas Manch",
+        "notes": "Main community group"
+      },
+      "group2": {
+        "name": "Youth Power Group",
+        "notes": "Very active"
+      },
+      "group3": {
+        "name": "Social & Cultural Events",
+        "notes": "High engagement"
+      },
+      "group4": {
+        "name": "Nagarsevak Support Group",
+        "notes": "Needs more members"
+      },
+      "group5": {
+        "name": "Pune Political Discussion",
+        "notes": "Joined as member"
+      },
+      "group6": {
+        "name": "Street Light Complaints Group",
+        "notes": "Not active recently"
+      },
+      "g1": {
+        "name": "Ward 12 Citizens Forum"
+      },
+      "g2": {
+        "name": "Youth Leaders Association",
+        "notes": "Very active in tech discussions"
+      },
+      "g3": {
+        "name": "Women Empowerment Cell"
+      },
+      "g4": {
+        "name": "Local Business Owners",
+        "notes": "Needs revival"
+      }
+    }
+  },
+  "profileAudit": {
+    "title": "Profile & Competitor Audit",
+    "subtitle": "2-month analysis checklist — your profile vs competitor's Facebook",
+    "resetAll": "Reset All",
+    "cards": {
+      "yourScore": "Your Profile Score",
+      "compScore": "Competitor Score",
+      "itemsCompleted": "items completed",
+      "itemsChecked": "items checked"
+    },
+    "advantage": {
+      "ahead": "You are ahead by {{pct}}% — keep it up!",
+      "behind": "Competitor is ahead by {{pct}}% — need to catch up!"
+    },
+    "tabs": {
+      "myProfile": "My Profile",
+      "sideBySide": "Side-by-Side"
+    },
+    "section": {
+      "done": "{{done}}/{{total}} done",
+      "you": "You"
+    },
+    "notePlaceholder": "Add note or data point…",
+    "summary": {
+      "title": "Audit Summary",
+      "complete": "{{pct}}% complete"
+    },
+    "competitors": {
+      "Competitor 1": "Competitor 1",
+      "Competitor 2": "Competitor 2"
+    },
+    "sections": {
+      "profile": {
+        "title": "Profile Completeness",
+        "p1": "Profile info fully filled (bio, location, contact)",
+        "p2": "Profile photo & cover image — professional quality",
+        "p3": "Check-ins enabled & used",
+        "p4": "Recommendations present on page",
+        "p5": "Interests & likes filled completely"
+      },
+      "reach": {
+        "title": "Reach & Followers",
+        "r1": "Follower count (note & compare)",
+        "r2": "Page likes count",
+        "r3": "Constituency / Ward connections count"
+      },
+      "content": {
+        "title": "Content Audit (Last 2 Months)",
+        "c1": "Number of Events posted",
+        "c2": "Number of Paid Ads run",
+        "c3": "Number of Images posted",
+        "c4": "Number of Articles / Long-form posts",
+        "c5": "Number of Videos posted",
+        "c6": "Number of Live Videos",
+        "c7": "Are images readable & high quality?",
+        "c8": "Facebook Group created?",
+        "c9": "Posting consistency — daily or regular?",
+        "c10": "Others' good posts shared?"
+      },
+      "engagement": {
+        "title": "Engagement Analysis",
+        "e1": "Topics posted & response rate per topic",
+        "e2": "Likes, Comments, Shares breakdown by topic",
+        "e3": "Content quality assessment",
+        "e4": "Which age group responds most?",
+        "e5": "Which area / location responds most?",
+        "e6": "Women's response percentage",
+        "e7": "Response to issue-based vs development posts",
+        "e8": "Development work posts — engagement rate"
+      }
+    }
+  },
+  "articlePlanner": {
+    "title": "Article Planner",
+    "subtitle": "Daily 10-line articles + Weekly big articles — assigned to team writers",
+    "buttons": {
+      "guide": "Guide",
+      "addArticle": "Add Article"
+    },
+    "streak": {
+      "published": "Today's article published!",
+      "notPublished": "No article published today yet",
+      "rule": "Document says: Write one 10-line article every day — personal, opposition critique, worker appreciation…"
+    },
+    "guide": {
+      "title": "Article Categories Guide",
+      "dailyTitle": "Daily Short Articles (10 lines, every day)",
+      "weeklyTitle": "Weekly Big Articles (1 per week)"
+    },
+    "stats": {
+      "dailyPub": "Daily Published",
+      "dailyDraft": "Daily Drafts",
+      "weeklyPub": "Weekly Published",
+      "weeklyDraft": "Weekly Drafts"
+    },
+    "tabs": {
+      "daily": "Daily Articles",
+      "weekly": "Weekly Articles"
+    },
+    "status": {
+      "idea": "Idea",
+      "draft": "Draft",
+      "published": "Published"
+    },
+    "actions": {
+      "moveToDraft": "Move to Draft",
+      "markPublished": "Mark Published"
+    },
+    "empty": {
+      "noDaily": "No daily articles yet.",
+      "noWeekly": "No weekly articles yet."
+    },
+    "form": {
+      "title": "Add Article",
+      "type": "Type",
+      "dailyShort": "Daily Short",
+      "weeklyBig": "Weekly Big",
+      "category": "Category",
+      "topicLabel": "Title / Topic",
+      "topicPlaceholder": "Article title or topic…",
+      "assignedWriter": "Assigned Writer",
+      "dueDate": "Due Date",
+      "noteLabel": "Note",
+      "notePlaceholder": "Any notes…",
+      "cancel": "Cancel",
+      "submit": "Add Article"
+    },
+    "categories": {
+      "Daily Activities / Personal": "Daily Activities / Personal",
+      "State / Central Opposition Critique": "State / Central Opposition Critique",
+      "Worker Appreciation": "Worker Appreciation",
+      "Social Movements & Events": "Social Movements & Events",
+      "Demographic Issues (age / gender / profession)": "Demographic Issues (age / gender / profession)",
+      "Ward Development Issues": "Ward Development Issues",
+      "Comparative Article": "Comparative Article",
+      "Social Awareness Commentary": "Social Awareness Commentary",
+      "Political Current Events": "Political Current Events",
+      "Youth Achievement": "Youth Achievement",
+      "Poetry / Creative Branding": "Poetry / Creative Branding",
+      "Public Useful Info (prices, jobs, courses)": "Public Useful Info (prices, jobs, courses)",
+      "Motivational": "Motivational",
+      "Development Work Invitation": "Development Work Invitation",
+      "Letter to CM / Party Leaders": "Letter to CM / Party Leaders",
+      "Letter to Official about social issue": "Letter to Official about social issue",
+      "Ward scheme / MLA fund suggestions copy": "Ward scheme / MLA fund suggestions copy",
+      "Candidate appreciation letter": "Candidate appreciation letter",
+      "Worker-penned article about our work": "Worker-penned article about our work",
+      "Area social problems & deficiencies": "Area social problems & deficiencies",
+      "Future plans for people": "Future plans for people",
+      "Personal qualities & characteristics": "Personal qualities & characteristics",
+      "Interview by journalist": "Interview by journalist",
+      "Thoughts on national event": "Thoughts on national event",
+      "New idea on social problem": "New idea on social problem",
+      "Committee / assembly attendance (last 6 months)": "Committee / assembly attendance (last 6 months)",
+      "Public questions on development / politics": "Public questions on development / politics",
+      "Analysis / Opinion piece": "Analysis / Opinion piece"
+    },
+    "mockData": {
+      "a1": {
+        "title": "Today's ward inspection update",
+        "note": ""
+      },
+      "a2": {
+        "title": "Student Rohan wins science olympiad",
+        "note": ""
+      },
+      "a3": {
+        "title": "Government job vacancies this week",
+        "note": "Add links"
+      },
+      "a4": {
+        "title": "Water conservation — our duty",
+        "note": ""
+      },
+      "a5": {
+        "title": "Letter to CM on ward water crisis",
+        "note": "Got 3k reach"
+      },
+      "a6": {
+        "title": "Innovative plastic waste solution",
+        "note": ""
+      },
+      "a7": {
+        "title": "Our 5-point vision for Ward 12",
+        "note": ""
+      }
+    }
+  },
+  "team": {
+    "Satish Waghmare": "Satish Waghmare",
+    "Sagar": "Sagar",
+    "Hemant": "Hemant",
+    "Harshal Vora": "Harshal Vora",
+    "Dr. Amol Pawar": "Dr. Amol Pawar"
   }
 }

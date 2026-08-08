@@ -5,7 +5,7 @@ import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
 export const Schedule = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [posts, setPosts] = useState<any[]>([]);
   const [content, setContent] = useState('');
   const [date, setDate] = useState('');
@@ -149,9 +149,9 @@ export const Schedule = () => {
               <div className={`mt-2 flex items-center gap-2 text-xs font-bold px-3 py-2 rounded-xl ${count > 3 ? 'animate-pulse' : ''}`}
                 style={{ background: count > 3 ? '#fef2f2' : '#f0fdf4', color: count > 3 ? '#dc2626' : '#16a34a' }}>
                 <span>{count > 3 ? '⚠️' : '✅'}</span>
-                <span>{count} hashtag{count !== 1 ? 's' : ''} detected</span>
-                {count > 3 && <span className="font-normal">— Document says: use only 2–3 hashtags!</span>}
-                {count <= 3 && <span className="font-normal opacity-70">— Good! Keep it at 2–3 max</span>}
+                <span>{t('schedule.hashtagWarning.detected', { count, defaultValue: '{{count}} hashtag(s) detected' })}</span>
+                {count > 3 && <span className="font-normal">{t('schedule.hashtagWarning.tooMany', '— Document says: use only 2–3 hashtags!')}</span>}
+                {count <= 3 && <span className="font-normal opacity-70">{t('schedule.hashtagWarning.good', '— Good! Keep it at 2–3 max')}</span>}
                 <span className="ml-auto opacity-50">{tags.join(' ')}</span>
               </div>
             ) : null;
@@ -249,7 +249,7 @@ export const Schedule = () => {
                 <div className="w-14 h-14 rounded-xl flex flex-col items-center justify-center font-bold shrink-0"
                   style={calBoxStyle(p.status)}>
                   <span className="text-[10px] uppercase font-bold">
-                    {new Date(p.scheduledAt).toLocaleDateString(undefined, { month: 'short' })}
+                    {new Date(p.scheduledAt).toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US', { month: 'short' })}
                   </span>
                   <span className="text-xl font-extrabold leading-none">
                     {new Date(p.scheduledAt).getDate()}
@@ -266,12 +266,12 @@ export const Schedule = () => {
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"
                       style={statusStyle(p.status)}>
-                      {p.status}
+                      {String(t(`schedule.status.${p.status.toLowerCase()}`, p.status))}
                     </span>
                   </div>
                   <p className="font-semibold line-clamp-1 mb-1" style={{ color: 'var(--slate-800)' }}>{p.content}</p>
                   <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>
-                    {new Date(p.scheduledAt).toLocaleTimeString()}
+                    {new Date(p.scheduledAt).toLocaleTimeString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')}
                   </p>
                 </div>
               </div>

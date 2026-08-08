@@ -9,7 +9,7 @@ const socket = io('http://localhost:3001');
 import { haptics } from '../utils/haptics';
 
 export const Inbox = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [items, setItems] = useState<any[]>([]);
   const [filter, setFilter] = useState('ALL');
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
@@ -160,18 +160,18 @@ export const Inbox = () => {
                     {item.authorHandle}
                   </span>
                   <span className="text-xs whitespace-nowrap" style={{ color: 'var(--slate-400)' }}>
-                    {new Date(item.receivedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(item.receivedAt).toLocaleTimeString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
                 <div className="flex gap-1.5 mb-1.5">
                   <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1"
                     style={{ background: 'var(--slate-100)', color: 'var(--slate-600)' }}>
                     {getBrandIcon(item.socialAccount?.platform)}
-                    {item.socialAccount?.platform}
+                    {item.socialAccount?.platform ? String(t(`dashboard.platforms.${item.socialAccount.platform.toLowerCase()}`, item.socialAccount.platform)).toUpperCase() : ''}
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold"
                     style={{ background: 'var(--brand-50)', color: 'var(--brand-600)' }}>
-                    {item.type}
+                    {item.type ? String(t(`inbox.filter.${item.type}`, item.type)) : ''}
                   </span>
                 </div>
                 <p className="text-sm line-clamp-2 leading-relaxed"
@@ -222,7 +222,7 @@ export const Inbox = () => {
                    </h2>
                    <p className="text-[10px] lg:text-sm uppercase tracking-widest mt-1 flex items-center gap-1.5" style={{ color: 'var(--slate-400)' }}>
                      {getBrandIcon(selectedItem.socialAccount?.platform, 12)}
-                     {selectedItem.socialAccount?.platform} {selectedItem.type}
+                     {selectedItem.socialAccount?.platform ? String(t(`dashboard.platforms.${selectedItem.socialAccount.platform.toLowerCase()}`, selectedItem.socialAccount.platform)).toUpperCase() : ''} {selectedItem.type ? String(t(`inbox.filter.${selectedItem.type}`, selectedItem.type)) : ''}
                    </p>
                  </div>
                </div>
@@ -275,8 +275,8 @@ export const Inbox = () => {
                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#fff'}
                  >
                     <Bot size={36} strokeWidth={1.5} className="mb-3 group-hover:scale-110 transition-transform inline-block" />
-                    <span className="font-bold text-lg" style={{ color: 'var(--brand-700)' }}>Generate Contextual Replies</span>
-                    <span className="text-sm font-medium mt-1" style={{ color: 'var(--brand-400)' }}>Leveraging GPT-4o analysis</span>
+                    <span className="font-bold text-lg" style={{ color: 'var(--brand-700)' }}>{t('inbox.ai.generate', 'Generate Contextual Replies')}</span>
+                    <span className="text-sm font-medium mt-1" style={{ color: 'var(--brand-400)' }}>{t('inbox.ai.subtitle', 'Leveraging GPT-4o analysis')}</span>
                  </button>
                ) : isGenerating ? (
                  <div className="w-full rounded-xl p-10 flex flex-col items-center justify-center animate-pulse"

@@ -119,7 +119,7 @@ export const fetchFollowerGrowth = async (userId: string, platform?: string) => 
     const zeroData = [];
     for (let i = 30; i >= 0; i--) {
        const d = new Date(); d.setDate(d.getDate() - i);
-       zeroData.push({ date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), followers: 0 });
+       zeroData.push({ date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), timestamp: d.getTime(), followers: 0 });
     }
     return zeroData;
   }
@@ -133,6 +133,7 @@ export const fetchFollowerGrowth = async (userId: string, platform?: string) => 
     d.setDate(d.getDate() - i);
     data.push({
       date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      timestamp: d.getTime(),
       followers: Math.floor(base)
     });
     base += dailyGrowth + (Math.random() * dailyGrowth * 0.5 - dailyGrowth * 0.25);

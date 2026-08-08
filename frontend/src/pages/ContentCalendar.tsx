@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, X, ChevronLeft, ChevronRight, Calendar, Gift, Star, Scale, BarChart2, Megaphone, RefreshCw, Radio, AlignLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Category = 'birthday' | 'festival' | 'social' | 'poll' | 'campaign' | 'repost' | 'live';
 type Status = 'draft' | 'ready' | 'posted';
@@ -23,10 +24,10 @@ const TEAM = ['Harshal Vora', 'Dr. Amol Pawar', 'Sagar'];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-const statusStyle: Record<Status, { bg: string; color: string; label: string }> = {
-  draft:  { bg: 'var(--slate-100)', color: 'var(--slate-600)', label: 'Draft' },
-  ready:  { bg: 'var(--brand-50)',  color: 'var(--brand-700)', label: 'Ready' },
-  posted: { bg: 'var(--brand-600)', color: '#fff',             label: 'Posted' },
+const statusStyle: Record<Status, { bg: string; color: string }> = {
+  draft:  { bg: 'var(--slate-100)', color: 'var(--slate-600)' },
+  ready:  { bg: 'var(--brand-50)',  color: 'var(--brand-700)' },
+  posted: { bg: 'var(--brand-600)', color: '#fff' },
 };
 
 const INITIAL: CalendarEntry[] = [
@@ -46,6 +47,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 export const ContentCalendar = () => {
+  const { t } = useTranslation();
   const today = new Date();
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [viewYear,  setViewYear]  = useState(today.getFullYear());
@@ -79,14 +81,14 @@ export const ContentCalendar = () => {
               <Calendar size={20} color="#fff" strokeWidth={2}/>
             </div>
             <div>
-              <h1 className="text-2xl font-black" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>Content Calendar</h1>
-              <p className="text-sm" style={{color:'var(--slate-500)'}}>Plan daily posts by category and assign to team members</p>
+              <h1 className="text-2xl font-black" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{t('calendar.title', 'Content Calendar')}</h1>
+              <p className="text-sm" style={{color:'var(--slate-500)'}}>{t('calendar.subtitle', 'Plan daily posts by category and assign to team members')}</p>
             </div>
           </div>
           <button onClick={()=>{setSelDate(today.getDate());setShowForm(true);}}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95"
             style={{background:'var(--brand-600)', boxShadow:'0 2px 8px rgba(2,132,199,0.25)'}}>
-            <Plus size={16}/> Add Entry
+            <Plus size={16}/> {t('calendar.addEntryBtn', 'Add Entry')}
           </button>
         </div>
 
@@ -97,7 +99,7 @@ export const ContentCalendar = () => {
             return (
               <span key={c.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border"
                 style={{background:c.bg, color:c.color, borderColor:c.border}}>
-                <CatIcon size={12} strokeWidth={2}/> {c.label}
+                <CatIcon size={12} strokeWidth={2}/> {String(t(`calendar.categories.${c.id}`, c.label))}
               </span>
             );
           })}
@@ -107,11 +109,11 @@ export const ContentCalendar = () => {
         <div className="bg-white rounded-2xl border p-5 mb-6" style={{borderColor:'var(--slate-200)', boxShadow:'0 1px 4px rgba(0,0,0,0.05)'}}>
           <div className="flex items-center justify-between mb-5">
             <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-slate-100 transition-colors"><ChevronLeft size={20}/></button>
-            <h2 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{MONTHS[viewMonth]} {viewYear}</h2>
+            <h2 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{String(t(`calendar.months.${viewMonth}`, MONTHS[viewMonth]))} {viewYear}</h2>
             <button onClick={nextMonth} className="p-2 rounded-xl hover:bg-slate-100 transition-colors"><ChevronRight size={20}/></button>
           </div>
           <div className="grid grid-cols-7 mb-2">
-            {DAYS.map(d=><div key={d} className="text-center text-xs font-bold uppercase tracking-widest py-2" style={{color:'var(--slate-400)'}}>{d}</div>)}
+            {DAYS.map((d,i)=><div key={d} className="text-center text-xs font-bold uppercase tracking-widest py-2" style={{color:'var(--slate-400)'}}>{String(t(`calendar.days.${i}`, d))}</div>)}
           </div>
           <div className="grid grid-cols-7 gap-1">
             {Array.from({length:firstDay}).map((_,i)=><div key={`e${i}`}/>)}
@@ -145,7 +147,7 @@ export const ContentCalendar = () => {
         {/* List */}
         <div className="bg-white rounded-2xl border p-5" style={{borderColor:'var(--slate-200)'}}>
           <h3 className="font-bold mb-4 flex items-center gap-2" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-800)'}}>
-            <AlignLeft size={16} style={{color:'var(--brand-600)'}}/> This Month's Entries
+            <AlignLeft size={16} style={{color:'var(--brand-600)'}}/> {t('calendar.thisMonthsEntries', "This Month's Entries")}
           </h3>
           <div className="space-y-2">
             {entries.filter(e=>e.month===viewMonth&&e.year===viewYear).sort((a,b)=>a.date-b.date).map(e=>{
@@ -157,15 +159,15 @@ export const ContentCalendar = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm truncate" style={{color:'var(--slate-900)'}}>{e.title}</p>
-                    <p className="text-xs" style={{color:'var(--slate-500)'}}>{MONTHS[e.month]} {e.date} · {e.assignee}</p>
+                    <p className="text-xs" style={{color:'var(--slate-500)'}}>{String(t(`calendar.months.${e.month}`, MONTHS[e.month]))} {e.date} · {String(t(`calendar.team.${e.assignee}`, e.assignee))}</p>
                   </div>
-                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg shrink-0" style={{background:st.bg, color:st.color}}>{st.label}</span>
+                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg shrink-0" style={{background:st.bg, color:st.color}}>{String(t(`calendar.status.${e.status}`, e.status))}</span>
                   <button onClick={()=>setEntries(p=>p.filter(x=>x.id!==e.id))} className="text-slate-300 hover:text-red-400 transition-colors"><X size={15}/></button>
                 </div>
               );
             })}
             {entries.filter(e=>e.month===viewMonth&&e.year===viewYear).length===0&&(
-              <p className="text-sm italic text-center py-6" style={{color:'var(--slate-400)'}}>No entries this month. Click a date to add one.</p>
+              <p className="text-sm italic text-center py-6" style={{color:'var(--slate-400)'}}>{t('calendar.noEntries', 'No entries this month. Click a date to add one.')}</p>
             )}
           </div>
         </div>
@@ -175,25 +177,25 @@ export const ContentCalendar = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{background:'rgba(15,23,42,0.5)', backdropFilter:'blur(4px)'}}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>Add Entry — {MONTHS[viewMonth]} {selDate}</h3>
+              <h3 className="font-bold text-lg" style={{fontFamily:'Outfit,sans-serif',color:'var(--slate-900)'}}>{t('calendar.addEntryModalTitle', { month: String(t(`calendar.months.${viewMonth}`, MONTHS[viewMonth])), date: selDate })}</h3>
               <button onClick={()=>setShowForm(false)} className="p-2 rounded-xl hover:bg-slate-100"><X size={18}/></button>
             </div>
             <div className="space-y-4">
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Title</label>
-                <input style={inputStyle} placeholder="Post title or topic…" value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))}/></div>
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Category</label>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('calendar.form.title', 'Title')}</label>
+                <input style={inputStyle} placeholder={String(t('calendar.form.titlePlaceholder', 'Post title or topic…'))} value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))}/></div>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('calendar.form.category', 'Category')}</label>
                 <select style={{...inputStyle,cursor:'pointer'}} value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value as Category}))}>
-                  {CATEGORIES.map(c=><option key={c.id} value={c.id}>{c.label}</option>)}</select></div>
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Assign To</label>
+                  {CATEGORIES.map(c=><option key={c.id} value={c.id}>{String(t(`calendar.categories.${c.id}`, c.label))}</option>)}</select></div>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('calendar.form.assignTo', 'Assign To')}</label>
                 <select style={{...inputStyle,cursor:'pointer'}} value={form.assignee} onChange={e=>setForm(f=>({...f,assignee:e.target.value}))}>
-                  {TEAM.map(m=><option key={m}>{m}</option>)}</select></div>
-              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>Status</label>
+                  {TEAM.map(m=><option key={m} value={m}>{String(t(`calendar.team.${m}`, m))}</option>)}</select></div>
+              <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('calendar.form.status', 'Status')}</label>
                 <select style={{...inputStyle,cursor:'pointer'}} value={form.status} onChange={e=>setForm(f=>({...f,status:e.target.value as Status}))}>
-                  <option value="draft">Draft</option><option value="ready">Ready</option><option value="posted">Posted</option></select></div>
+                  <option value="draft">{String(t('calendar.status.draft', 'Draft'))}</option><option value="ready">{String(t('calendar.status.ready', 'Ready'))}</option><option value="posted">{String(t('calendar.status.posted', 'Posted'))}</option></select></div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={()=>setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border transition-colors hover:bg-slate-50" style={{borderColor:'var(--slate-200)',color:'var(--slate-600)'}}>Cancel</button>
-              <button onClick={addEntry} className="flex-1 py-3 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95" style={{background:'var(--brand-600)'}}>Add to Calendar</button>
+              <button onClick={()=>setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border transition-colors hover:bg-slate-50" style={{borderColor:'var(--slate-200)',color:'var(--slate-600)'}}>{t('calendar.form.cancel', 'Cancel')}</button>
+              <button onClick={addEntry} className="flex-1 py-3 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95" style={{background:'var(--brand-600)'}}>{t('calendar.form.submit', 'Add to Calendar')}</button>
             </div>
           </div>
         </div>

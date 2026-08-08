@@ -16,8 +16,9 @@ i18n
   .init({
     resources,
     fallbackLng: 'mr',
+    lng: localStorage.getItem('i18nextLng') || 'mr',
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'],
       caches: ['localStorage'],
     },
     interpolation: {
