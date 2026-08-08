@@ -9,6 +9,19 @@ import { Settings } from './pages/Settings';
 import { CommentExporter } from './pages/CommentExporter';
 import { QuickCommenter } from './pages/QuickCommenter';
 import { Header } from './components/Header';
+import { ContentCalendar } from './pages/ContentCalendar';
+import { TeamTasks } from './pages/TeamTasks';
+import { LiveTracker } from './pages/LiveTracker';
+import { PollManager } from './pages/PollManager';
+import { RepostReminder } from './pages/RepostReminder';
+import { AdTracker } from './pages/AdTracker';
+import { NetworkBuilder } from './pages/NetworkBuilder';
+import { GroupsManager } from './pages/GroupsManager';
+import { ProfileAudit } from './pages/ProfileAudit';
+import { ArticlePlanner } from './pages/ArticlePlanner';
+import { VideoProduction } from './pages/VideoProduction';
+import { AIAssistant } from './pages/AIAssistant';
+import { Toaster } from 'sonner';
 
 function Layout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -45,9 +58,21 @@ function App() {
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/search" element={<PostSearch />} />
           <Route path="/schedule" element={<Schedule />} />
+          <Route path="/ai" element={<AIAssistant />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/export" element={<CommentExporter />} />
           <Route path="/quick-comment" element={<QuickCommenter />} />
+          <Route path="/content-calendar" element={<ContentCalendar />} />
+          <Route path="/team-tasks" element={<TeamTasks />} />
+          <Route path="/live-tracker" element={<LiveTracker />} />
+          <Route path="/polls" element={<PollManager />} />
+          <Route path="/reposts" element={<RepostReminder />} />
+          <Route path="/ads" element={<AdTracker />} />
+          <Route path="/network" element={<NetworkBuilder />} />
+          <Route path="/groups" element={<GroupsManager />} />
+          <Route path="/profile-audit" element={<ProfileAudit />} />
+          <Route path="/articles" element={<ArticlePlanner />} />
+          <Route path="/videos" element={<VideoProduction />} />
           <Route path="*" element={
             <div className="flex-1 flex items-center justify-center bg-gray-50">
               <div className="text-gray-400 text-lg flex flex-col items-center gap-2">
@@ -58,6 +83,7 @@ function App() {
           } />
         </Routes>
       </Layout>
+      <Toaster position="top-right" richColors />
     </Router>
   );
 }

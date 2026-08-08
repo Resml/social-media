@@ -1,38 +1,31 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/axios';
-import { PostCard } from '../components/PostCard';
+import { PostRow } from '../components/PostRow';
 import { useTranslation } from 'react-i18next';
+import { Search, Plus, Filter, Columns, Download, Info, ArrowUpDown, ChevronDown, Video } from 'lucide-react';
 
 export const PostSearch = () => {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState('PUBLISHED');
   const [query, setQuery] = useState('');
-  const [hashtag, setHashtag] = useState('');
-  const [platform, setPlatform] = useState('ALL');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
-  
   const [results, setResults] = useState<any[]>([]);
-  const [total, setTotal] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => { fetchResults(); }, 300);
     return () => clearTimeout(delayDebounceFn);
-  }, [query, hashtag, platform, from, to]);
+  }, [query, activeTab]);
 
   const fetchResults = async () => {
     setIsSearching(true);
     try {
       const params = new URLSearchParams();
-      if (query.trim())   params.append('q', query.trim());
-      if (hashtag.trim()) params.append('hashtag', hashtag.trim());
-      if (platform !== 'ALL') params.append('platform', platform);
-      if (from) params.append('from', from);
-      if (to)   params.append('to', to);
-
+      params.append('status', activeTab);
+      if (query.trim()) params.append('q', query.trim());
+      
       const res = await api.get(`/search/posts?${params.toString()}`);
       setResults(res.data.items || []);
-      setTotal(res.data.total || 0);
     } catch(err) {
       console.error(err);
     } finally {
@@ -40,110 +33,183 @@ export const PostSearch = () => {
     }
   };
 
-  const inputStyle = {
-    width: '100%',
-    background: 'var(--slate-50)',
-    border: '1px solid var(--slate-200)',
-    color: 'var(--slate-900)',
-    fontSize: '0.875rem',
-    borderRadius: '0.75rem',
-    padding: '0.625rem 0.75rem',
-    outline: 'none',
-    transition: 'border-color 0.15s, box-shadow 0.15s',
+  const toggleSelectAll = () => {
+    if (selectedIds.length === results.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(results.map(r => r.id));
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 lg:p-8" style={{ background: 'var(--slate-50)' }}>
-      <div className="max-w-7xl mx-auto flex flex-col gap-6 lg:gap-7 h-full">
+    <div className="flex-1 overflow-y-auto bg-[#F0F2F5]">
+      <div className="max-w-[1400px] mx-auto p-4 lg:p-6">
+        
+        {/* Page Header */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 text-[12px] text-[#65676B] mb-1">
+             <span className="hover:underline cursor-pointer">Professional dashboard</span>
+             <span>›</span>
+             <span className="hover:underline cursor-pointer text-[#050505] font-medium">Content</span>
+          </div>
+          <h1 className="text-[24px] font-bold text-[#050505]">Content</h1>
+        </div>
 
-        {/* Filter Card */}
-        <div className="rounded-2xl p-4 lg:p-6 shrink-0"
-          style={{ background: '#ffffff', border: '1px solid var(--slate-100)', boxShadow: '0 1px 4px rgba(2, 132, 199, 0.06)' }}>
-          <h1 className="text-xl lg:text-2xl font-bold mb-6 tracking-tight"
-            style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-            {t('postSearch.title', 'Post Repository Search')}
-          </h1>
-
-          <div className="flex flex-col lg:flex-row lg:flex-wrap gap-4 items-end">
-            {/* Keyword */}
-            <div className="flex-1 min-w-[280px]">
-              <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-                {t('postSearch.keywordQuery', 'Keyword Query')}
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-2.5" style={{ color: 'var(--slate-400)' }}>🔍</span>
-                <input
-                  type="text" value={query} onChange={e => setQuery(e.target.value)}
-                  placeholder={t('postSearch.keywordPlaceholder', 'Search captions contextually…')}
-                  style={{ ...inputStyle, paddingLeft: '2.25rem' }}
-                  onFocus={e => { (e.target as HTMLInputElement).style.borderColor = 'var(--brand-400)'; (e.target as HTMLInputElement).style.boxShadow = '0 0 0 3px var(--brand-100)'; }}
-                  onBlur={e  => { (e.target as HTMLInputElement).style.borderColor = 'var(--slate-200)'; (e.target as HTMLInputElement).style.boxShadow = 'none'; }}
-                />
-              </div>
-            </div>
-            {/* Hashtag */}
-            <div className="w-full sm:w-44">
-              <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-                {t('postSearch.hashtagFilter', 'Hashtag Filter')}
-              </label>
-              <input type="text" value={hashtag} onChange={e => setHashtag(e.target.value)}
-                placeholder="#milestone"
-                style={inputStyle}
-                onFocus={e => { (e.target as HTMLInputElement).style.borderColor = 'var(--brand-400)'; (e.target as HTMLInputElement).style.boxShadow = '0 0 0 3px var(--brand-100)'; }}
-                onBlur={e  => { (e.target as HTMLInputElement).style.borderColor = 'var(--slate-200)'; (e.target as HTMLInputElement).style.boxShadow = 'none'; }}
-              />
-            </div>
-            {/* Platform */}
-            <div className="w-full sm:w-40">
-              <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>
-                {t('postSearch.platform', 'Platform')}
-              </label>
-              <select value={platform} onChange={e => setPlatform(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
-                <option value="ALL">{t('postSearch.allNetworks', 'ALL NETWORKS')}</option>
-                <option value="INSTAGRAM">INSTAGRAM</option>
-                <option value="TWITTER">TWITTER</option>
-                <option value="FACEBOOK">FACEBOOK</option>
-              </select>
-            </div>
-            {/* Date range */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-              <div className="flex-1 lg:w-36">
-                <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>{t('postSearch.from', 'From')}</label>
-                <input type="date" value={from} onChange={e => setFrom(e.target.value)} style={inputStyle} />
-              </div>
-              <div className="flex-1 lg:w-36">
-                <label className="block text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--slate-400)' }}>{t('postSearch.to', 'To')}</label>
-                <input type="date" value={to} onChange={e => setTo(e.target.value)} style={inputStyle} />
-              </div>
+        {/* Content Card */}
+        <div className="bg-white rounded-lg border border-[#ced0d4] shadow-sm overflow-hidden">
+          
+          {/* Section Header */}
+          <div className="p-4 border-b border-[#ced0d4]">
+            <h2 className="text-[20px] font-bold text-[#050505] mb-4">Content Library</h2>
+            
+            {/* Tabs */}
+            <div className="flex gap-4 border-b border-transparent">
+              {['PUBLISHED', 'SCHEDULED', 'DRAFTS'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`pb-3 px-2 text-[15px] font-semibold transition-colors relative ${
+                    activeTab === tab ? 'text-[#1877f2]' : 'text-[#65676B] hover:bg-gray-50'
+                  }`}
+                >
+                  {t(`postSearch.tabs.${tab.toLowerCase()}`)}
+                  {activeTab === tab && (
+                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#1877f2] rounded-t-full" />
+                  )}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* Status bar */}
-        <div className="flex items-center px-1">
-          <span className={`text-[10px] lg:text-sm font-bold uppercase tracking-wider${isSearching ? ' animate-pulse' : ''}`}
-            style={{ color: isSearching ? 'var(--brand-500)' : 'var(--slate-400)' }}>
-            {isSearching ? t('postSearch.analyzing', 'Analyzing Post Database…') : t('postSearch.retrieved', 'Retrieved {{total}} matching entries', { total })}
-          </span>
-        </div>
+          {/* Reel Alert (Matching screenshot) */}
+          <div className="bg-[#E7F3FF] p-4 flex items-center gap-3 border-b border-[#ced0d4]">
+             <div className="w-8 h-8 rounded-full bg-[#1877f2] flex items-center justify-center text-white">
+                <Video size={18} />
+             </div>
+             <div className="flex-1">
+                <p className="text-[14px] font-bold text-[#050505]">Videos you post on Facebook are now reels</p>
+                <p className="text-[13px] text-[#65676B]">You can still view your previously posted videos, but they will be combined under the reels filter.</p>
+             </div>
+             <button className="text-[#65676B] hover:bg-black/5 p-1 rounded-full">✕</button>
+          </div>
 
-        {/* Results grid */}
-        <div className="flex-1">
-          {results.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-6 pb-10">
-               {results.map((r, i) => <PostCard key={`${r.id}-${i}`} post={r} />)}
+          {/* Action Bar */}
+          <div className="p-4 flex flex-wrap items-center gap-2 border-b border-[#ced0d4] bg-white">
+            <div className="relative flex-1 min-w-[300px] max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#65676B]" size={16} />
+              <input
+                type="text"
+                placeholder="Search for posts"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-1.5 bg-[#F0F2F5] border-transparent focus:bg-white focus:border-[#1877f2] focus:ring-1 focus:ring-[#1877f2] rounded-full text-[14px] outline-none transition-all"
+              />
             </div>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center py-20 opacity-80" style={{ color: 'var(--slate-400)' }}>
-               <span className="text-4xl lg:text-5xl mb-6">📭</span>
-               <h3 className="text-xl lg:text-2xl font-bold mb-2 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-500)' }}>
-                 {t('postSearch.noPosts', 'No posts match criteria')}
-               </h3>
-               <p className="text-xs lg:text-sm font-medium">{t('postSearch.noPostsHint', 'Try generalizing your keywords or date range.')}</p>
+
+            <div className="flex items-center gap-2">
+              <button className="flex items-center gap-1.5 bg-[#1877f2] hover:bg-[#166fe5] text-white px-4 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
+                <Plus size={18} strokeWidth={3} />
+                <span>Create</span>
+                <ChevronDown size={14} />
+              </button>
+
+              <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
+                <Filter size={16} />
+                <span>Filters</span>
+                <ChevronDown size={14} />
+              </button>
+
+              <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
+                <Columns size={16} />
+                <span>Columns</span>
+                <ChevronDown size={14} />
+              </button>
+
+              <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
+                <span>Last 28 days: Mar 16 - Apr 13</span>
+                <ChevronDown size={14} />
+              </button>
+
+              <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors ml-auto">
+                <Download size={16} />
+                <span>Export data</span>
+                <ChevronDown size={14} />
+              </button>
             </div>
-          )}
+          </div>
+
+          {/* Selection Info */}
+          <div className="px-4 py-2 border-b border-[#ced0d4] bg-white">
+             <span className="text-[12px] text-[#65676B] font-medium">
+               {selectedIds.length}/{results.length} posts selected
+             </span>
+          </div>
+
+          {/* Table Headers */}
+          <div className="flex items-center bg-[#F2F3F5] border-b border-[#ced0d4] px-4 py-2 text-[12px] font-bold text-[#65676B] uppercase tracking-wide">
+            <div className="flex items-center justify-center w-6 mr-4">
+              <input 
+                type="checkbox" 
+                checked={selectedIds.length === results.length && results.length > 0} 
+                onChange={toggleSelectAll}
+                className="w-4 h-4 rounded border-gray-300 text-[#1877f2] focus:ring-[#1877f2]"
+              />
+            </div>
+            <div className="flex-1 flex items-center gap-1 min-w-[300px]">
+              {t('postSearch.table.preview')}
+              <ChevronDown size={14} className="text-[#1877f2]" />
+            </div>
+            {['views', 'viewers', 'interactions', 'netFollows', 'impressions'].map(col => (
+              <div key={col} className="w-32 flex items-center justify-center gap-1">
+                {t(`postSearch.table.${col}`)}
+                <Info size={14} className="text-gray-400" />
+                <ArrowUpDown size={12} />
+              </div>
+            ))}
+          </div>
+
+          {/* Table Body */}
+          <div className="min-h-[400px]">
+            {isSearching ? (
+              <div className="p-20 flex flex-col items-center justify-center gap-4 text-[#65676B]">
+                 <div className="w-10 h-10 border-4 border-[#1877f2] border-t-transparent rounded-full animate-spin"></div>
+                 <span className="text-[15px] font-semibold">{t('postSearch.analyzing')}</span>
+              </div>
+            ) : results.length > 0 ? (
+              results.map(post => (
+                <PostRow 
+                  key={post.id} 
+                  post={post} 
+                  isSelected={selectedIds.includes(post.id)}
+                  onSelect={toggleSelect}
+                />
+              ))
+            ) : (
+              <div className="p-20 flex flex-col items-center justify-center text-[#65676B]">
+                <div className="text-5xl mb-4">📭</div>
+                <h3 className="text-xl font-bold mb-1 text-[#050505]">
+                  {activeTab === 'PUBLISHED' ? t('postSearch.noPosts') : `No ${activeTab.toLowerCase()} posts found`}
+                </h3>
+                <p className="text-[14px]">{t('postSearch.noPostsHint')}</p>
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
+      
+      {/* Floating Create Button (Optional, Facebook has it in sidebar usually but adding a secondary one matches overall feel) */}
+      <button className="fixed bottom-6 right-6 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all scale-100 hover:scale-105 active:scale-95 text-[#050505]">
+         <Plus size={24} />
+      </button>
+
     </div>
   );
 };
+

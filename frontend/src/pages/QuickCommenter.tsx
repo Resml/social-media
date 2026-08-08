@@ -1,183 +1,308 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../api/axios';
-import { MessageCircle, Send, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { 
+  MessageCircle, 
+  Send, 
+  User, 
+  Wand2, 
+  RefreshCw, 
+  ExternalLink
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { AIService } from '../services/aiService';
+import { toast } from 'sonner';
+
+interface SocialAccount {
+  id: string;
+  platform: string;
+  accountHandle: string;
+}
+
+interface TargetProfile {
+  id: string;
+  name: string;
+  facebookId: string;
+  platform: 'Facebook' | 'Instagram';
+  lastPost: string;
+}
+
+const MOCK_PROFILES: TargetProfile[] = [
+  { id: '1', name: 'Rahul Sharma', facebookId: 'fb.rahul.123', platform: 'Facebook', lastPost: 'Just finished a great workout!' },
+  { id: '2', name: 'Anjali Patil', facebookId: 'fb.anjali.p', platform: 'Facebook', lastPost: 'Beautiful sunset in Mumbai.' },
+  { id: '3', name: 'Vikram Singh', facebookId: 'fb.vikram.s', platform: 'Facebook', lastPost: 'Excited for the new project launch.' },
+  { id: '4', name: 'Sneha Gupta', facebookId: 'fb.sneha.g', platform: 'Facebook', lastPost: 'Had an amazing dinner tonight.' },
+  { id: '5', name: 'Amit Verma', facebookId: 'fb.amit.v', platform: 'Facebook', lastPost: 'Weekend vibes!' },
+  { id: '6', name: 'Priya Reddy', facebookId: 'fb.priya.r', platform: 'Facebook', lastPost: 'Exploring the mountains.' },
+  { id: '7', name: 'Sandeep K.', facebookId: 'fb.sandeep.k', platform: 'Facebook', lastPost: 'Congratulations to the team!' },
+  { id: '8', name: 'Meera Das', facebookId: 'fb.meera.d', platform: 'Facebook', lastPost: 'Book club meeting was fun.' },
+  { id: '9', name: 'Rohan Mehta', facebookId: 'fb.rohan.m', platform: 'Facebook', lastPost: 'New car alert!' },
+  { id: '10', name: 'Kavita Iyer', facebookId: 'fb.kavita.i', platform: 'Facebook', lastPost: 'Teaching my kids Marathi today.' },
+];
 
 export const QuickCommenter = () => {
-  const { t } = useTranslation();
-  const [url, setUrl] = useState('');
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const { t, i18n } = useTranslation();
+  const [accounts, setAccounts] = useState<SocialAccount[]>([]);
+  const [selectedAccountId, setSelectedAccountId] = useState<string>('');
+  const [comments, setComments] = useState<Record<string, string>>({});
+  const [generating, setGenerating] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState<Record<string, boolean>>({});
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  
+  // Manual URL state
+  const [manualUrl, setManualUrl] = useState('');
+  const [manualComment, setManualComment] = useState('');
+  const [manualLoading, setManualLoading] = useState(false);
 
-  const postComment = async () => {
-    if (!url || !message) return;
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const fetchAccounts = async () => {
     try {
-      const resp = await api.post('/engagement/quick-comment', { url, message });
-      setSuccess(`${t('quickCommenter.success', 'Success!')} (ID: ${resp.data.commentId})`);
-      setMessage('');
-    } catch (err: any) {
-      setError(err.response?.data?.error || t('quickCommenter.error', 'Error'));
+      const res = await api.get('/settings');
+      const socialAccounts = res.data.socialAccounts || [];
+      setAccounts(socialAccounts);
+      if (socialAccounts.length > 0) {
+        setSelectedAccountId(socialAccounts[0].id);
+      }
+    } catch (err) {
+      console.error("Failed to fetch accounts", err);
+      toast.error("Failed to load social accounts");
     } finally {
-      setLoading(false);
+      setIsDataLoading(false);
     }
   };
 
-  const inputBase: React.CSSProperties = {
-    width: '100%',
-    padding: '0.875rem 1.25rem',
-    background: 'var(--slate-50)',
-    border: '1px solid var(--slate-200)',
-    borderRadius: '0.875rem',
-    fontSize: '0.875rem',
-    color: 'var(--slate-900)',
-    outline: 'none',
-    transition: 'border-color 0.15s, box-shadow 0.15s',
+  const handleGenerateAI = async (profile: TargetProfile) => {
+    setGenerating(prev => ({ ...prev, [profile.id]: true }));
+    try {
+      const lang = i18n.language === 'mr' ? 'Marathi' : 'English';
+      const suggestion = await AIService.generateQuickComment(profile.name, profile.facebookId, lang as any);
+      setComments(prev => ({ ...prev, [profile.id]: suggestion }));
+      toast.success(t('ai.suggestSuccess', 'AI suggestion generated!'));
+    } catch (err) {
+      toast.error("Failed to generate AI suggestion");
+    } finally {
+      setGenerating(prev => ({ ...prev, [profile.id]: false }));
+    }
   };
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = 'var(--brand-400)';
-    e.target.style.boxShadow = '0 0 0 3px var(--brand-100)';
-  };
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = 'var(--slate-200)';
-    e.target.style.boxShadow = 'none';
+  const handlePostComment = async (profile: TargetProfile) => {
+    const message = comments[profile.id];
+    if (!message || !selectedAccountId) return;
+
+    setLoading(prev => ({ ...prev, [profile.id]: true }));
+    try {
+      await api.post('/engagement/quick-comment', {
+        accountId: selectedAccountId,
+        targetId: profile.facebookId,
+        message: message
+      });
+      toast.success(t('quickCommenter.success', 'Comment posted successfully!'));
+      setComments(prev => ({ ...prev, [profile.id]: '' }));
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || "Failed to post comment");
+    } finally {
+      setLoading(prev => ({ ...prev, [profile.id]: false }));
+    }
   };
 
-  const detectedPlatform = url.includes('instagram.com')
-    ? { label: 'Instagram App Detected', bg: 'linear-gradient(135deg,#e1306c,#f77737)', color: '#fff' }
-    : url.includes('facebook') || url.includes('fb.watch')
-    ? { label: 'Facebook App Detected', bg: 'var(--brand-600)', color: '#fff' }
-    : null;
+  const handlePostManualComment = async () => {
+    if (!manualUrl || !manualComment || !selectedAccountId) return;
+    setManualLoading(true);
+    try {
+      await api.post('/engagement/quick-comment', {
+        accountId: selectedAccountId,
+        url: manualUrl,
+        message: manualComment
+      });
+      toast.success(t('quickCommenter.success', 'Comment posted successfully!'));
+      setManualUrl('');
+      setManualComment('');
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || "Failed to post comment");
+    } finally {
+      setManualLoading(false);
+    }
+  };
+
+  if (isDataLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-slate-50">
+        <RefreshCw className="animate-spin text-blue-600" size={32} />
+      </div>
+    );
+  }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8" style={{ background: 'var(--slate-50)' }}>
-      <div className="max-w-3xl mx-auto">
-
-        {/* Page header */}
-        <header className="mb-8 text-center mt-4 lg:mt-8">
-          <div className="inline-flex items-center justify-center p-2.5 lg:p-3 rounded-2xl mb-4"
-            style={{ background: 'var(--brand-100)', color: 'var(--brand-600)' }}>
-            <MessageCircle size={24} className="lg:w-8 lg:h-8" strokeWidth={1.5} />
+    <div className="flex-1 overflow-y-auto p-4 lg:p-8 bg-slate-50">
+      <div className="max-w-5xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-200">
+              <MessageCircle size={28} />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+                {t('quickCommenter.title', 'Quick Commenter')}
+              </h1>
+              <p className="text-slate-500 font-medium">
+                {t('quickCommenter.description', 'Post AI-powered comments to targeted profiles')}
+              </p>
+            </div>
           </div>
-          <h1 className="text-2xl lg:text-4xl font-extrabold mb-2 tracking-tight"
-            style={{ fontFamily: 'Outfit, sans-serif', color: 'var(--slate-900)' }}>
-            {t('quickCommenter.title', 'Quick Commenter')}
-          </h1>
-          <p className="text-sm lg:text-lg" style={{ color: 'var(--slate-500)' }}>
-            {t('quickCommenter.description', 'Post comments directly to any Facebook or Instagram link from your connected account.')}
-          </p>
-        </header>
 
-        {/* Main card */}
-        <div className="rounded-2xl lg:rounded-3xl p-5 lg:p-8 mb-6"
-
-          style={{
-            background: '#ffffff',
-            border: '1px solid var(--slate-100)',
-            boxShadow: '0 4px 24px rgba(2,132,199,0.08)',
-          }}
-        >
-          {/* URL field */}
-          <div className="mb-6">
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2"
-              style={{ color: 'var(--slate-500)' }}>
-              {t('quickCommenter.targetUrl', 'Target Post URL')}
+          {/* Account Selector */}
+          <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-2">
+              {t('quickCommenter.postFrom', 'Post From:')}
             </label>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="https://www.facebook.com/share/p/…"
-                style={{ ...inputBase, paddingRight: detectedPlatform ? '12rem' : '1.25rem' }}
-                value={url}
-                onChange={e => setUrl(e.target.value)}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-              />
-              {detectedPlatform && (
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider"
-                  style={{ background: detectedPlatform.bg, color: detectedPlatform.color }}>
-                  {detectedPlatform.label}
-                </span>
+            <select
+              className="bg-slate-50 border-none rounded-xl px-3 py-2 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-600/20"
+              value={selectedAccountId}
+              onChange={(e) => setSelectedAccountId(e.target.value)}
+            >
+              {accounts.length === 0 ? (
+                <option value="">{t('quickCommenter.noAccounts', 'No accounts connected')}</option>
+              ) : (
+                accounts.map(acc => (
+                  <option key={acc.id} value={acc.id}>
+                    @{acc.accountHandle} ({acc.platform})
+                  </option>
+                ))
               )}
-            </div>
+            </select>
           </div>
-
-          {/* Comment textarea */}
-          <div className="mb-8">
-            <label className="block text-xs font-bold uppercase tracking-widest mb-2"
-              style={{ color: 'var(--slate-500)' }}>
-              {t('quickCommenter.yourComment', 'Your Comment')}
-            </label>
-            <textarea
-              rows={4}
-              placeholder={t('quickCommenter.placeholder', 'Write your genuine response here…')}
-              style={{ ...inputBase, resize: 'none' } as React.CSSProperties}
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              onFocus={handleFocus as any}
-              onBlur={handleBlur as any}
-            />
-          </div>
-
-          {/* Submit button */}
-          <button
-            onClick={postComment}
-            disabled={loading || !url || !message}
-            className="w-full py-4 text-lg font-bold rounded-2xl transition-all active:scale-95 flex justify-center items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              background: loading || !url || !message ? 'var(--slate-200)' : 'var(--brand-600)',
-              color: loading || !url || !message ? 'var(--slate-400)' : '#fff',
-              boxShadow: loading || !url || !message ? 'none' : '0 3px 12px rgba(2,132,199,0.3)',
-            }}
-            onMouseEnter={e => { if (!loading && url && message) (e.currentTarget as HTMLElement).style.background = 'var(--brand-700)'; }}
-            onMouseLeave={e => { if (!loading && url && message) (e.currentTarget as HTMLElement).style.background = 'var(--brand-600)'; }}
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                {t('quickCommenter.publishing', 'Publishing to Meta…')}
-              </>
-            ) : (
-              <>
-                <Send size={18} strokeWidth={2} />
-                {t('quickCommenter.sendComment', 'Send Comment')}
-              </>
-            )}
-          </button>
-
-          {/* Error */}
-          {error && (
-            <div className="mt-5 p-4 rounded-2xl text-sm flex items-start gap-3"
-              style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c' }}>
-              <AlertCircle size={17} strokeWidth={2} className="shrink-0 mt-0.5" />
-              <div><strong>{t('quickCommenter.error', 'Error')}:</strong> {error}</div>
-            </div>
-          )}
-
-          {/* Success */}
-          {success && (
-            <div className="mt-5 p-4 rounded-2xl text-sm flex items-start gap-3 relative overflow-hidden"
-              style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d' }}>
-              <div className="absolute left-0 top-0 w-1 h-full" style={{ background: '#10b981' }} />
-              <CheckCircle2 size={17} strokeWidth={2} className="shrink-0 mt-0.5" />
-              <div><strong className="block mb-0.5">{t('quickCommenter.success', 'Success!')}</strong>{success}</div>
-            </div>
-          )}
         </div>
 
-        {/* Disclaimer */}
-        <div className="text-center text-xs" style={{ color: 'var(--slate-400)' }}>
-          {t('quickCommenter.disclaimer', '⚠️ Comments are posted securely using the official Meta Graph API via the account connected in Settings.')}
+        {/* Manual URL Input Section */}
+        <div className="ns-card p-6 bg-white shadow-md border-blue-100">
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <ExternalLink size={14} className="text-blue-600" />
+            {t('quickCommenter.manualInput', 'Direct Link Comment')}
+          </h2>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 space-y-4">
+              <input
+                type="text"
+                className="ns-input"
+                placeholder="Paste Facebook or Instagram Post URL here..."
+                value={manualUrl}
+                onChange={(e) => setManualUrl(e.target.value)}
+              />
+              <textarea
+                rows={2}
+                className="ns-input resize-none"
+                placeholder={t('quickCommenter.placeholder', 'Write your comment...')}
+                value={manualComment}
+                onChange={(e) => setManualComment(e.target.value)}
+              />
+            </div>
+            <div className="flex items-end">
+              <button
+                onClick={handlePostManualComment}
+                disabled={manualLoading || !manualUrl || !manualComment || !selectedAccountId}
+                className="ns-btn-primary h-12 px-8 w-full md:w-auto shadow-blue-100"
+              >
+                {manualLoading ? (
+                  <RefreshCw size={20} className="animate-spin" />
+                ) : (
+                  <>
+                    <Send size={18} />
+                    {t('quickCommenter.sendComment', 'Post Now')}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Profile List */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest px-1">
+            {t('quickCommenter.targetProfiles', 'Frequent Targets')}
+          </h2>
+          <div className="grid grid-cols-1 gap-4">
+          {MOCK_PROFILES.map((profile) => (
+            <div key={profile.id} className="ns-card p-5 hover:border-blue-200 transition-all group">
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* Profile Info */}
+                <div className="flex items-start gap-4 lg:w-1/3">
+                  <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 border border-blue-100">
+                    <User size={24} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-bold text-slate-900 truncate">{profile.name}</h3>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                        {profile.platform}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 font-mono mb-2 truncate">@{profile.facebookId}</p>
+                    <div className="bg-slate-50 rounded-lg p-2 border border-slate-100 italic text-[11px] text-slate-600 line-clamp-1">
+                      "{profile.lastPost}"
+                    </div>
+                  </div>
+                </div>
+
+                {/* Comment Action */}
+                <div className="flex-1 flex flex-col sm:flex-row items-center gap-3">
+                  <div className="flex-1 w-full relative">
+                    <input
+                      type="text"
+                      className="ns-input pr-12"
+                      placeholder={t('quickCommenter.placeholder', 'Write a comment...')}
+                      value={comments[profile.id] || ''}
+                      onChange={(e) => setComments(prev => ({ ...prev, [profile.id]: e.target.value }))}
+                    />
+                    <button
+                      onClick={() => handleGenerateAI(profile)}
+                      disabled={generating[profile.id]}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+                      title={t('ai.generateBtn', 'Generate AI Comment')}
+                    >
+                      {generating[profile.id] ? (
+                        <RefreshCw size={18} className="animate-spin" />
+                      ) : (
+                        <Wand2 size={18} />
+                      )}
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => handlePostComment(profile)}
+                    disabled={loading[profile.id] || !comments[profile.id] || !selectedAccountId}
+                    className="ns-btn-primary px-6 h-10 w-full sm:w-auto shadow-blue-100 whitespace-nowrap"
+                  >
+                    {loading[profile.id] ? (
+                      <RefreshCw size={18} className="animate-spin" />
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        {t('quickCommenter.sendComment', 'Post')}
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* View Link */}
+                <div className="hidden lg:flex items-center justify-center px-4 border-l border-slate-100">
+                  <a 
+                    href={`https://facebook.com/${profile.facebookId}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
+                  >
+                    <ExternalLink size={18} />
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };

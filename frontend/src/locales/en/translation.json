@@ -71,6 +71,26 @@
     "safetyBlock": "Safety Guard Blocked",
     "selectThread": "Select a thread to view details"
   },
+  "ai": {
+    "subtitle": "Generate premium content in seconds",
+    "configuration": "Configuration",
+    "topicLabel": "What is the topic?",
+    "topicPlaceholder": "e.g., Opening of a new community park this Sunday...",
+    "typeLabel": "Content Type",
+    "toneLabel": "Tone",
+    "languageLabel": "Output Language",
+    "generateBtn": "Generate Content",
+    "generating": "Generating...",
+    "resultTitle": "AI Result",
+    "copyBtn": "Copy to clipboard",
+    "emptyState": "Configure the options and click generate to see the magic happen.",
+    "analyzing": "Synthesizing content...",
+    "historyTitle": "History",
+    "searchHistory": "Search history...",
+    "noHistory": "No history yet",
+    "successGenerated": "Content generated successfully!",
+    "copied": "Copied to clipboard!"
+  },
   "schedule": {
     "createDeployment": "Create Deployment",
     "targetAccount": "Target Account",
@@ -173,7 +193,26 @@
     "analyzing": "Analyzing Post Database…",
     "retrieved": "Retrieved {{total}} matching entries",
     "noPosts": "No posts match criteria",
-    "noPostsHint": "Try generalizing your keywords or date range."
+    "noPostsHint": "Try generalizing your keywords or date range.",
+    "tabs": {
+        "published": "Published",
+        "scheduled": "Scheduled",
+        "drafts": "Drafts"
+    },
+    "table": {
+        "preview": "Preview",
+        "views": "Views",
+        "viewers": "Viewers",
+        "interactions": "Interactions",
+        "netFollows": "Net follows",
+        "impressions": "Impressions"
+    },
+    "actions": {
+        "create": "Create",
+        "filters": "Filters",
+        "columns": "Columns",
+        "export": "Export data"
+    }
   },
   "postCard": {
     "timeAgo": {
@@ -200,7 +239,12 @@
     "sendComment": "Send Comment",
     "error": "Error",
     "success": "Success!",
-    "disclaimer": "⚠️ Comments are posted securely using the official Meta Graph API via the account connected in Settings."
+    "disclaimer": "⚠️ Comments are posted securely using the official Meta Graph API via the account connected in Settings.",
+    "postFrom": "Post From:",
+    "noAccounts": "No accounts connected",
+    "suggestSuccess": "AI suggestion generated!",
+    "manualInput": "Direct Link Comment",
+    "targetProfiles": "Frequent Targets"
   },
   "commentExporter": {
     "title": "Comment Exporter",

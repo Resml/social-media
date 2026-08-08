@@ -141,6 +141,21 @@ export const Schedule = () => {
             placeholder={t('schedule.captionPlaceholder', 'Write your post caption here…')}
             onFocus={handleFocus as any} onBlur={handleBlur as any}
           />
+          {/* Hashtag counter */}
+          {(() => {
+            const tags = (content.match(/#\w+/g) || []);
+            const count = tags.length;
+            return count > 0 ? (
+              <div className={`mt-2 flex items-center gap-2 text-xs font-bold px-3 py-2 rounded-xl ${count > 3 ? 'animate-pulse' : ''}`}
+                style={{ background: count > 3 ? '#fef2f2' : '#f0fdf4', color: count > 3 ? '#dc2626' : '#16a34a' }}>
+                <span>{count > 3 ? '⚠️' : '✅'}</span>
+                <span>{count} hashtag{count !== 1 ? 's' : ''} detected</span>
+                {count > 3 && <span className="font-normal">— Document says: use only 2–3 hashtags!</span>}
+                {count <= 3 && <span className="font-normal opacity-70">— Good! Keep it at 2–3 max</span>}
+                <span className="ml-auto opacity-50">{tags.join(' ')}</span>
+              </div>
+            ) : null;
+          })()}
         </div>
 
         {/* Media upload */}

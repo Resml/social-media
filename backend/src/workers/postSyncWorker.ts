@@ -13,9 +13,12 @@ export const postSyncQueue = new Queue('post-sync', { connection });
 
 export const postSyncWorker = new Worker('post-sync', async (job: Job) => {
   if (job.name === 'sync-posts') {
-    const activeAccounts = await prisma.socialAccount.findMany();
+    const { accountId } = job.data;
+    const accounts = accountId 
+      ? await prisma.socialAccount.findMany({ where: { id: accountId } })
+      : await prisma.socialAccount.findMany();
     
-    for (const account of activeAccounts) {
+    for (const account of accounts) {
       try {
         let postsToSync: any[] = [];
         

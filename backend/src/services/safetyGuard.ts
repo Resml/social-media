@@ -45,7 +45,7 @@ export const safetyGuard = {
     }
 
     // Parse per-account prefs (fall back to safe defaults)
-    const prefs = (account.safetyPrefs as SafetyPrefs) ?? {
+    const prefs = (account.safetyPrefs as unknown as SafetyPrefs) ?? {
       dailyCap: 15,
       gapSeconds: 60,
       blackoutStart: 0,
