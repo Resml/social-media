@@ -627,12 +627,12 @@
     }
   },
   "adTracker": {
-    "title": "अ‍ॅड ट्रॅकर (Ad Tracker)",
+    "title": "अ‍ॅड ट्रॅकर",
     "subtitle": "मासिक पेड कॅम्पेन्सचा मागोवा घ्या · अहवालानुसार ध्येय: दरमहा १ पेड अ‍ॅड",
     "addCampaign": "कॅम्पेन जोडा",
     "stats": {
       "totalSpent": "एकूण खर्च",
-      "totalReach": "एकूण पोहोच (Reach)",
+      "totalReach": "एकूण पोहोच",
       "totalClicks": "एकूण क्लिक्स",
       "avgCPC": "सरासरी CPC"
     },
@@ -686,7 +686,7 @@
     }
   },
   "teamTasks": {
-    "title": "टीम टास्क (Team Tasks)",
+    "title": "टीम टास्क",
     "subtitle": "तुमच्या टीममध्ये पोस्टची कामे सोपवा आणि मागोवा घ्या",
     "addTask": "टास्क जोडा",
     "stats": {
@@ -706,7 +706,7 @@
       "Birthday Post": "वाढदिवसाची पोस्ट",
       "Festival Post": "सण पोस्ट",
       "Social Issue": "सामाजिक समस्या",
-      "Poll": "मतदान (Poll)",
+      "Poll": "मतदान",
       "Live Video": "लाईव्ह व्हिडिओ",
       "Campaign": "मोहीम",
       "Repost": "रिपोस्ट",
