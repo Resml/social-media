@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Plus, X, ChevronLeft, ChevronRight, Calendar, Gift, Star, Scale, BarChart2, Megaphone, RefreshCw, Radio, AlignLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { getHolidaysForYear } from '../services/holidaysService';
 
 type Category = 'birthday' | 'festival' | 'social' | 'poll' | 'campaign' | 'repost' | 'live';
 type Status = 'draft' | 'ready' | 'posted';
@@ -8,6 +9,7 @@ type Status = 'draft' | 'ready' | 'posted';
 interface CalendarEntry {
   id: string; date: number; month: number; year: number;
   category: Category; title: string; assignee: string; status: Status;
+  isSystem?: boolean;
 }
 
 const CATEGORIES: { id: Category; label: string; Icon: React.FC<any>; color: string; bg: string; border: string }[] = [
@@ -60,7 +62,18 @@ export const ContentCalendar = () => {
   const firstDay    = new Date(viewYear, viewMonth, 1).getDay();
   const prevMonth   = () => { if(viewMonth===0){setViewMonth(11);setViewYear(y=>y-1);}else setViewMonth(m=>m-1); };
   const nextMonth   = () => { if(viewMonth===11){setViewMonth(0);setViewYear(y=>y+1);}else setViewMonth(m=>m+1); };
-  const dayEntries  = (d:number) => entries.filter(e=>e.date===d&&e.month===viewMonth&&e.year===viewYear);
+  
+  const systemEntries = useMemo(() => {
+    return getHolidaysForYear(viewYear).map(h => ({
+      id: h.id, date: h.date, month: h.month, year: h.year,
+      category: 'festival' as Category, title: h.name, assignee: 'System', status: 'posted' as Status,
+      isSystem: true
+    }));
+  }, [viewYear]);
+
+  const allEntries = useMemo(() => [...entries, ...systemEntries], [entries, systemEntries]);
+  
+  const dayEntries  = (d:number) => allEntries.filter(e=>e.date===d&&e.month===viewMonth&&e.year===viewYear);
   const catOf       = (id:Category) => CATEGORIES.find(c=>c.id===id)!;
 
   const addEntry = () => {
@@ -133,7 +146,9 @@ export const ContentCalendar = () => {
                       <div key={e.id} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md mb-0.5 flex items-center gap-1 justify-between group"
                         style={{background:cat.bg, color:cat.color}} onClick={ev=>ev.stopPropagation()}>
                         <span className="flex items-center gap-1 truncate"><CatIcon size={9} strokeWidth={2}/> {e.title}</span>
-                        <button onClick={()=>setEntries(p=>p.filter(x=>x.id!==e.id))} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"><X size={9}/></button>
+                        {!e.isSystem && (
+                          <button onClick={()=>setEntries(p=>p.filter(x=>x.id!==e.id))} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"><X size={9}/></button>
+                        )}
                       </div>
                     );
                   })}
@@ -150,7 +165,7 @@ export const ContentCalendar = () => {
             <AlignLeft size={16} style={{color:'var(--brand-600)'}}/> {t('calendar.thisMonthsEntries', "This Month's Entries")}
           </h3>
           <div className="space-y-2">
-            {entries.filter(e=>e.month===viewMonth&&e.year===viewYear).sort((a,b)=>a.date-b.date).map(e=>{
+            {allEntries.filter(e=>e.month===viewMonth&&e.year===viewYear).sort((a,b)=>a.date-b.date).map(e=>{
               const cat=catOf(e.category); const st=statusStyle[e.status]; const CatIcon=cat.Icon;
               return (
                 <div key={e.id} className="flex items-center gap-3 p-3 rounded-xl border" style={{borderColor:'var(--slate-100)'}}>
@@ -162,11 +177,15 @@ export const ContentCalendar = () => {
                     <p className="text-xs" style={{color:'var(--slate-500)'}}>{String(t(`calendar.months.${e.month}`, MONTHS[e.month]))} {e.date} · {String(t(`calendar.team.${e.assignee}`, e.assignee))}</p>
                   </div>
                   <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg shrink-0" style={{background:st.bg, color:st.color}}>{String(t(`calendar.status.${e.status}`, e.status))}</span>
-                  <button onClick={()=>setEntries(p=>p.filter(x=>x.id!==e.id))} className="text-slate-300 hover:text-red-400 transition-colors"><X size={15}/></button>
+                  {!e.isSystem ? (
+                    <button onClick={()=>setEntries(p=>p.filter(x=>x.id!==e.id))} className="text-slate-300 hover:text-red-400 transition-colors"><X size={15}/></button>
+                  ) : (
+                    <div className="w-[15px] shrink-0" />
+                  )}
                 </div>
               );
             })}
-            {entries.filter(e=>e.month===viewMonth&&e.year===viewYear).length===0&&(
+            {allEntries.filter(e=>e.month===viewMonth&&e.year===viewYear).length===0&&(
               <p className="text-sm italic text-center py-6" style={{color:'var(--slate-400)'}}>{t('calendar.noEntries', 'No entries this month. Click a date to add one.')}</p>
             )}
           </div>
