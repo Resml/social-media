@@ -172,7 +172,7 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                                  </p>
                                  <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0"
                                    style={{ background: 'var(--slate-100)', color: 'var(--slate-500)' }}>
-                                   {n.type}
+                                   {String(t(`header.types.${n.type}`, n.type))}
                                  </span>
                                </div>
                                <p className="text-xs line-clamp-2 leading-relaxed" style={{ color: 'var(--slate-500)' }}>
@@ -182,7 +182,7 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                                <p className="text-[10px] mt-1 font-semibold flex items-center gap-1"
                                  style={{ color: meta.color }}>
                                  {meta.icon}
-                                 {n.socialAccount?.platform}
+                                 {String(t(`dashboard.platforms.${n.socialAccount?.platform?.toLowerCase()}`, n.socialAccount?.platform))}
                                </p>
                              </div>
                            </NavLink>
