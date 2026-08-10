@@ -76,7 +76,7 @@ export const QuickCommenter = () => {
   const handleGenerateAI = async (profile: TargetProfile) => {
     setGenerating(prev => ({ ...prev, [profile.id]: true }));
     try {
-      const lang = i18n.language.startsWith('mr') ? 'Marathi' : 'English';
+      const lang = i18n.language.startsWith('hi') ? 'Hindi' : i18n.language.startsWith('mr') ? 'Marathi' : 'English';
       const suggestion = await AIService.generateQuickComment(profile.name, profile.facebookId, lang as any);
       setComments(prev => ({ ...prev, [profile.id]: suggestion }));
       toast.success(t('ai.suggestSuccess', 'AI suggestion generated!'));

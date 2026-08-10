@@ -21,7 +21,7 @@ export const AIAssistant = () => {
   const [contentType, setContentType] = useState<ContentType>('Social Media Caption');
   const [tone, setTone] = useState<ToneType>('Enthusiastic');
   const [aiLanguage, setAiLanguage] = useState<LanguageType>(
-    i18n.language.startsWith('mr') ? 'Marathi' : 'English'
+    i18n.language.startsWith('hi') ? 'Hindi' : i18n.language.startsWith('mr') ? 'Marathi' : 'English'
   );
 
   const [generatedContent, setGeneratedContent] = useState('');

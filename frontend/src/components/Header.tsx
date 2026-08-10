@@ -73,11 +73,19 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                   className="flex items-center gap-1.5 p-2 rounded-xl text-xs font-bold transition-all hover:bg-slate-100 text-slate-500"
                >
                   <Languages size={18} strokeWidth={1.8} />
-                  <span className="hidden sm:inline">{i18n.language === 'en' ? 'English' : 'मराठी'}</span>
+                  <span className="hidden sm:inline">
+                    {i18n.language.startsWith('hi') ? 'हिंदी' : i18n.language.startsWith('mr') ? 'मराठी' : 'English'}
+                  </span>
                </button>
 
                {isLangMenuOpen && (
                   <div className="absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden py-1">
+                     <button
+                        onClick={() => { i18n.changeLanguage('hi'); setIsLangMenuOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language.startsWith('hi') ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
+                     >
+                        हिंदी
+                     </button>
                      <button
                         onClick={() => { i18n.changeLanguage('mr'); setIsLangMenuOpen(false); }}
                         className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language.startsWith('mr') ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
