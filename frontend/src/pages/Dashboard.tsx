@@ -2,8 +2,12 @@ import { useEffect, useState, useRef } from 'react';
 import { api } from '../api/axios';
 import { StatCard } from '../components/StatCard';
 import { EngagementChart, FollowerGrowthChart } from '../components/Charts';
-import { Users, TrendingUp, Eye, AtSign, ArrowUp } from 'lucide-react';
+import { Users, TrendingUp, Eye, AtSign, ArrowUp, Download } from 'lucide-react';
 import { haptics } from '../utils/haptics';
+import { toast } from 'sonner';
+import * as htmlToImage from 'html-to-image';
+import { jsPDF } from 'jspdf';
+import { DashboardReport } from '../components/DashboardReport';
 import { useTranslation } from 'react-i18next';
 
 export const Dashboard = () => {
@@ -18,6 +22,8 @@ export const Dashboard = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
   useEffect(() => {
     api.get('/auth/accounts').then(res => {
@@ -48,6 +54,43 @@ export const Dashboard = () => {
     const interval = setInterval(fetchData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [platform]);
+
+    const generatePDF = async () => {
+    if (!reportRef.current) return;
+    setIsGeneratingReport(true);
+    haptics.medium();
+    
+            try {
+      const element = reportRef.current;
+      if (!element) {
+        toast.error("Report template not found");
+        return;
+      }
+      
+      const imgData = await htmlToImage.toPng(element, { 
+        pixelRatio: 2, 
+        backgroundColor: '#ffffff'
+      });
+      
+      if (!imgData || imgData === 'data:,') {
+        toast.error("Failed to capture report. Image is empty.");
+        return;
+      }
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Dashboard_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+      toast.success("Report downloaded successfully!");
+    } catch (err: any) {
+      console.error('Failed to generate PDF', err);
+      toast.error("Error generating PDF: " + (err?.message || "Unknown error"));
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
 
   const handleManualSync = async () => {
     if (!selectedAccount) return;
@@ -83,6 +126,10 @@ export const Dashboard = () => {
 
   return (
     <div ref={scrollRef} className="flex-1 overflow-y-auto" style={{ background: 'var(--slate-50)', padding: '0.75rem' }}>
+            <div ref={reportRef} style={{ position: 'absolute', top: 0, left: 0, zIndex: -50, width: '794px' }}>
+        <DashboardReport summary={summary} growth={growth} engagement={engagement} />
+      </div>
+
       <div className="max-w-7xl mx-auto md:p-4">
 
         {/* Pro Header */}
@@ -109,7 +156,17 @@ export const Dashboard = () => {
               </select>
               
               <button 
-                onClick={handleManualSync}
+                onClick={generatePDF}
+                disabled={isGeneratingReport}
+                className={`px-3 py-1.5 rounded-lg font-medium text-[13px] transition-all flex items-center gap-1.5 border ${isGeneratingReport ? 'bg-slate-50 text-slate-400 border-slate-200' : 'bg-[#f0f8ff] text-[#0076ce] border-[#bfe0ff] hover:bg-[#e0f0ff]'}`}
+              >
+                {isGeneratingReport ? (
+                  <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                ) : <Download size={14} />}
+                {isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : t('dashboard.report.downloadPdf', 'Download PDF')}
+              </button>
+              
+              <button
                 disabled={isSyncing}
                 className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${
                   isSyncing ? 'bg-slate-100 text-slate-400' : 'bg-brand-600 text-white hover:bg-brand-700'
