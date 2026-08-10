@@ -12,7 +12,7 @@ export const PostRow = ({ post, isSelected, onSelect }: PostRowProps) => {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    const locale = i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US';
+    const locale = i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US';
     return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' }) + ` ${t('postRow.at', 'at')} ` + 
            date.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit', hour12: true });
   };

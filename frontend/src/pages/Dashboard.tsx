@@ -221,7 +221,7 @@ export const Dashboard = () => {
                           {typeLabel}
                         </span>
                         <span className="text-xs font-medium" style={{ color: 'var(--slate-400)' }}>
-                          {item.authorHandle} · {item.socialAccount?.platform ? String(t(`dashboard.platforms.${item.socialAccount.platform.toLowerCase()}`, item.socialAccount.platform)).toUpperCase() : ''} · {new Date(item.receivedAt).toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')}
+                          {item.authorHandle} · {item.socialAccount?.platform ? String(t(`dashboard.platforms.${item.socialAccount.platform.toLowerCase()}`, item.socialAccount.platform)).toUpperCase() : ''} · {new Date(item.receivedAt).toLocaleDateString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')}
                         </span>
                       </div>
                       <div className="text-sm" style={{ color: 'var(--slate-700)' }}>{item.content}</div>

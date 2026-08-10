@@ -69,11 +69,16 @@ export const AIService = {
         if (isMarathi) {
           return `नमस्कार मित्रांनो आणि मान्यवरांनो,\n\nआज आपण एका अत्यंत महत्त्वाच्या विषयावर चर्चा करण्यासाठी येथे जमलो आहोत - '${topic}'.\n\nया विषयाचे गांभीर्य लक्षात घेता, आपण सर्वांनी मिळून यावर विचार करणे गरजेचे आहे. मला खात्री आहे की आपले सहकार्य नक्कीच मिळेल.\n\nधन्यवाद.\n- आपला स्नेही.`;
         }
+        if (isHindi) {
+          return `नमस्कार मित्रों और आदरणीय अतिथियों,\n\nआज हम एक बेहद महत्वपूर्ण विषय पर चर्चा करने के लिए यहाँ एकत्र हुए हैं - '${topic}'.\n\nइस विषय की गंभीरता को ध्यान में रखते हुए, हम सभी को मिलकर इस पर विचार करने की आवश्यकता है। मुझे विश्वास है कि आप सभी का सहयोग मिलेगा।\n\nधन्यवाद।`;
+        }
         return `Hello everyone and respected guests,\n\nWe have gathered here today to talk about an important topic: '${topic}'.\n\nUnderstanding the importance of this, I believe we all need to work together for progress. I'm confident in our collective efforts.\n\nThank you.`;
       }
 
       return isMarathi 
         ? `विषय: ${topic}\n\nमहोदय/महोदया,\n\nआपल्या विनंतीनुसार, आम्ही '${topic}' या विषयावर अधिक माहिती लवकरच उपलब्ध करून देऊ. \n\nधन्यवाद.`
+        : isHindi
+        ? `विषय: ${topic}\n\nमहोदय/महोदया,\n\nआपके अनुरोध के अनुसार, हम जल्द ही '${topic}' विषय पर अधिक जानकारी उपलब्ध कराएंगे।\n\nधन्यवाद।`
         : `Subject: Update on ${topic}\n\nDear recipient,\n\nRegarding '${topic}', we are currently processing your request and will provide more details soon.\n\nBest regards.`;
     }
   },
@@ -90,7 +95,7 @@ export const AIService = {
       return (await result.response).text().trim().replace(/^"|"$/g, '');
     } catch (error) {
       console.error("AI Quick Comment Error:", error);
-      return language === 'Marathi' ? "छान पोस्ट!" : "Great post!";
+      return language === 'Hindi' ? "बहुत बढ़िया पोस्ट!" : language === 'Marathi' ? "छान पोस्ट!" : "Great post!";
     }
   }
 };

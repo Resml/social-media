@@ -249,7 +249,7 @@ export const Schedule = () => {
                 <div className="w-14 h-14 rounded-xl flex flex-col items-center justify-center font-bold shrink-0"
                   style={calBoxStyle(p.status)}>
                   <span className="text-[10px] uppercase font-bold">
-                    {new Date(p.scheduledAt).toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US', { month: 'short' })}
+                    {new Date(p.scheduledAt).toLocaleDateString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US', { month: 'short' })}
                   </span>
                   <span className="text-xl font-extrabold leading-none">
                     {new Date(p.scheduledAt).getDate()}
@@ -271,7 +271,7 @@ export const Schedule = () => {
                   </div>
                   <p className="font-semibold line-clamp-1 mb-1" style={{ color: 'var(--slate-800)' }}>{p.content}</p>
                   <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--slate-400)' }}>
-                    {new Date(p.scheduledAt).toLocaleTimeString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')}
+                    {new Date(p.scheduledAt).toLocaleTimeString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')}
                   </p>
                 </div>
               </div>
