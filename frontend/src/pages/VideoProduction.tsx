@@ -138,7 +138,7 @@ export const VideoProduction = () => {
           <div className="flex items-center gap-2">
             <button onClick={generatePDF} disabled={isGeneratingReport} className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${isGeneratingReport ? 'bg-slate-200 text-slate-500' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'}`} style={{boxShadow:'0 2px 4px rgba(0,0,0,0.05)'}}>
               {isGeneratingReport ? (<div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />) : <Download size={16}/>}
-              {isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : 'Download PDF'}
+              {isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : t('dashboard.report.downloadPdf', 'Download PDF')}
             </button>
             <button onClick={() => setShowForm(true)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95"

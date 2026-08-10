@@ -127,7 +127,7 @@ export const PostSearch = () => {
                 {isGeneratingReport ? (
                   <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
                 ) : <Download size={16} />}
-                <span>{isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : 'Download PDF'}</span>
+                <span>{isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : t('dashboard.report.downloadPdf', 'Download PDF')}</span>
               </button>
             </div>
             

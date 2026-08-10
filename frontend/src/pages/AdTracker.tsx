@@ -112,7 +112,7 @@ export const AdTracker = () => {
               {isGeneratingReport ? (
                   <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
                 ) : <Download size={16}/>}
-              {isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : 'Download PDF'}
+              {isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : t('dashboard.report.downloadPdf', 'Download PDF')}
             </button>
             <button onClick={()=>setShowForm(true)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95"
