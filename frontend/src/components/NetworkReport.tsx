@@ -24,6 +24,7 @@ export const NetworkReport = forwardRef<HTMLDivElement, NetworkReportProps>(({ c
   });
 
   const isMarathi = i18n.language.startsWith('mr');
+  const isHindi = i18n.language.startsWith('hi');
   
   const truncate = (str: string, len: number) => {
     if (!str) return '-';
@@ -47,15 +48,15 @@ export const NetworkReport = forwardRef<HTMLDivElement, NetworkReportProps>(({ c
       <div className="flex justify-between items-end mb-2">
         <div>
           <h1 className="text-3xl font-bold text-[#0066cc] mb-1">
-            {isMarathi ? 'नेटवर्क बिल्डर अहवाल' : 'Network Builder Report'}
+            {isMarathi ? 'नेटवर्क बिल्डर अहवाल' : isHindi ? 'नेटवर्क बिल्डर रिपोर्ट' : 'Network Builder Report'}
           </h1>
           <p className="text-lg text-gray-500">
-            {isMarathi ? 'संपर्क आणि स्वयंसेवक' : 'Contacts & Volunteers'}
+            {isMarathi ? 'संपर्क आणि स्वयंसेवक' : isHindi ? 'संपर्क और स्वयंसेवक' : 'Contacts & Volunteers'}
           </p>
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
-          <p>{isMarathi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण संपर्क:' : 'Total Contacts:'} {contacts.length}</p>
+          <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
+          <p>{isMarathi ? 'एकूण संपर्क:' : isHindi ? 'कुल संपर्क:' : 'Total Contacts:'} {contacts.length}</p>
         </div>
       </div>
 
@@ -65,12 +66,12 @@ export const NetworkReport = forwardRef<HTMLDivElement, NetworkReportProps>(({ c
       <table className="w-full text-sm text-left border-collapse border border-gray-200">
         <thead className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-300">
           <tr>
-            <th className="px-3 py-4 border-r border-gray-200 w-10 text-center">{isMarathi ? 'अ. क्र.' : 'Sr. No.'}</th>
-            <th className="px-4 py-4 border-r border-gray-200 w-48">{isMarathi ? 'नाव' : 'Name'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'ठिकाण' : 'Location'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'स्वारस्य' : 'Interest'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'टॅग' : 'Tag'}</th>
-            <th className="px-4 py-4">{isMarathi ? 'संपर्क' : 'Contact Info'}</th>
+            <th className="px-3 py-4 border-r border-gray-200 w-10 text-center">{isMarathi ? 'अ. क्र.' : isHindi ? 'क्र. सं.' : 'Sr. No.'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-48">{isMarathi ? 'नाव' : isHindi ? 'नाम' : 'Name'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'ठिकाण' : isHindi ? 'स्थान' : 'Location'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'स्वारस्य' : isHindi ? 'रुचि' : 'Interest'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'टॅग' : isHindi ? 'टैग' : 'Tag'}</th>
+            <th className="px-4 py-4">{isMarathi ? 'संपर्क' : isHindi ? 'संपर्क जानकारी' : 'Contact Info'}</th>
           </tr>
         </thead>
         <tbody>
@@ -107,7 +108,7 @@ export const NetworkReport = forwardRef<HTMLDivElement, NetworkReportProps>(({ c
           }) : (
             <tr>
               <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                {isMarathi ? 'कोणतीही माहिती उपलब्ध नाही' : 'No data available'}
+                {isMarathi ? 'कोणतीही माहिती उपलब्ध नाही' : isHindi ? 'कोई डेटा उपलब्ध नहीं' : 'No data available'}
               </td>
             </tr>
           )}

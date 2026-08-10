@@ -25,6 +25,7 @@ export const ArticlePlannerReport = forwardRef<HTMLDivElement, ArticlePlannerRep
   });
 
   const isMarathi = i18n.language.startsWith('mr');
+  const isHindi = i18n.language.startsWith('hi');
   
   const truncate = (str: string, len: number) => {
     if (!str) return '-';
@@ -48,15 +49,15 @@ export const ArticlePlannerReport = forwardRef<HTMLDivElement, ArticlePlannerRep
       <div className="flex justify-between items-end mb-2">
         <div>
           <h1 className="text-3xl font-bold text-[#0066cc] mb-1">
-            {isMarathi ? 'लेख नियोजन अहवाल' : 'Article Planner Report'}
+            {isMarathi ? 'लेख नियोजन अहवाल' : isHindi ? 'लेख प्लानर रिपोर्ट' : 'Article Planner Report'}
           </h1>
           <p className="text-lg text-gray-500">
-            {isMarathi ? 'दैनिक आणि साप्ताहिक लेख' : 'Daily & Weekly Articles'}
+            {isMarathi ? 'दैनिक आणि साप्ताहिक लेख' : isHindi ? 'दैनिक और साप्ताहिक लेख' : 'Daily & Weekly Articles'}
           </p>
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
-          <p>{isMarathi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण लेख:' : 'Total Articles:'} {articles.length}</p>
+          <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
+          <p>{isMarathi ? 'एकूण लेख:' : isHindi ? 'कुल लेख:' : 'Total Articles:'} {articles.length}</p>
         </div>
       </div>
 
@@ -66,12 +67,12 @@ export const ArticlePlannerReport = forwardRef<HTMLDivElement, ArticlePlannerRep
       <table className="w-full text-sm text-left border-collapse border border-gray-200">
         <thead className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-300">
           <tr>
-            <th className="px-3 py-4 border-r border-gray-200 w-10 text-center">{isMarathi ? 'अ. क्र.' : 'Sr. No.'}</th>
-            <th className="px-4 py-4 border-r border-gray-200 w-56">{isMarathi ? 'शीर्षक' : 'Title'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'प्रकार' : 'Type'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'लेखक' : 'Writer'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'दिनांक' : 'Date'}</th>
-            <th className="px-4 py-4">{isMarathi ? 'स्थिती' : 'Status'}</th>
+            <th className="px-3 py-4 border-r border-gray-200 w-10 text-center">{isMarathi ? 'अ. क्र.' : isHindi ? 'क्र. सं.' : 'Sr. No.'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-56">{isMarathi ? 'शीर्षक' : isHindi ? 'शीर्षक' : 'Title'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'प्रकार' : isHindi ? 'प्रकार' : 'Type'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'लेखक' : isHindi ? 'लेखक' : 'Writer'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'दिनांक' : isHindi ? 'दिनांक' : 'Date'}</th>
+            <th className="px-4 py-4">{isMarathi ? 'स्थिती' : isHindi ? 'स्थिति' : 'Status'}</th>
           </tr>
         </thead>
         <tbody>
@@ -81,18 +82,18 @@ export const ArticlePlannerReport = forwardRef<HTMLDivElement, ArticlePlannerRep
             let statusColor = '';
             
             if (article.status === 'published') {
-              statusText = isMarathi ? 'प्रकाशित' : 'Published';
+              statusText = isMarathi ? 'प्रकाशित' : isHindi ? 'प्रकाशित' : 'Published';
               statusColor = 'bg-green-100 text-green-700';
             } else if (article.status === 'draft') {
-              statusText = isMarathi ? 'मसुदा' : 'Draft';
+              statusText = isMarathi ? 'मसुदा' : isHindi ? 'ड्राफ्ट' : 'Draft';
               statusColor = 'bg-blue-100 text-blue-700';
             } else {
-              statusText = isMarathi ? 'कल्पना' : 'Idea';
+              statusText = isMarathi ? 'कल्पना' : isHindi ? 'आइडिया' : 'Idea';
               statusColor = 'bg-gray-100 text-gray-700';
             }
 
-            const typeLabel = article.type === 'daily-short' ? (isMarathi ? 'दैनिक' : 'Daily') : (isMarathi ? 'साप्ताहिक' : 'Weekly');
-            const dueDate = article.dueDate ? new Date(article.dueDate).toLocaleDateString(isMarathi ? 'mr-IN' : 'en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-';
+            const typeLabel = article.type === 'daily-short' ? (isMarathi ? 'दैनिक' : isHindi ? 'दैनिक' : 'Daily') : (isMarathi ? 'साप्ताहिक' : isHindi ? 'साप्ताहिक' : 'Weekly');
+            const dueDate = article.dueDate ? new Date(article.dueDate).toLocaleDateString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-';
 
             return (
               <tr key={article.id} className="border-b border-gray-200 hover:bg-gray-50">
@@ -114,7 +115,7 @@ export const ArticlePlannerReport = forwardRef<HTMLDivElement, ArticlePlannerRep
           }) : (
             <tr>
               <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                {isMarathi ? 'कोणतीही माहिती उपलब्ध नाही' : 'No data available'}
+                {isMarathi ? 'कोणतीही माहिती उपलब्ध नाही' : isHindi ? 'कोई डेटा उपलब्ध नहीं' : 'No data available'}
               </td>
             </tr>
           )}

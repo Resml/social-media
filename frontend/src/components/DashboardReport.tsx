@@ -20,6 +20,7 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
 
   // Combine and process data (take last 15 days to fit A4 page perfectly)
   const isMarathi = i18n.language.startsWith('mr');
+  const isHindi = i18n.language.startsWith('hi');
   
   // Create table rows
   const tableRows = [];
@@ -38,26 +39,26 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
     const growthDiff = gData.followers - prevGData.followers;
     
     // Status Logic
-    let statusText = isMarathi ? 'सामान्य' : 'Normal';
+    let statusText = isMarathi ? 'सामान्य' : isHindi ? 'सामान्य' : 'Normal';
     let statusColor = 'bg-gray-100 text-gray-700';
     
     if (eData.views > 20000 || growthDiff > 50) {
-      statusText = isMarathi ? 'मंजूर' : 'Excellent';
+      statusText = isMarathi ? 'मंजूर' : isHindi ? 'उत्कृष्ट' : 'Excellent';
       statusColor = 'bg-green-100 text-green-700';
     } else if (eData.views < 5000 || growthDiff < 0) {
-      statusText = isMarathi ? 'नाकारले' : 'Needs Impr.';
+      statusText = isMarathi ? 'नाकारले' : isHindi ? 'सुधार की जरूरत' : 'Needs Impr.';
       statusColor = 'bg-red-100 text-red-700';
     } else if (eData.views > 10000) {
-      statusText = isMarathi ? 'प्रगतीवर' : 'Good';
+      statusText = isMarathi ? 'प्रगतीवर' : isHindi ? 'अच्छा' : 'Good';
       statusColor = 'bg-blue-100 text-blue-700';
     }
 
     tableRows.push({
       sr: i + 1,
       date: gData.date,
-      followers: gData.followers.toLocaleString(isMarathi ? 'mr-IN' : 'en-US'),
-      views: (eData.views || Math.floor(Math.random() * 25000 + 5000)).toLocaleString(isMarathi ? 'mr-IN' : 'en-US'),
-      likes: (eData.likes || Math.floor(Math.random() * 5000 + 1000)).toLocaleString(isMarathi ? 'mr-IN' : 'en-US'),
+      followers: gData.followers.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'),
+      views: (eData.views || Math.floor(Math.random() * 25000 + 5000)).toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'),
+      likes: (eData.likes || Math.floor(Math.random() * 5000 + 1000)).toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'),
       status: statusText,
       statusColor,
       growth: growthDiff > 0 ? `+${growthDiff}` : growthDiff.toString()
@@ -79,15 +80,15 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
       <div className="flex justify-between items-end mb-2">
         <div>
           <h1 className="text-3xl font-bold text-[#0066cc] mb-1">
-            {isMarathi ? 'सोशल मीडिया रिपोर्ट' : 'Social Media Report'}
+            {isMarathi ? 'सोशल मीडिया रिपोर्ट' : isHindi ? 'सोशल मीडिया रिपोर्ट' : 'Social Media Report'}
           </h1>
           <p className="text-lg text-gray-500">
-            {isMarathi ? 'विश्लेषण अहवाल' : 'Analytics Report'}
+            {isMarathi ? 'विश्लेषण अहवाल' : isHindi ? 'एनालिटिक्स रिपोर्ट' : 'Analytics Report'}
           </p>
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
-          <p>{isMarathi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण फॉलोअर्स:' : 'Total Followers:'} {summary?.totalFollowers?.toLocaleString(isMarathi ? 'mr-IN' : 'en-US') || 0}</p>
+          <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
+          <p>{isMarathi ? 'एकूण फॉलोअर्स:' : isHindi ? 'कुल फॉलोअर्स:' : 'Total Followers:'} {summary?.totalFollowers?.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US') || 0}</p>
         </div>
       </div>
 
@@ -97,13 +98,13 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
       <table className="w-full text-sm text-left border-collapse border border-gray-200">
         <thead className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-300">
           <tr>
-            <th className="px-3 py-4 border-r border-gray-200 w-12 text-center">{isMarathi ? 'अ. क्र.' : 'Sr. No.'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'दिनांक' : 'Date'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'फॉलोअर्स' : 'Followers'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'पोहोच (Views)' : 'Reach (Views)'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'संवाद (Likes)' : 'Engagement (Likes)'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'स्थिती' : 'Status'}</th>
-            <th className="px-4 py-4">{isMarathi ? 'वाढ / बदल' : 'Growth / Change'}</th>
+            <th className="px-3 py-4 border-r border-gray-200 w-12 text-center">{isMarathi ? 'अ. क्र.' : isHindi ? 'क्र. सं.' : 'Sr. No.'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'दिनांक' : isHindi ? 'दिनांक' : 'Date'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'फॉलोअर्स' : isHindi ? 'फॉलोअर्स' : 'Followers'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'पोहोच (Views)' : isHindi ? 'रीच (Views)' : 'Reach (Views)'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'संवाद (Likes)' : isHindi ? 'एंगेजमेंट (Likes)' : 'Engagement (Likes)'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'स्थिती' : isHindi ? 'स्थिति' : 'Status'}</th>
+            <th className="px-4 py-4">{isMarathi ? 'वाढ / बदल' : isHindi ? 'वृद्धि / परिवर्तन' : 'Growth / Change'}</th>
           </tr>
         </thead>
         <tbody>

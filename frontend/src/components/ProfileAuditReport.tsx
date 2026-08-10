@@ -20,6 +20,7 @@ export const ProfileAuditReport = forwardRef<HTMLDivElement, ProfileAuditReportP
   });
 
   const isMarathi = i18n.language.startsWith('mr');
+  const isHindi = i18n.language.startsWith('hi');
   
   const allItems = sections.flatMap(s => s.items);
   const selfTotal = allItems.filter(i => i.selfDone).length;
@@ -40,15 +41,15 @@ export const ProfileAuditReport = forwardRef<HTMLDivElement, ProfileAuditReportP
       <div className="flex justify-between items-end mb-2">
         <div>
           <h1 className="text-3xl font-bold text-[#0066cc] mb-1">
-            {isMarathi ? 'प्रोफाइल ऑडिट अहवाल' : 'Profile Audit Report'}
+            {isMarathi ? 'प्रोफाइल ऑडिट अहवाल' : isHindi ? 'प्रोफ़ाइल ऑडिट रिपोर्ट' : 'Profile Audit Report'}
           </h1>
           <p className="text-lg text-gray-500">
-            {isMarathi ? 'स्व-मूल्यांकन आणि विश्लेषण' : 'Self Assessment & Analysis'}
+            {isMarathi ? 'स्व-मूल्यांकन आणि विश्लेषण' : isHindi ? 'स्वयं मूल्यांकन और विश्लेषण' : 'Self Assessment & Analysis'}
           </p>
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
-          <p>{isMarathi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'ऑडिट स्कोअर:' : 'Audit Score:'} <strong className="text-[#0066cc]">{score}%</strong></p>
+          <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
+          <p>{isMarathi ? 'ऑडिट स्कोअर:' : isHindi ? 'ऑडिट स्कोर:' : 'Audit Score:'} <strong className="text-[#0066cc]">{score}%</strong></p>
         </div>
       </div>
 
@@ -57,8 +58,8 @@ export const ProfileAuditReport = forwardRef<HTMLDivElement, ProfileAuditReportP
       <table className="w-full text-sm text-left border-collapse border border-gray-200">
         <thead className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-300">
           <tr>
-            <th className="px-4 py-4 border-r border-gray-200 w-64">{isMarathi ? 'ऑडिट विभाग / तपासणी' : 'Audit Section / Item'}</th>
-            <th className="px-4 py-4 w-24 text-center">{isMarathi ? 'स्थिती' : 'Status'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-64">{isMarathi ? 'ऑडिट विभाग / तपासणी' : isHindi ? 'ऑडिट अनुभाग / आइटम' : 'Audit Section / Item'}</th>
+            <th className="px-4 py-4 w-24 text-center">{isMarathi ? 'स्थिती' : isHindi ? 'स्थिति' : 'Status'}</th>
           </tr>
         </thead>
         <tbody>
@@ -76,9 +77,9 @@ export const ProfileAuditReport = forwardRef<HTMLDivElement, ProfileAuditReportP
                   </td>
                   <td className="px-4 py-3 text-center">
                     {item.selfDone ? (
-                      <span className="text-green-600 font-bold">{isMarathi ? 'पूर्ण' : 'Done'}</span>
+                      <span className="text-green-600 font-bold">{isMarathi ? 'पूर्ण' : isHindi ? 'पूरा हुआ' : 'Done'}</span>
                     ) : (
-                      <span className="text-gray-400">{isMarathi ? 'अपूर्ण' : 'Pending'}</span>
+                      <span className="text-gray-400">{isMarathi ? 'अपूर्ण' : isHindi ? 'लंबित' : 'Pending'}</span>
                     )}
                   </td>
                 </tr>

@@ -18,6 +18,7 @@ export const PostSearchReport = forwardRef<HTMLDivElement, PostSearchReportProps
   });
 
   const isMarathi = i18n.language.startsWith('mr');
+  const isHindi = i18n.language.startsWith('hi');
   
   // Truncate function for captions
   const truncate = (str: string, len: number) => {
@@ -52,15 +53,15 @@ export const PostSearchReport = forwardRef<HTMLDivElement, PostSearchReportProps
       <div className="flex justify-between items-end mb-2">
         <div>
           <h1 className="text-3xl font-bold text-[#0066cc] mb-1">
-            {isMarathi ? 'कंटेंट लायब्ररी रिपोर्ट' : 'Content Library Report'}
+            {isMarathi ? 'कंटेंट लायब्ररी रिपोर्ट' : isHindi ? 'कंटेंट लाइब्रेरी रिपोर्ट' : 'Content Library Report'}
           </h1>
           <p className="text-lg text-gray-500">
             {subtitleText}
           </p>
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
-          <p>{isMarathi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण पोस्ट्स:' : 'Total Posts:'} {results.length}</p>
+          <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
+          <p>{isMarathi ? 'एकूण पोस्ट्स:' : isHindi ? 'कुल पोस्ट:' : 'Total Posts:'} {results.length}</p>
         </div>
       </div>
 
@@ -70,18 +71,18 @@ export const PostSearchReport = forwardRef<HTMLDivElement, PostSearchReportProps
       <table className="w-full text-sm text-left border-collapse border border-gray-200">
         <thead className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-300">
           <tr>
-            <th className="px-3 py-4 border-r border-gray-200 w-10 text-center">{isMarathi ? 'अ. क्र.' : 'Sr. No.'}</th>
-            <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'प्लॅटफॉर्म' : 'Platform'}</th>
-            <th className="px-4 py-4 border-r border-gray-200 w-64">{isMarathi ? 'मजकूर' : 'Content'}</th>
-            <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'दिनांक' : 'Date'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'व्ह्यूज' : 'Views'}</th>
-            <th className="px-4 py-4">{isMarathi ? 'संवाद' : 'Interactions'}</th>
+            <th className="px-3 py-4 border-r border-gray-200 w-10 text-center">{isMarathi ? 'अ. क्र.' : isHindi ? 'क्र. सं.' : 'Sr. No.'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'प्लॅटफॉर्म' : isHindi ? 'प्लेटफ़ॉर्म' : 'Platform'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-64">{isMarathi ? 'मजकूर' : isHindi ? 'कंटेंट' : 'Content'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'दिनांक' : isHindi ? 'दिनांक' : 'Date'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'व्ह्यूज' : isHindi ? 'दृश्यों' : 'Views'}</th>
+            <th className="px-4 py-4">{isMarathi ? 'संवाद' : isHindi ? 'इंटरैक्शन' : 'Interactions'}</th>
           </tr>
         </thead>
         <tbody>
           {displayResults.length > 0 ? displayResults.map((post, idx) => {
             const dateObj = new Date(post.publishedAt || post.scheduledAt || post.createdAt || Date.now());
-            const postDate = dateObj.toLocaleDateString(isMarathi ? 'mr-IN' : 'en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+            const postDate = dateObj.toLocaleDateString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
             
             const metrics = post.metrics || {};
             const views = metrics.views || (post.totalEng ? post.totalEng * 18 : 0) || Math.floor(Math.random() * 5000);
@@ -97,14 +98,14 @@ export const PostSearchReport = forwardRef<HTMLDivElement, PostSearchReportProps
                   {truncate(post.caption || post.content || '', 40)}
                 </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-medium text-gray-600">{postDate}</td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{views.toLocaleString(isMarathi ? 'mr-IN' : 'en-US')}</td>
-                <td className="px-4 py-4 text-gray-600">{interactions.toLocaleString(isMarathi ? 'mr-IN' : 'en-US')}</td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{views.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')}</td>
+                <td className="px-4 py-4 text-gray-600">{interactions.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')}</td>
               </tr>
             );
           }) : (
             <tr>
               <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                {isMarathi ? 'कोणतीही माहिती उपलब्ध नाही' : 'No data available'}
+                {isMarathi ? 'कोणतीही माहिती उपलब्ध नाही' : isHindi ? 'कोई डेटा उपलब्ध नहीं' : 'No data available'}
               </td>
             </tr>
           )}

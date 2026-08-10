@@ -23,6 +23,7 @@ export const PollReport = forwardRef<HTMLDivElement, PollReportProps>(({ polls }
   });
 
   const isMarathi = i18n.language.startsWith('mr');
+  const isHindi = i18n.language.startsWith('hi');
   
   const truncate = (str: string, len: number) => {
     if (!str) return '-';
@@ -46,15 +47,15 @@ export const PollReport = forwardRef<HTMLDivElement, PollReportProps>(({ polls }
       <div className="flex justify-between items-end mb-2">
         <div>
           <h1 className="text-3xl font-bold text-[#0066cc] mb-1">
-            {isMarathi ? 'मतदान अहवाल' : 'Poll Report'}
+            {isMarathi ? 'मतदान अहवाल' : isHindi ? 'पोल रिपोर्ट' : 'Poll Report'}
           </h1>
           <p className="text-lg text-gray-500">
-            {isMarathi ? 'जनमत चाचणी' : 'Public Opinion Polls'}
+            {isMarathi ? 'जनमत चाचणी' : isHindi ? 'जनमत सर्वेक्षण' : 'Public Opinion Polls'}
           </p>
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
-          <p>{isMarathi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण मतदान:' : 'Total Polls:'} {polls.length}</p>
+          <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
+          <p>{isMarathi ? 'एकूण मतदान:' : isHindi ? 'कुल पोल:' : 'Total Polls:'} {polls.length}</p>
         </div>
       </div>
 
@@ -64,25 +65,25 @@ export const PollReport = forwardRef<HTMLDivElement, PollReportProps>(({ polls }
       <table className="w-full text-sm text-left border-collapse border border-gray-200">
         <thead className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-300">
           <tr>
-            <th className="px-3 py-4 border-r border-gray-200 w-10 text-center">{isMarathi ? 'अ. क्र.' : 'Sr. No.'}</th>
-            <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'प्लॅटफॉर्म' : 'Platform'}</th>
-            <th className="px-4 py-4 border-r border-gray-200 w-64">{isMarathi ? 'प्रश्न' : 'Question'}</th>
-            <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'दिनांक' : 'Date'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'एकूण मते' : 'Total Votes'}</th>
-            <th className="px-4 py-4">{isMarathi ? 'स्थिती' : 'Status'}</th>
+            <th className="px-3 py-4 border-r border-gray-200 w-10 text-center">{isMarathi ? 'अ. क्र.' : isHindi ? 'क्र. सं.' : 'Sr. No.'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'प्लॅटफॉर्म' : isHindi ? 'प्लेटफ़ॉर्म' : 'Platform'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-64">{isMarathi ? 'प्रश्न' : isHindi ? 'प्रश्न' : 'Question'}</th>
+            <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'दिनांक' : isHindi ? 'दिनांक' : 'Date'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'एकूण मते' : isHindi ? 'कुल वोट' : 'Total Votes'}</th>
+            <th className="px-4 py-4">{isMarathi ? 'स्थिती' : isHindi ? 'स्थिति' : 'Status'}</th>
           </tr>
         </thead>
         <tbody>
           {displayPolls.length > 0 ? displayPolls.map((poll, idx) => {
-            let statusText = isMarathi ? 'सक्रिय' : 'Active';
+            let statusText = isMarathi ? 'सक्रिय' : isHindi ? 'सक्रिय' : 'Active';
             let statusColor = 'bg-green-100 text-green-700';
             
             if (poll.status === 'closed') {
-              statusText = isMarathi ? 'बंद' : 'Closed';
+              statusText = isMarathi ? 'बंद' : isHindi ? 'बंद' : 'Closed';
               statusColor = 'bg-gray-100 text-gray-700';
             }
 
-            const pollDate = new Date(poll.createdAt).toLocaleDateString(isMarathi ? 'mr-IN' : 'en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+            const pollDate = new Date(poll.createdAt).toLocaleDateString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
 
             return (
               <tr key={poll.id} className="border-b border-gray-200 hover:bg-gray-50">
@@ -92,7 +93,7 @@ export const PollReport = forwardRef<HTMLDivElement, PollReportProps>(({ polls }
                   {truncate(poll.question, 50)}
                 </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-medium text-gray-600">{pollDate}</td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{poll.totalVotes.toLocaleString(isMarathi ? 'mr-IN' : 'en-US')}</td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{poll.totalVotes.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')}</td>
                 <td className="px-4 py-4">
                   <span className={`px-2 py-1 rounded font-medium text-[11px] ${statusColor}`}>
                     {statusText}
@@ -103,7 +104,7 @@ export const PollReport = forwardRef<HTMLDivElement, PollReportProps>(({ polls }
           }) : (
             <tr>
               <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                {isMarathi ? 'कोणतीही माहिती उपलब्ध नाही' : 'No data available'}
+                {isMarathi ? 'कोणतीही माहिती उपलब्ध नाही' : isHindi ? 'कोई डेटा उपलब्ध नहीं' : 'No data available'}
               </td>
             </tr>
           )}
