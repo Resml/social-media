@@ -262,7 +262,7 @@ export const Schedule = () => {
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider flex items-center gap-1"
                       style={{ background: 'var(--slate-100)', color: 'var(--slate-600)' }}>
                       {getBrandIcon(p.socialAccount?.platform)}
-                      {p.socialAccount?.platform}
+                      {String(t(`dashboard.platforms.${p.socialAccount?.platform?.toLowerCase()}`, p.socialAccount?.platform))}
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"
                       style={statusStyle(p.status)}>
