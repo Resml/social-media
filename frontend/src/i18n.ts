@@ -15,7 +15,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'mr',
+    fallbackLng: 'en',
     lng: localStorage.getItem('i18nextLng') || 'mr',
     detection: {
       order: ['localStorage'],
