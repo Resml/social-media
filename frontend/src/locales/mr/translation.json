@@ -17,11 +17,11 @@
     "quickCommenter": "क्विक कमेंटर",
     "navigation": "नेव्हिगेशन",
     "settings": "सेटिंग्ज",
-    "overview": "आढावा (Overview)",
+    "overview": "आढावा",
     "content": "कंटेंट व्यवस्थापन",
-    "tools": "वाढ आणि सहभाग (Grow & Engage)",
-    "organization": "संस्था (Organization)",
-    "analysis": "विश्लेषण आणि कंटेंट (Analysis & Content)",
+    "tools": "वाढ आणि सहभाग",
+    "organization": "संस्था",
+    "analysis": "विश्लेषण आणि कंटेंट",
     "contentCalendar": "कंटेंट कॅलेंडर",
     "reposts": "रिपोस्ट रिमाइंडर",
     "polls": "पोल मॅनेजर",
@@ -131,7 +131,7 @@
     "topicLabel": "विषय काय आहे?",
     "topicPlaceholder": "उदा. या रविवारी नवीन कम्युनिटी पार्कचे उद्घाटन...",
     "typeLabel": "मजकूर प्रकार",
-    "toneLabel": "सूर (Tone)",
+    "toneLabel": "सूर",
     "languageLabel": "आउटपुट भाषा",
     "generateBtn": "मजकूर तयार करा",
     "generating": "तयार करत आहे...",
@@ -583,8 +583,8 @@
       "both": "दोन्ही",
       "via": "माध्यम",
       "viaOptions": {
-        "direct": "थेट (Direct)",
-        "googleMeet": "गुगल मीट (Google Meet)"
+        "direct": "थेट",
+        "googleMeet": "गुगल मीट"
       },
       "dateTime": "तारीख आणि वेळ",
       "duration": "कालावधी (मिनिटे)",
@@ -739,7 +739,7 @@
     }
   },
   "networkBuilder": {
-    "title": "नेटवर्क बिल्डर (Network Builder)",
+    "title": "नेटवर्क बिल्डर",
     "subtitle": "समर्थक, प्रभावकार आणि मतदार नेटवर्क तयार करा आणि व्यवस्थापित करा",
     "addContact": "संपर्क जोडा",
     "searchPlaceholder": "नाव, ठिकाण किंवा आवडीनुसार शोधा…",
@@ -751,7 +751,7 @@
       "namePlaceholder": "नाव…",
       "location": "ठिकाण / प्रभाग",
       "locationPlaceholder": "प्रभाग / परिसर…",
-      "interest": "आवड (Interest)",
+      "interest": "आवड",
       "platform": "प्लॅटफॉर्म",
       "phone": "फोन नंबर",
       "phonePlaceholder": "फोन नंबर…",
@@ -763,7 +763,7 @@
     },
     "tags": {
       "Supporter": "समर्थक",
-      "Influencer": "प्रभावशाली (Influencer)",
+      "Influencer": "प्रभावशाली",
       "Voter": "मतदार",
       "Activist": "कार्यकर्ता",
       "Opponent": "विरोधक",
@@ -782,9 +782,9 @@
       "Business": "व्यवसाय"
     },
     "platforms": {
-      "Facebook": "फेसबुक (Facebook)",
-      "Instagram": "इन्स्टाग्राम (Instagram)",
-      "WhatsApp": "व्हॉट्सॲप (WhatsApp)",
+      "Facebook": "फेसबुक",
+      "Instagram": "इन्स्टाग्राम",
+      "WhatsApp": "व्हॉट्सॲप",
       "None": "काहीही नाही"
     },
     "mockData": {
@@ -816,7 +816,7 @@
     }
   },
   "groupsManager": {
-    "title": "ग्रुप व्यवस्थापक (Groups Manager)",
+    "title": "ग्रुप व्यवस्थापक",
     "subtitle": "फेसबुक ग्रुप व्यवस्थापित करा — प्रति ग्रुप किमान ३० सदस्य आवश्यक",
     "addGroup": "ग्रुप जोडा",
     "ruleTitle": "उद्दिष्ट (डॉक्युमेंटमधून):",
@@ -825,7 +825,7 @@
       "totalGroups": "एकूण ग्रुप्स",
       "activeGroups": "सक्रिय ग्रुप्स",
       "memberGoal": "३०+ सदस्यांचे लक्ष्य",
-      "totalReach": "एकूण पोहोच (Reach)"
+      "totalReach": "एकूण पोहोच"
     },
     "list": {
       "members": "सदस्य",
@@ -851,20 +851,20 @@
       "submit": "ग्रुप जोडा"
     },
     "categories": {
-      "Community": "समुदाय (Community)",
-      "Youth": "तरुण (Youth)",
+      "Community": "समुदाय",
+      "Youth": "तरुण",
       "Events": "इव्हेंट्स",
       "Political": "राजकीय",
       "Women": "महिला",
       "Religious": "धार्मिक",
       "Sports": "क्रीडा",
       "Business": "व्यवसाय",
-      "Charity": "चॅरिटी (Charity)"
+      "Charity": "चॅरिटी"
     },
     "platforms": {
-      "Facebook": "फेसबुक (Facebook)",
-      "WhatsApp": "व्हॉट्सॲप (WhatsApp)",
-      "Telegram": "टेलिग्राम (Telegram)"
+      "Facebook": "फेसबुक",
+      "WhatsApp": "व्हॉट्सॲप",
+      "Telegram": "टेलिग्राम"
     },
     "mockData": {
       "group1": {
@@ -908,7 +908,7 @@
     }
   },
   "profileAudit": {
-    "title": "प्रोफाईल आणि स्पर्धक ऑडिट (Profile & Competitor Audit)",
+    "title": "प्रोफाईल आणि स्पर्धक ऑडिट",
     "subtitle": "२ महिन्यांची विश्लेषण चेकलिस्ट — तुमचे प्रोफाईल वि. प्रतिस्पर्ध्यांचे फेसबुक",
     "resetAll": "सर्व रिसेट करा",
     "cards": {
@@ -923,7 +923,7 @@
     },
     "tabs": {
       "myProfile": "माझे प्रोफाईल",
-      "sideBySide": "तुलना (Side-by-Side)"
+      "sideBySide": "तुलना"
     },
     "section": {
       "done": "{{done}}/{{total}} पूर्ण",
@@ -948,7 +948,7 @@
         "p5": "आवड आणि लाईक्स पूर्णपणे भरलेले आहेत"
       },
       "reach": {
-        "title": "पोहोच आणि फॉलोअर्स (Reach & Followers)",
+        "title": "पोहोच आणि फॉलोअर्स",
         "r1": "फॉलोअर संख्या (नोंद करा आणि तुलना करा)",
         "r2": "पेज लाईक्सची संख्या",
         "r3": "मतदारसंघ / प्रभागातील कनेक्शनची संख्या"
@@ -967,7 +967,7 @@
         "c10": "इतरांच्या चांगल्या पोस्ट शेअर केल्या आहेत का?"
       },
       "engagement": {
-        "title": "प्रतिसाद विश्लेषण (Engagement Analysis)",
+        "title": "प्रतिसाद विश्लेषण",
         "e1": "पोस्ट केलेले विषय आणि प्रति विषय मिळणारा प्रतिसाद",
         "e2": "विषयांनुसार लाईक्स, कमेंट्स, शेअर्सचे वर्गीकरण",
         "e3": "कंटेंटच्या दर्जाचे मूल्यांकन",
@@ -980,10 +980,10 @@
     }
   },
   "articlePlanner": {
-    "title": "लेख नियोजन (Article Planner)",
+    "title": "लेख नियोजन",
     "subtitle": "दैनंदिन १० ओळींचे लेख + साप्ताहिक मोठे लेख — टीममधील लेखकांना दिलेले",
     "buttons": {
-      "guide": "मार्गदर्शक (Guide)",
+      "guide": "मार्गदर्शक",
       "addArticle": "लेख जोडा"
     },
     "streak": {
@@ -992,7 +992,7 @@
       "rule": "डॉक्युमेंटनुसार: दररोज एक १० ओळींचा लेख लिहा — वैयक्तिक, विरोधकांवर टीका, कार्यकर्त्यांचे कौतुक…"
     },
     "guide": {
-      "title": "लेखांच्या श्रेणींचे मार्गदर्शक (Categories Guide)",
+      "title": "लेखांच्या श्रेणींचे मार्गदर्शक",
       "dailyTitle": "दैनंदिन छोटे लेख (१० ओळी, दररोज)",
       "weeklyTitle": "साप्ताहिक मोठे लेख (आठवड्यातून १)"
     },
@@ -1007,9 +1007,9 @@
       "weekly": "साप्ताहिक लेख"
     },
     "status": {
-      "idea": "कल्पना (Idea)",
-      "draft": "ड्राफ्ट (Draft)",
-      "published": "प्रकाशित (Published)"
+      "idea": "कल्पना",
+      "draft": "ड्राफ्ट",
+      "published": "प्रकाशित"
     },
     "actions": {
       "moveToDraft": "ड्राफ्टमध्ये हलवा",
@@ -1028,7 +1028,7 @@
       "topicLabel": "शीर्षक / विषय",
       "topicPlaceholder": "लेखाचे शीर्षक किंवा विषय…",
       "assignedWriter": "नियुक्त लेखक",
-      "dueDate": "नियत तारीख (Due Date)",
+      "dueDate": "नियत तारीख",
       "noteLabel": "नोंद",
       "notePlaceholder": "कोणत्याही नोंदी…",
       "cancel": "रद्द करा",
