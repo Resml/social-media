@@ -12,10 +12,10 @@ export const ProfileAuditReport = forwardRef<HTMLDivElement, ProfileAuditReportP
   const { i18n } = useTranslation();
   
   const now = new Date();
-  const dateStr = now.toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-GB', {
+  const dateStr = now.toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-GB', {
     day: '2-digit', month: '2-digit', year: 'numeric'
   });
-  const timeStr = now.toLocaleTimeString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-GB', {
+  const timeStr = now.toLocaleTimeString(i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-GB', {
     hour: '2-digit', minute: '2-digit'
   });
 

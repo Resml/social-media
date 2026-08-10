@@ -106,7 +106,7 @@ export const RepostReminder = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm" style={{color:'var(--slate-900)'}}>{item.content}</p>
-                      <p className="text-xs mt-1" style={{color:'var(--slate-500)'}}>{t('repostReminder.item.originallyPosted', { date: new Date(item.originalDate).toLocaleDateString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US') })} · {t('repostReminder.item.daysAgo', { days: daysSince(item.originalDate) })} · {String(t(`dashboard.platforms.${item.platform.toLowerCase()}`, item.platform))} · {String(t(`repostReminder.categories.${item.category}`, item.category))}</p>
+                      <p className="text-xs mt-1" style={{color:'var(--slate-500)'}}>{t('repostReminder.item.originallyPosted', { date: new Date(item.originalDate).toLocaleDateString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-US') })} · {t('repostReminder.item.daysAgo', { days: daysSince(item.originalDate) })} · {String(t(`dashboard.platforms.${item.platform.toLowerCase()}`, item.platform))} · {String(t(`repostReminder.categories.${item.category}`, item.category))}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <button onClick={()=>markReposted(item.id)}
@@ -138,7 +138,7 @@ export const RepostReminder = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm" style={{color:'var(--slate-900)'}}>{item.content}</p>
-                      <p className="text-xs mt-1" style={{color:'var(--slate-500)'}}>{new Date(item.originalDate).toLocaleDateString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')} · {t('repostReminder.item.daysAgo', { days: daysSince(item.originalDate) })} · {String(t(`dashboard.platforms.${item.platform.toLowerCase()}`, item.platform))}</p>
+                      <p className="text-xs mt-1" style={{color:'var(--slate-500)'}}>{new Date(item.originalDate).toLocaleDateString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-US')} · {t('repostReminder.item.daysAgo', { days: daysSince(item.originalDate) })} · {String(t(`dashboard.platforms.${item.platform.toLowerCase()}`, item.platform))}</p>
                     </div>
                     <div className="text-center shrink-0">
                       <div className="font-black text-xl" style={{color:'var(--brand-600)'}}>{daysLeft(item)}</div>
@@ -164,7 +164,7 @@ export const RepostReminder = () => {
                   <RefreshCw size={16} style={{color:'var(--slate-400)', flexShrink:0}}/>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm truncate" style={{color:'var(--slate-700)'}}>{item.content}</p>
-                    <p className="text-xs" style={{color:'var(--slate-400)'}}>{t('repostReminder.item.repostedDate', { date: new Date(item.repostedDate!).toLocaleDateString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US') })}</p>
+                    <p className="text-xs" style={{color:'var(--slate-400)'}}>{t('repostReminder.item.repostedDate', { date: new Date(item.repostedDate!).toLocaleDateString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-US') })}</p>
                   </div>
                   <button onClick={()=>setItems(p=>p.filter(x=>x.id!==item.id))} className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-400"><X size={14}/></button>
                 </div>

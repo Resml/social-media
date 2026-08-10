@@ -160,7 +160,7 @@ export const Inbox = () => {
                     {item.authorHandle}
                   </span>
                   <span className="text-xs whitespace-nowrap" style={{ color: 'var(--slate-400)' }}>
-                    {new Date(item.receivedAt).toLocaleTimeString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(item.receivedAt).toLocaleTimeString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
                 <div className="flex gap-1.5 mb-1.5">

@@ -7,7 +7,7 @@ export const FollowerGrowthChart = ({ data }: { data: any[] }) => {
   const formattedData = data.map(item => ({
     ...item,
     formattedDate: item.timestamp 
-      ? new Date(item.timestamp).toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US', { month: 'short', day: 'numeric' }) 
+      ? new Date(item.timestamp).toLocaleDateString(i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-US', { month: 'short', day: 'numeric' }) 
       : item.date
   }));
 

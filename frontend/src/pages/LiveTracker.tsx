@@ -183,7 +183,7 @@ export const LiveTracker = () => {
                       <div className="flex-1 min-w-0">
                         <p className="font-bold" style={{color:'var(--slate-900)'}}>{String(t(`liveTracker.mockData.session${s.id}.topic`, s.topic))}</p>
                         <p className="text-xs mt-0.5" style={{color:'var(--slate-500)'}}>
-                          {new Date(s.scheduledAt).toLocaleString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')} · {s.duration} {t('liveTracker.card.min', 'min')} · {String(t(`dashboard.platforms.${s.platform.toLowerCase()}`, s.platform))} · {t('liveTracker.card.via', 'via')} {s.via}
+                          {new Date(s.scheduledAt).toLocaleString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-US')} · {s.duration} {t('liveTracker.card.min', 'min')} · {String(t(`dashboard.platforms.${s.platform.toLowerCase()}`, s.platform))} · {t('liveTracker.card.via', 'via')} {s.via}
                         </p>
                         {s.notes&&<p className="text-xs mt-1 italic" style={{color:'var(--slate-400)'}}>"{String(t(`liveTracker.mockData.session${s.id}.notes`, s.notes))}"</p>}
                       </div>
