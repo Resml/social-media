@@ -1120,7 +1120,9 @@
       "scheduledDateLabel": "नियोजित तारीख",
       "noteLabel": "टीप",
       "cancel": "रद्द करा",
-      "submit": "व्हिडिओ जोडा"
+      "submit": "व्हिडिओ जोडा",
+      "titlePlaceholder": "व्हिडिओचे शीर्षक…",
+      "notePlaceholder": "काही नोंदी…"
     },
     "formats": {
       "square": "चौकोनी (शिफारस केलेले)",

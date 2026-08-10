@@ -106,7 +106,7 @@ export const VideoProduction = () => {
           <button onClick={() => setShowForm(true)}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95"
             style={{ background:'var(--brand-600)', boxShadow:'0 2px 8px rgba(2,132,199,0.25)' }}>
-            <Plus size={16}/> Add Video
+            <Plus size={16}/> {t('videoTracker.addVideo', 'Add Video')}
           </button>
         </div>
 
@@ -115,7 +115,7 @@ export const VideoProduction = () => {
           <div className="bg-white rounded-2xl border p-5 mb-6" style={{ borderColor:'var(--slate-200)' }}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold flex items-center gap-2" style={{ fontFamily:'Outfit,sans-serif', color:'var(--slate-900)' }}>
-                <Info size={16} style={{ color:'var(--brand-600)' }}/> Video Guidelines (from document)
+                <Info size={16} style={{ color:'var(--brand-600)' }}/> {t('videoTracker.guidelinesTitle', 'Video Guidelines (from document)')}
               </h3>
               <button onClick={() => setShowGuide(false)} className="text-slate-400 hover:text-slate-600"><X size={16}/></button>
             </div>
@@ -184,7 +184,7 @@ export const VideoProduction = () => {
                           <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-black" style={{ background:'var(--brand-600)' }}>
                             {WRITER_INITIALS(v.assignee)}
                           </div>
-                          <p className="text-xs" style={{ color:'var(--slate-500)' }}>{v.assignee} {v.scheduledDate && `· ${v.scheduledDate}`}</p>
+                          <p className="text-xs" style={{ color:'var(--slate-500)' }}>{String(t(`team.${v.assignee}`, v.assignee))} {v.scheduledDate && `· ${v.scheduledDate}`}</p>
                         </div>
                         <p className="text-xs mt-1 font-medium" style={{ color:dc.color }}>{dc.msg}</p>
                         {v.note && <p className="text-xs mt-1 italic" style={{ color:'var(--slate-400)' }}>"{String(t(`videoTracker.mockData.v${v.id}.note`, v.note))}"</p>}
@@ -227,7 +227,7 @@ export const VideoProduction = () => {
             </div>
             <div className="space-y-4">
               <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color:'var(--slate-400)' }}>{t('videoTracker.form.titleLabel', 'Title')}</label>
-                <input style={inputStyle} placeholder="Video title…" value={form.title} onChange={e => setForm(f => ({ ...f, title:e.target.value }))}/></div>
+                <input style={inputStyle} placeholder={String(t('videoTracker.form.titlePlaceholder', 'Video title…'))} value={form.title} onChange={e => setForm(f => ({ ...f, title:e.target.value }))}/></div>
               <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color:'var(--slate-400)' }}>{t('videoTracker.form.categoryLabel', 'Category')}</label>
                 <select style={{ ...inputStyle, cursor:'pointer' }} value={form.category} onChange={e => setForm(f => ({ ...f, category:e.target.value }))}>
                   {VIDEO_CATEGORIES.map(c => <option key={c}value={c}>{String(t(`videoTracker.categories.${c}`, c))}</option>)}</select></div>
@@ -250,12 +250,12 @@ export const VideoProduction = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color:'var(--slate-400)' }}>{t('videoTracker.form.assigneeLabel', 'Assignee')}</label>
                   <select style={{ ...inputStyle, cursor:'pointer' }} value={form.assignee} onChange={e => setForm(f => ({ ...f, assignee:e.target.value }))}>
-                    {WRITERS.map(w => <option key={w}>{w}</option>)}</select></div>
+                    {WRITERS.map(w => <option key={w} value={w}>{String(t(`team.${w}`, w))}</option>)}</select></div>
                 <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color:'var(--slate-400)' }}>{t('videoTracker.form.scheduledDateLabel', 'Scheduled Date')}</label>
                   <input type="date" style={{ ...inputStyle, cursor:'pointer' }} value={form.scheduledDate} onChange={e => setForm(f => ({ ...f, scheduledDate:e.target.value }))}/></div>
               </div>
               <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color:'var(--slate-400)' }}>{t('videoTracker.form.noteLabel', 'Note')}</label>
-                <input style={inputStyle} placeholder="Any notes…" value={form.note} onChange={e => setForm(f => ({ ...f, note:e.target.value }))}/></div>
+                <input style={inputStyle} placeholder={String(t('videoTracker.form.notePlaceholder', 'Any notes…'))} value={form.note} onChange={e => setForm(f => ({ ...f, note:e.target.value }))}/></div>
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-xl font-bold text-sm border hover:bg-slate-50" style={{ borderColor:'var(--slate-200)', color:'var(--slate-600)' }}>{t('videoTracker.form.cancel', 'Cancel')}</button>
