@@ -94,14 +94,41 @@ export const VideoProductionReport = forwardRef<HTMLDivElement, VideoProductionR
               statusColor = 'bg-gray-100 text-gray-700';
             }
 
+            const formatMap: Record<string, string> = {
+              'square': isMarathi ? 'चौरस' : 'Square',
+              'portrait': isMarathi ? 'उभा' : 'Portrait',
+              'landscape': isMarathi ? 'आडवा' : 'Landscape'
+            };
+
+            const catMap: Record<string, string> = {
+              'Development Work Update': isMarathi ? 'विकास कार्याचे अपडेट' : 'Development Work Update',
+              'Social Issue Commentary': isMarathi ? 'सामाजिक विषयावर भाष्य' : 'Social Issue Commentary',
+              'Event/Festival Message': isMarathi ? 'कार्यक्रम/सण संदेश' : 'Event/Festival Message',
+              'Opposition Critique': isMarathi ? 'विरोधकांवर टीका' : 'Opposition Critique',
+              'Short Reel/Trend': isMarathi ? 'शॉर्ट रील/ट्रेंड' : 'Short Reel/Trend',
+              'Interview/Testimonial': isMarathi ? 'मुलाखत/प्रतिक्रिया' : 'Interview/Testimonial'
+            };
+
+            const displayCategory = catMap[video.category] || video.category;
+            const displayFormat = formatMap[video.format] || video.format;
+
             const dueDate = video.scheduledDate ? new Date(video.scheduledDate).toLocaleDateString(isMarathi ? 'mr-IN' : 'en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-';
+
+            const titleMap: Record<string, string> = {
+              'Ward 12 Road Work Progress': isMarathi ? 'प्रभाग 12 रस्ता काम प्रगती' : 'Ward 12 Road Work Progress',
+              'Water scarcity commentary': isMarathi ? 'पाणी टंचाईवर भाष्य' : 'Water scarcity commentary',
+              'Youth empowerment motivational': isMarathi ? 'युवा सक्षमीकरण प्रेरणादायक' : 'Youth empowerment motivational',
+              'Hospital expansion plan': isMarathi ? 'रुग्णालय विस्तार योजना' : 'Hospital expansion plan'
+            };
+
+            const displayTitle = titleMap[video.title] || video.title;
 
             return (
               <tr key={video.id} className="border-b border-gray-200 hover:bg-gray-50">
                 <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">{idx + 1}</td>
                 <td className="px-4 py-4 border-r border-gray-200 font-medium text-gray-700">
-                  {truncate(video.title, 40)}
-                  <span className="block text-[11px] text-gray-400 mt-1">{video.category} ({video.format})</span>
+                  {truncate(displayTitle, 40)}
+                  <span className="block text-[11px] text-gray-400 mt-1">{displayCategory} ({displayFormat})</span>
                 </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-600">{video.duration}s</td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{video.assignee}</td>
