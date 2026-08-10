@@ -5,7 +5,7 @@ type LiveStatus = 'scheduled' | 'live' | 'done' | 'cancelled';
 
 interface LiveSession {
   id: string; topic: string; platform: 'Facebook' | 'Instagram' | 'Both';
-  via: 'Direct' | 'Google Meet'; scheduledAt: string; duration: number;
+  scheduledAt: string; duration: number;
   status: LiveStatus; notes: string;
 }
 
@@ -104,7 +104,6 @@ export const LiveTrackerReport = forwardRef<HTMLDivElement, LiveTrackerReportPro
                 <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">{session.platform}</td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600 font-medium">
                   {truncate(session.topic, 50)}
-                  {session.via === 'Google Meet' && <span className="block text-[11px] text-gray-400 mt-1">via Google Meet</span>}
                 </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-medium text-gray-600">{dateFmt}<br/><span className="text-gray-400 text-[11px]">{timeFmt}</span></td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{session.duration} {isMarathi ? 'मिनिटे' : isHindi ? 'मिनट' : 'mins'}</td>

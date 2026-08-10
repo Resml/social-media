@@ -11,7 +11,7 @@ type LiveStatus = 'scheduled' | 'live' | 'done' | 'cancelled';
 
 interface LiveSession {
   id: string; topic: string; platform: 'Facebook' | 'Instagram' | 'Both';
-  via: 'Direct' | 'Google Meet'; scheduledAt: string; duration: number;
+  scheduledAt: string; duration: number;
   status: LiveStatus; notes: string;
 }
 
@@ -23,10 +23,10 @@ const STATUS_STYLE: Record<LiveStatus, { bg: string; color: string; Icon: React.
 };
 
 const INITIAL: LiveSession[] = [
-  { id:'1', topic:'Ward development progress update',  platform:'Facebook', via:'Direct',      scheduledAt:'2025-05-10T19:00', duration:30, status:'done',      notes:'Good turnout' },
-  { id:'2', topic:'Water crisis: open discussion',     platform:'Facebook', via:'Google Meet', scheduledAt:'2025-05-18T20:00', duration:45, status:'scheduled', notes:'' },
-  { id:'3', topic:'Social cultural event highlights',  platform:'Both',     via:'Direct',      scheduledAt:'2025-05-22T18:30', duration:20, status:'scheduled', notes:'' },
-  { id:'4', topic:'Road work inspection live',         platform:'Facebook', via:'Direct',      scheduledAt:'2025-04-28T17:00', duration:15, status:'done',      notes:'Shared to group' },
+  { id:'1', topic:'Ward development progress update',  platform:'Facebook', scheduledAt:'2025-05-10T19:00', duration:30, status:'done',      notes:'Good turnout' },
+  { id:'2', topic:'Water crisis: open discussion',     platform:'Facebook', scheduledAt:'2025-05-18T20:00', duration:45, status:'scheduled', notes:'' },
+  { id:'3', topic:'Social cultural event highlights',  platform:'Both',     scheduledAt:'2025-05-22T18:30', duration:20, status:'scheduled', notes:'' },
+  { id:'4', topic:'Road work inspection live',         platform:'Facebook', scheduledAt:'2025-04-28T17:00', duration:15, status:'done',      notes:'Shared to group' },
 ];
 
 const inputStyle: React.CSSProperties = {
@@ -39,7 +39,7 @@ export const LiveTracker = () => {
   const { t, i18n } = useTranslation();
   const [sessions, setSessions] = useState<LiveSession[]>(INITIAL);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState<Omit<LiveSession,'id'>>({ topic:'', platform:'Facebook', via:'Direct', scheduledAt:'', duration:30, status:'scheduled', notes:'' });
+  const [form, setForm] = useState<Omit<LiveSession,'id'>>({ topic:'', platform:'Facebook', scheduledAt:'', duration:30, status:'scheduled', notes:'' });
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
 
@@ -183,7 +183,7 @@ export const LiveTracker = () => {
                       <div className="flex-1 min-w-0">
                         <p className="font-bold" style={{color:'var(--slate-900)'}}>{String(t(`liveTracker.mockData.session${s.id}.topic`, s.topic))}</p>
                         <p className="text-xs mt-0.5" style={{color:'var(--slate-500)'}}>
-                          {new Date(s.scheduledAt).toLocaleString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : i18n.language.startsWith('hi') ? 'hi-IN' : 'en-US')} · {s.duration} {t('liveTracker.card.min', 'min')} · {String(t(`dashboard.platforms.${s.platform.toLowerCase()}`, s.platform))} · {t('liveTracker.card.via', 'via')} {s.via}
+                          {new Date(s.scheduledAt).toLocaleString(i18n.language.startsWith('hi') ? 'hi-IN' : i18n.language.startsWith('mr') ? 'mr-IN' : 'en-US')} · {s.duration} {t('liveTracker.card.min', 'min')} · {String(t(`dashboard.platforms.${s.platform.toLowerCase()}`, s.platform))}
                         </p>
                         {s.notes&&<p className="text-xs mt-1 italic" style={{color:'var(--slate-400)'}}>"{String(t(`liveTracker.mockData.session${s.id}.notes`, s.notes))}"</p>}
                       </div>
@@ -220,17 +220,12 @@ export const LiveTracker = () => {
             <div className="space-y-4">
               <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('liveTracker.form.topic', 'Topic')}</label>
                 <input style={inputStyle} placeholder={String(t('liveTracker.form.topicPlaceholder', 'What will you talk about?'))} value={form.topic} onChange={e=>setForm(f=>({...f,topic:e.target.value}))}/></div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('liveTracker.form.platform', 'Platform')}</label>
                   <select style={{...inputStyle,cursor:'pointer'}} value={form.platform} onChange={e=>setForm(f=>({...f,platform:e.target.value as any}))}>
                     <option value="Facebook">{String(t('dashboard.platforms.facebook', 'Facebook'))}</option>
                     <option value="Instagram">{String(t('dashboard.platforms.instagram', 'Instagram'))}</option>
                     <option value="Both">{String(t('liveTracker.form.both', 'Both'))}</option></select></div>
-                <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('liveTracker.form.via', 'Via')}</label>
-                  <select style={{...inputStyle,cursor:'pointer'}} value={form.via} onChange={e=>setForm(f=>({...f,via:e.target.value as any}))}>
-                    <option value="Direct">{t('liveTracker.form.viaOptions.direct', 'Direct')}</option>
-                    <option value="Google Meet">{t('liveTracker.form.viaOptions.googleMeet', 'Google Meet')}</option>
-                  </select></div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div><label className="block text-xs font-bold uppercase tracking-widest mb-1.5" style={{color:'var(--slate-400)'}}>{t('liveTracker.form.dateTime', 'Date & Time')}</label>
