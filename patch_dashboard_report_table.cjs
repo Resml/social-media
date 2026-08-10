@@ -1,4 +1,9 @@
-import { forwardRef } from 'react';
+const fs = require('fs');
+const path = require('path');
+
+const filePath = path.join(__dirname, 'frontend/src/components/DashboardReport.tsx');
+
+const content = `import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface DashboardReportProps {
@@ -60,7 +65,7 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
       likes: (eData.likes || Math.floor(Math.random() * 5000 + 1000)).toLocaleString(isMarathi ? 'mr-IN' : 'en-US'),
       status: statusText,
       statusColor,
-      growth: growthDiff > 0 ? `+${growthDiff}` : growthDiff.toString()
+      growth: growthDiff > 0 ? \`+\${growthDiff}\` : growthDiff.toString()
     });
   }
 
@@ -115,11 +120,11 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
               <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{row.views}</td>
               <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{row.likes}</td>
               <td className="px-4 py-4 border-r border-gray-200">
-                <span className={`px-2 py-1 rounded font-medium text-[11px] ${row.statusColor}`}>
+                <span className={\`px-2 py-1 rounded font-medium text-[11px] \${row.statusColor}\`}>
                   {row.status}
                 </span>
               </td>
-              <td className={`px-4 py-4 font-medium ${row.growth.startsWith('+') ? 'text-green-600' : row.growth === '0' ? 'text-gray-400' : 'text-red-600'}`}>
+              <td className={\`px-4 py-4 font-medium \${row.growth.startsWith('+') ? 'text-green-600' : row.growth === '0' ? 'text-gray-400' : 'text-red-600'}\`}>
                 {row.growth !== '0' ? row.growth : '-'}
               </td>
             </tr>
@@ -131,3 +136,7 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
 });
 
 DashboardReport.displayName = 'DashboardReport';
+`;
+
+fs.writeFileSync(filePath, content, 'utf8');
+console.log('Successfully replaced DashboardReport.tsx with tabular layout');

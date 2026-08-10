@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { api } from '../api/axios';
 import { PostRow } from '../components/PostRow';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, Filter, Columns, Download, Info, ArrowUpDown, ChevronDown, Video } from 'lucide-react';
+import { Search, Plus, Download, Info, ArrowUpDown, ChevronDown, Video } from 'lucide-react';
+import * as htmlToImage from 'html-to-image';
+import { jsPDF } from 'jspdf';
+import { toast } from 'sonner';
+import { PostSearchReport } from '../components/PostSearchReport';
+import { useRef } from 'react';
 
 const TABLE_COL_LABELS: Record<string, string> = {
   views: 'VIEWS',
@@ -19,6 +24,41 @@ export const PostSearch = () => {
   const [results, setResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  const generatePDF = async () => {
+    if (!reportRef.current) return;
+    setIsGeneratingReport(true);
+    
+    try {
+      const element = reportRef.current;
+      
+      const imgData = await htmlToImage.toPng(element, { 
+        pixelRatio: 2, 
+        backgroundColor: '#ffffff',
+        style: { opacity: '1' }
+      });
+      
+      if (!imgData || imgData === 'data:,') {
+        toast.error("Failed to capture report. Image is empty.");
+        return;
+      }
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Content_Library_${activeTab}_${new Date().toISOString().split('T')[0]}.pdf`);
+      toast.success("Report downloaded successfully!");
+    } catch (err: any) {
+      console.error('Failed to generate PDF', err);
+      toast.error("Error generating PDF: " + (err?.message || "Unknown error"));
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => { fetchResults(); }, 300);
@@ -56,7 +96,10 @@ export const PostSearch = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#F0F2F5]">
+    <div className="flex-1 overflow-y-auto bg-[#F0F2F5] relative z-0">
+      <div ref={reportRef} style={{ position: 'absolute', top: 0, left: 0, opacity: 0, pointerEvents: 'none', width: '794px' }}>
+        <PostSearchReport activeTab={activeTab} results={results} />
+      </div>
       <div className="max-w-[1400px] mx-auto p-4 lg:p-6">
         
         {/* Page Header */}
@@ -74,7 +117,19 @@ export const PostSearch = () => {
           
           {/* Section Header */}
           <div className="p-4 border-b border-[#ced0d4]">
-            <h2 className="text-[20px] font-bold text-[#050505] mb-4">{t('postSearch.subtitle', 'Content Library')}</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-[20px] font-bold text-[#050505]">{t('postSearch.subtitle', 'Content Library')}</h2>
+              <button 
+                onClick={generatePDF}
+                disabled={isGeneratingReport}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors ${isGeneratingReport ? 'bg-slate-100 text-slate-400' : 'bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505]'}`}
+              >
+                {isGeneratingReport ? (
+                  <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                ) : <Download size={16} />}
+                <span>{isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : 'Download PDF'}</span>
+              </button>
+            </div>
             
             {/* Tabs */}
             <div className="flex gap-4 border-b border-transparent">
@@ -127,28 +182,7 @@ export const PostSearch = () => {
                 <ChevronDown size={14} />
               </button>
 
-              <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
-                <Filter size={16} />
-                <span>{t('postSearch.actions.filters', 'Filters')}</span>
-                <ChevronDown size={14} />
-              </button>
 
-              <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
-                <Columns size={16} />
-                <span>{t('postSearch.actions.columns', 'Columns')}</span>
-                <ChevronDown size={14} />
-              </button>
-
-              <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
-                <span>{t('postSearch.actions.dateRange', 'Last 28 days: Mar 16 - Apr 13')}</span>
-                <ChevronDown size={14} />
-              </button>
-
-              <button className="flex items-center gap-1.5 bg-[#E4E6EB] hover:bg-[#D8DADF] text-[#050505] px-3 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors ml-auto">
-                <Download size={16} />
-                <span>{t('postSearch.actions.export', 'Export data')}</span>
-                <ChevronDown size={14} />
-              </button>
             </div>
           </div>
 

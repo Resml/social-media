@@ -130,7 +130,7 @@ export const Dashboard = () => {
         <DashboardReport summary={summary} growth={growth} engagement={engagement} />
       </div>
 
-      <div className="max-w-7xl mx-auto md:p-4">
+      <div className="w-full md:p-4">
 
         {/* Pro Header */}
         <div className="bg-white rounded-3xl p-6 lg:p-8 mb-8 border border-slate-200 shadow-sm">
@@ -144,7 +144,7 @@ export const Dashboard = () => {
               </p>
             </div>
             
-            <div className="flex items-center gap-3 w-full lg:w-auto">
+            <div className="flex items-center justify-end gap-3 w-full lg:w-auto ml-auto">
               <select 
                 value={selectedAccount || ''}
                 onChange={(e) => setSelectedAccount(e.target.value)}
@@ -158,11 +158,11 @@ export const Dashboard = () => {
               <button 
                 onClick={generatePDF}
                 disabled={isGeneratingReport}
-                className={`px-3 py-1.5 rounded-lg font-medium text-[13px] transition-all flex items-center gap-1.5 border ${isGeneratingReport ? 'bg-slate-50 text-slate-400 border-slate-200' : 'bg-[#f0f8ff] text-[#0076ce] border-[#bfe0ff] hover:bg-[#e0f0ff]'}`}
+                className={`px-2.5 py-1.5 h-fit rounded-lg border font-medium text-xs whitespace-nowrap transition-all flex items-center gap-1.5 ${isGeneratingReport ? 'bg-slate-50 text-slate-400 border-slate-200' : 'bg-[#f0f8ff] text-[#0076ce] border-[#bfe0ff] hover:bg-[#e0f0ff]'}`}
               >
                 {isGeneratingReport ? (
-                  <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                ) : <Download size={14} />}
+                  <div className="w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                ) : <Download size={12} />}
                 {isGeneratingReport ? t('dashboard.report.downloading', 'Generating...') : t('dashboard.report.downloadPdf', 'Download PDF')}
               </button>
               
