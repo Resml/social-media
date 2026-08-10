@@ -81,10 +81,10 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                {isLangMenuOpen && (
                   <div className="absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden py-1">
                      <button
-                        onClick={() => { i18n.changeLanguage('hi'); setIsLangMenuOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language.startsWith('hi') ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
+                        onClick={() => { i18n.changeLanguage('en'); setIsLangMenuOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language === 'en' ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
                      >
-                        हिंदी
+                        English
                      </button>
                      <button
                         onClick={() => { i18n.changeLanguage('mr'); setIsLangMenuOpen(false); }}
@@ -93,10 +93,10 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
                         मराठी
                      </button>
                      <button
-                        onClick={() => { i18n.changeLanguage('en'); setIsLangMenuOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language === 'en' ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
+                        onClick={() => { i18n.changeLanguage('hi'); setIsLangMenuOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold hover:bg-slate-50 ${i18n.language.startsWith('hi') ? 'text-brand-600 bg-brand-50' : 'text-slate-700'}`}
                      >
-                        English
+                        हिंदी
                      </button>
                   </div>
                )}
