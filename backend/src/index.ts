@@ -22,6 +22,7 @@ import { initInboxPollerWorker } from './workers/inboxPollerWorker';
 import { initPostSyncWorker } from './workers/postSyncWorker';
 import { initSchedulerWorker } from './workers/schedulerWorker';
 import { initEmailDigestWorker } from './workers/emailDigestWorker';
+import { startAutoScheduler } from './services/autoSchedulerService';
 import path from 'path';
 
 const app = express();
@@ -112,6 +113,9 @@ httpServer.listen(PORT, async () => {
   await initPostSyncWorker();
   await initSchedulerWorker();
   await initEmailDigestWorker();
+  
+  // Initialize Auto Holiday Post Scheduler
+  startAutoScheduler();
 });
 
 export default app;

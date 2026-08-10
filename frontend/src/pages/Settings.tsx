@@ -11,6 +11,7 @@ interface SafetyPrefs {
   gapSeconds: number;
   blackoutStart: number;
   blackoutEnd: number;
+  holidayPostTime?: string;
 }
 
 interface NotificationPrefs {
@@ -411,8 +412,8 @@ export const Settings = () => {
 
             {/* Per-Account Safety Sliders */}
             {settings?.socialAccounts.map((acc) => {
-              const prefs = safetyByAccount[acc.id] ?? { dailyCap: 15, gapSeconds: 60, blackoutStart: 0, blackoutEnd: 6 };
-              const update = (key: keyof SafetyPrefs, val: number) =>
+              const prefs = safetyByAccount[acc.id] ?? { dailyCap: 15, gapSeconds: 60, blackoutStart: 0, blackoutEnd: 6, holidayPostTime: '07:00' };
+              const update = (key: keyof SafetyPrefs, val: any) =>
                 setSafetyByAccount((prev) => ({ ...prev, [acc.id]: { ...prev[acc.id], [key]: val } }));
 
               return (
@@ -467,6 +468,16 @@ export const Settings = () => {
                       <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>{t('settings.safety.blackoutEnd', 'Blackout End (UTC hour)')}</label>
                       <input type="number" min={0} max={23} value={prefs.blackoutEnd}
                         onChange={e => update('blackoutEnd', Number(e.target.value))}
+                        className="w-full rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
+                        style={{ border: '1px solid var(--slate-200)', color: 'var(--slate-800)' }}
+                      />
+                    </div>
+
+                    {/* Holiday Auto-Post Time */}
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: 'var(--slate-400)' }}>Holiday Auto-Post Time</label>
+                      <input type="time" value={prefs.holidayPostTime ?? '07:00'}
+                        onChange={e => update('holidayPostTime', e.target.value)}
                         className="w-full rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
                         style={{ border: '1px solid var(--slate-200)', color: 'var(--slate-800)' }}
                       />
