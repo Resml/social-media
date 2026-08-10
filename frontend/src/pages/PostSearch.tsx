@@ -4,6 +4,14 @@ import { PostRow } from '../components/PostRow';
 import { useTranslation } from 'react-i18next';
 import { Search, Plus, Filter, Columns, Download, Info, ArrowUpDown, ChevronDown, Video } from 'lucide-react';
 
+const TABLE_COL_LABELS: Record<string, string> = {
+  views: 'VIEWS',
+  viewers: 'VIEWERS',
+  interactions: 'INTERACTIONS',
+  netFollows: 'NET FOLLOWERS',
+  impressions: 'IMPRESSIONS'
+};
+
 export const PostSearch = () => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('PUBLISHED');
@@ -162,12 +170,12 @@ export const PostSearch = () => {
               />
             </div>
             <div className="flex-1 flex items-center gap-1 min-w-[300px]">
-              {t('postSearch.table.preview')}
+              {t('postSearch.table.preview', 'PREVIEW')}
               <ChevronDown size={14} className="text-[#1877f2]" />
             </div>
             {['views', 'viewers', 'interactions', 'netFollows', 'impressions'].map(col => (
               <div key={col} className="w-32 flex items-center justify-center gap-1">
-                {t(`postSearch.table.${col}`)}
+                {t(`postSearch.table.${col}`, TABLE_COL_LABELS[col])}
                 <Info size={14} className="text-gray-400" />
                 <ArrowUpDown size={12} />
               </div>
