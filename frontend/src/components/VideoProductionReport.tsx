@@ -32,6 +32,82 @@ export const VideoProductionReport = forwardRef<HTMLDivElement, VideoProductionR
     return str.length > len ? str.substring(0, len) + '...' : str;
   };
 
+  const toDevanagari = (numStr: string) => {
+    if (!isMarathi && !isHindi) return numStr;
+    const devDigits = ['०','१','२','३','४','५','६','७','८','९'];
+    return numStr.replace(/\d/g, d => devDigits[parseInt(d)]);
+  };
+
+  const translateAssignee = (name: string) => {
+    if (!name) return name;
+    if (isMarathi) {
+      if (name === 'Harshal Vora') return 'हर्षल व्होरा';
+      if (name === 'Dr. Amol Pawar') return 'डॉ. अमोल पवार';
+      if (name === 'Sagar') return 'सागर';
+      if (name === 'Satish Waghmare') return 'सतीश वाघमारे';
+      if (name === 'Hemant') return 'हेमंत';
+    } else if (isHindi) {
+      if (name === 'Harshal Vora') return 'हर्षल वोरा';
+      if (name === 'Dr. Amol Pawar') return 'डॉ. अमोल पवार';
+      if (name === 'Sagar') return 'सागर';
+      if (name === 'Satish Waghmare') return 'सतीश वाघमारे';
+      if (name === 'Hemant') return 'हेमंत';
+    }
+    return name;
+  };
+
+  const translateCategory = (cat: string) => {
+    if (!cat) return cat;
+    if (isMarathi) {
+      if (cat.includes('Development Work Update')) return 'विकास कार्याचे अपडेट';
+      if (cat.includes('Social Issue Commentary')) return 'सामाजिक विषयावर भाष्य';
+      if (cat.includes('Cultural Institution Info')) return 'सांस्कृतिक संस्था माहिती';
+      if (cat.includes('Current Events Commentary')) return 'चालू घडामोडींवर भाष्य';
+      if (cat.includes('Leader Decision Welcome')) return 'नेत्याच्या निर्णयाचे स्वागत';
+      if (cat.includes('Motivational Ad')) return 'प्रेरक जाहिरात';
+      if (cat.includes('Google Meet + FB Live Recap')) return 'गुगल मीट + फेसबुक लाईव्ह रीकॅप';
+      if (cat.includes('Opposition Critique')) return 'विरोधकांवर टीका';
+      if (cat.includes('Documentary (1-2 min)')) return 'माहितीपट (१-२ मिनिटे)';
+      if (cat.includes('General Campaign')) return 'सामान्य मोहीम';
+      // Old fallbacks
+      if (cat.includes('Event/Festival Message')) return 'कार्यक्रम/सण संदेश';
+      if (cat.includes('Short Reel/Trend')) return 'शॉर्ट रील/ट्रेंड';
+      if (cat.includes('Interview/Testimonial')) return 'मुलाखत/प्रतिक्रिया';
+    } else if (isHindi) {
+      if (cat.includes('Development Work Update')) return 'विकास कार्य अपडेट';
+      if (cat.includes('Social Issue Commentary')) return 'सामाजिक मुद्दे पर टिप्पणी';
+      if (cat.includes('Cultural Institution Info')) return 'सांस्कृतिक संस्थान की जानकारी';
+      if (cat.includes('Current Events Commentary')) return 'वर्तमान घटनाओं पर टिप्पणी';
+      if (cat.includes('Leader Decision Welcome')) return 'नेता के फैसले का स्वागत';
+      if (cat.includes('Motivational Ad')) return 'प्रेरक विज्ञापन';
+      if (cat.includes('Google Meet + FB Live Recap')) return 'गूगल मीट + एफबी लाइव रीकैप';
+      if (cat.includes('Opposition Critique')) return 'विपक्ष की आलोचना';
+      if (cat.includes('Documentary (1-2 min)')) return 'वृत्तचित्र (1-2 मिनट)';
+      if (cat.includes('General Campaign')) return 'सामान्य अभियान';
+      // Old fallbacks
+      if (cat.includes('Event/Festival Message')) return 'कार्यक्रम/त्यौहार संदेश';
+      if (cat.includes('Short Reel/Trend')) return 'शॉर्ट रील/ट्रेंड';
+      if (cat.includes('Interview/Testimonial')) return 'साक्षात्कार/प्रशंसापत्र';
+    }
+    return cat;
+  };
+
+  const translateTitle = (title: string) => {
+    if (!title) return title;
+    if (isMarathi) {
+      if (title.includes('Ward 12 Road Work Progress')) return 'प्रभाग 12 रस्ता काम प्रगती';
+      if (title.includes('Water scarcity commentary')) return 'पाणी टंचाईवर भाष्य';
+      if (title.includes('Youth empowerment motivational')) return 'युवा सक्षमीकरण प्रेरणादायक';
+      if (title.includes('Hospital expansion plan')) return 'रुग्णालय विस्तार योजना';
+    } else if (isHindi) {
+      if (title.includes('Ward 12 Road Work Progress')) return 'वार्ड 12 सड़क कार्य प्रगति';
+      if (title.includes('Water scarcity commentary')) return 'पानी की कमी पर टिप्पणी';
+      if (title.includes('Youth empowerment motivational')) return 'युवा सशक्तिकरण प्रेरक';
+      if (title.includes('Hospital expansion plan')) return 'अस्पताल विस्तार योजना';
+    }
+    return title;
+  };
+
   const displayVideos = videos.slice(0, 15);
 
   return (
@@ -57,7 +133,7 @@ export const VideoProductionReport = forwardRef<HTMLDivElement, VideoProductionR
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
           <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण व्हिडिओ:' : isHindi ? 'कुल वीडियो:' : 'Total Videos:'} {videos.length}</p>
+          <p>{isMarathi ? 'एकूण व्हिडिओ:' : isHindi ? 'कुल वीडियो:' : 'Total Videos:'} {toDevanagari(videos.length.toString())}</p>
         </div>
       </div>
 
@@ -101,38 +177,23 @@ export const VideoProductionReport = forwardRef<HTMLDivElement, VideoProductionR
               'landscape': isMarathi ? 'आडवा' : isHindi ? 'लैंडस्केप' : 'Landscape'
             };
 
-            const catMap: Record<string, string> = {
-              'Development Work Update': isMarathi ? 'विकास कार्याचे अपडेट' : isHindi ? 'विकास कार्य अपडेट' : 'Development Work Update',
-              'Social Issue Commentary': isMarathi ? 'सामाजिक विषयावर भाष्य' : isHindi ? 'सामाजिक मुद्दे पर टिप्पणी' : 'Social Issue Commentary',
-              'Event/Festival Message': isMarathi ? 'कार्यक्रम/सण संदेश' : isHindi ? 'कार्यक्रम/त्यौहार संदेश' : 'Event/Festival Message',
-              'Opposition Critique': isMarathi ? 'विरोधकांवर टीका' : isHindi ? 'विपक्ष की आलोचना' : 'Opposition Critique',
-              'Short Reel/Trend': isMarathi ? 'शॉर्ट रील/ट्रेंड' : isHindi ? 'शॉर्ट रील/ट्रेंड' : 'Short Reel/Trend',
-              'Interview/Testimonial': isMarathi ? 'मुलाखत/प्रतिक्रिया' : isHindi ? 'साक्षात्कार/प्रशंसापत्र' : 'Interview/Testimonial'
-            };
-
-            const displayCategory = catMap[video.category] || video.category;
+            const displayCategory = translateCategory(video.category);
             const displayFormat = formatMap[video.format] || video.format;
 
             const dueDate = video.scheduledDate ? new Date(video.scheduledDate).toLocaleDateString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '-';
-
-            const titleMap: Record<string, string> = {
-              'Ward 12 Road Work Progress': isMarathi ? 'प्रभाग 12 रस्ता काम प्रगती' : isHindi ? 'वार्ड 12 सड़क कार्य प्रगति' : 'Ward 12 Road Work Progress',
-              'Water scarcity commentary': isMarathi ? 'पाणी टंचाईवर भाष्य' : isHindi ? 'पानी की कमी पर टिप्पणी' : 'Water scarcity commentary',
-              'Youth empowerment motivational': isMarathi ? 'युवा सक्षमीकरण प्रेरणादायक' : isHindi ? 'युवा सशक्तिकरण प्रेरक' : 'Youth empowerment motivational',
-              'Hospital expansion plan': isMarathi ? 'रुग्णालय विस्तार योजना' : isHindi ? 'अस्पताल विस्तार योजना' : 'Hospital expansion plan'
-            };
-
-            const displayTitle = titleMap[video.title] || video.title;
+            const durationText = isMarathi ? `${toDevanagari(video.duration.toString())} सेकंद` : isHindi ? `${toDevanagari(video.duration.toString())} सेकंड` : `${video.duration}s`;
 
             return (
               <tr key={video.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">{idx + 1}</td>
+                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">
+                  {toDevanagari((idx + 1).toString())}
+                </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-medium text-gray-700">
-                  {truncate(displayTitle, 40)}
+                  {truncate(translateTitle(video.title), 40)}
                   <span className="block text-[11px] text-gray-400 mt-1">{displayCategory} ({displayFormat})</span>
                 </td>
-                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-600">{video.duration}s</td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{video.assignee}</td>
+                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-600">{durationText}</td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{translateAssignee(video.assignee)}</td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{dueDate}</td>
                 <td className="px-4 py-4">
                   <span className={`px-2 py-1 rounded font-medium text-[11px] ${statusColor}`}>

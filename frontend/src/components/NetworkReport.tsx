@@ -31,6 +31,83 @@ export const NetworkReport = forwardRef<HTMLDivElement, NetworkReportProps>(({ c
     return str.length > len ? str.substring(0, len) + '...' : str;
   };
 
+  const translatePlatform = (platform: string) => {
+    if (!platform) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'Facebook';
+    const p = platform.toUpperCase();
+    if (p.includes('FB') || p.includes('FACEBOOK')) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'Facebook';
+    if (p.includes('INSTA')) return isMarathi ? 'इन्स्टाग्राम' : isHindi ? 'इंस्टाग्राम' : 'Instagram';
+    if (p.includes('TWITTER') || p === 'X') return isMarathi ? 'ट्विटर' : isHindi ? 'ट्विटर' : 'Twitter';
+    if (p.includes('LINKEDIN')) return isMarathi ? 'लिंक्डइन' : isHindi ? 'लिंक्डइन' : 'LinkedIn';
+    return platform;
+  };
+
+  const translateName = (name: string) => {
+    if (!name) return name;
+    if (isMarathi) {
+      if (name === 'Ramesh Patil') return 'रमेश पाटील';
+      if (name === 'Sunita Deshmukh') return 'सुनीता देशमुख';
+      if (name === 'Anil Kadam') return 'अनिल कदम';
+      if (name === 'Priya Shinde') return 'प्रिया शिंदे';
+      if (name === 'Vijay Mane') return 'विजय माने';
+    } else if (isHindi) {
+      if (name === 'Ramesh Patil') return 'रमेश पाटिल';
+      if (name === 'Sunita Deshmukh') return 'सुनीता देशमुख';
+      if (name === 'Anil Kadam') return 'अनिल कदम';
+      if (name === 'Priya Shinde') return 'प्रिया शिंदे';
+      if (name === 'Vijay Mane') return 'विजय माने';
+    }
+    return name;
+  };
+
+  const translateLocation = (loc: string) => {
+    if (!loc) return loc;
+    if (isMarathi) {
+      if (loc === 'Ward 12') return 'प्रभाग १२';
+      if (loc === 'Ward 14') return 'प्रभाग १४';
+      if (loc === 'Ward 15') return 'प्रभाग १५';
+    } else if (isHindi) {
+      if (loc === 'Ward 12') return 'वार्ड 12';
+      if (loc === 'Ward 14') return 'वार्ड 14';
+      if (loc === 'Ward 15') return 'वार्ड 15';
+    }
+    return loc;
+  };
+
+  const translateInterest = (interest: string) => {
+    if (!interest) return interest;
+    if (isMarathi) {
+      if (interest === 'Politics') return 'राजकारण';
+      if (interest === 'Education') return 'शिक्षण';
+      if (interest === 'Youth') return 'युवा';
+      if (interest === 'Women Empowerment') return 'महिला सक्षमीकरण';
+      if (interest === 'Sports') return 'क्रीडा';
+    } else if (isHindi) {
+      if (interest === 'Politics') return 'राजनीति';
+      if (interest === 'Education') return 'शिक्षा';
+      if (interest === 'Youth') return 'युवा';
+      if (interest === 'Women Empowerment') return 'महिला सशक्तिकरण';
+      if (interest === 'Sports') return 'खेल';
+    }
+    return interest;
+  };
+
+  const translateTag = (tag: string) => {
+    if (isMarathi) {
+      const mrMap: any = { Supporter: 'समर्थक', Influencer: 'प्रभावशाली', Voter: 'मतदार', Activist: 'कार्यकर्ता', Opponent: 'विरोधक', Neutral: 'तटस्थ' };
+      return mrMap[tag] || tag;
+    } else if (isHindi) {
+      const hiMap: any = { Supporter: 'समर्थक', Influencer: 'प्रभावशाली', Voter: 'मतदाता', Activist: 'कार्यकर्ता', Opponent: 'विरोधी', Neutral: 'तटस्थ' };
+      return hiMap[tag] || tag;
+    }
+    return tag;
+  };
+
+  const toDevanagari = (numStr: string) => {
+    if (!isMarathi && !isHindi) return numStr;
+    const devDigits = ['०','१','२','३','४','५','६','७','८','९'];
+    return numStr.replace(/\d/g, d => devDigits[parseInt(d)]);
+  };
+
   const displayContacts = contacts.slice(0, 15);
 
   return (
@@ -56,7 +133,7 @@ export const NetworkReport = forwardRef<HTMLDivElement, NetworkReportProps>(({ c
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
           <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण संपर्क:' : isHindi ? 'कुल संपर्क:' : 'Total Contacts:'} {contacts.length}</p>
+          <p>{isMarathi ? 'एकूण संपर्क:' : isHindi ? 'कुल संपर्क:' : 'Total Contacts:'} {toDevanagari(contacts.length.toString())}</p>
         </div>
       </div>
 
@@ -81,27 +158,23 @@ export const NetworkReport = forwardRef<HTMLDivElement, NetworkReportProps>(({ c
             if (contact.tag === 'Supporter' || contact.tag === 'Voter') tagColor = 'bg-blue-100 text-blue-700';
             else if (contact.tag === 'Influencer') tagColor = 'bg-purple-100 text-purple-700';
             else if (contact.tag === 'Opponent') tagColor = 'bg-red-100 text-red-700';
-            
-            let translatedTag = contact.tag;
-            if (isMarathi) {
-              const mrMap: any = { Supporter: 'समर्थक', Influencer: 'प्रभावशाली', Voter: 'मतदार', Activist: 'कार्यकर्ता', Opponent: 'विरोधक', Neutral: 'तटस्थ' };
-              translatedTag = mrMap[contact.tag] || contact.tag;
-            }
 
             return (
               <tr key={contact.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">{idx + 1}</td>
-                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">{truncate(contact.name, 30)}</td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-600 font-medium">{truncate(contact.location, 25)}</td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{truncate(contact.interest, 20)}</td>
+                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">
+                  {isMarathi ? (idx + 1).toLocaleString('mr-IN') : isHindi ? (idx + 1).toLocaleString('hi-IN') : (idx + 1)}
+                </td>
+                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">{truncate(translateName(contact.name), 30)}</td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-600 font-medium">{truncate(translateLocation(contact.location), 25)}</td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{truncate(translateInterest(contact.interest), 20)}</td>
                 <td className="px-4 py-4 border-r border-gray-200">
                   <span className={`px-2 py-1 rounded font-medium text-[11px] ${tagColor}`}>
-                    {translatedTag}
+                    {translateTag(contact.tag)}
                   </span>
                 </td>
                 <td className="px-4 py-4 font-medium text-gray-600">
-                  {contact.phone || '-'}
-                  <span className="block text-[11px] text-gray-400 mt-1">{contact.platform}</span>
+                  {toDevanagari(contact.phone || '-')}
+                  <span className="block text-[11px] text-gray-400 mt-1">{translatePlatform(contact.platform)}</span>
                 </td>
               </tr>
             );

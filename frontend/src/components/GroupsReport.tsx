@@ -29,6 +29,56 @@ export const GroupsReport = forwardRef<HTMLDivElement, GroupsReportProps>(({ gro
     return str.length > len ? str.substring(0, len) + '...' : str;
   };
 
+  const translatePlatform = (platform: string) => {
+    if (!platform) return platform;
+    const p = platform.toUpperCase();
+    if (p.includes('FB') || p.includes('FACEBOOK')) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'Facebook';
+    if (p.includes('WHATSAPP') || p.includes('WA')) return isMarathi ? 'व्हॉट्सॲप' : isHindi ? 'व्हाट्सएप' : 'WhatsApp';
+    if (p.includes('TELEGRAM')) return isMarathi ? 'टेलिग्राम' : isHindi ? 'टेलीग्राम' : 'Telegram';
+    if (p.includes('INSTA')) return isMarathi ? 'इन्स्टाग्राम' : isHindi ? 'इंस्टाग्राम' : 'Instagram';
+    return platform;
+  };
+
+  const translateCategory = (cat: string) => {
+    if (!cat) return cat;
+    if (isMarathi) {
+      if (cat === 'Community') return 'समुदाय';
+      if (cat === 'Youth') return 'युवा';
+      if (cat === 'Events') return 'कार्यक्रम';
+      if (cat === 'Political') return 'राजकीय';
+      if (cat === 'Women') return 'महिला';
+      if (cat === 'Religious') return 'धार्मिक';
+      if (cat === 'Sports') return 'क्रीडा';
+      if (cat === 'Business') return 'व्यवसाय';
+      if (cat === 'Charity') return 'धर्मादाय';
+    } else if (isHindi) {
+      if (cat === 'Community') return 'समुदाय';
+      if (cat === 'Youth') return 'युवा';
+      if (cat === 'Events') return 'कार्यक्रम';
+      if (cat === 'Political') return 'राजनीतिक';
+      if (cat === 'Women') return 'महिला';
+      if (cat === 'Religious') return 'धार्मिक';
+      if (cat === 'Sports') return 'खेल';
+      if (cat === 'Business') return 'व्यवसाय';
+      if (cat === 'Charity') return 'दान';
+    }
+    return cat;
+  };
+
+  const translateAdmin = (name: string) => {
+    if (!name) return name;
+    if (isMarathi) {
+      if (name === 'Harshal Vora') return 'हर्षल व्होरा';
+      if (name === 'Dr. Amol Pawar') return 'डॉ. अमोल पवार';
+      if (name === 'Sagar') return 'सागर';
+    } else if (isHindi) {
+      if (name === 'Harshal Vora') return 'हर्षल वोरा';
+      if (name === 'Dr. Amol Pawar') return 'डॉ. अमोल पवार';
+      if (name === 'Sagar') return 'सागर';
+    }
+    return name;
+  };
+
   const displayGroups = groups.slice(0, 15);
   const totalMembers = groups.reduce((acc, curr) => acc + curr.members, 0);
 
@@ -81,14 +131,22 @@ export const GroupsReport = forwardRef<HTMLDivElement, GroupsReportProps>(({ gro
 
             return (
               <tr key={group.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">{idx + 1}</td>
+                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">
+                  {isMarathi ? (idx + 1).toLocaleString('mr-IN') : isHindi ? (idx + 1).toLocaleString('hi-IN') : (idx + 1)}
+                </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">
                   {truncate(group.name, 35)}
-                  <span className="block text-[11px] text-gray-400 mt-1">{group.platform}</span>
+                  <span className="block text-[11px] text-gray-400 mt-1">{translatePlatform(group.platform)}</span>
                 </td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-600 font-medium">{truncate(group.category, 20)}</td>
-                <td className="px-4 py-4 border-r border-gray-200 font-bold text-blue-600">{group.members.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')}</td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{group.admin}</td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-600 font-medium">
+                  {truncate(translateCategory(group.category), 20)}
+                </td>
+                <td className="px-4 py-4 border-r border-gray-200 font-bold text-blue-600">
+                  {group.members.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')}
+                </td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">
+                  {translateAdmin(group.admin)}
+                </td>
                 <td className="px-4 py-4">
                   <span className={`px-2 py-1 rounded font-medium text-[11px] ${statusColor}`}>
                     {statusText}
