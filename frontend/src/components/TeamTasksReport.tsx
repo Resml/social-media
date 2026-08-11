@@ -32,6 +32,64 @@ export const TeamTasksReport = forwardRef<HTMLDivElement, TeamTasksReportProps>(
     return str.length > len ? str.substring(0, len) + '...' : str;
   };
 
+  const translateCategory = (cat: string) => {
+    if (!cat) return cat;
+    if (isMarathi) {
+      if (cat === 'Birthday Post') return 'वाढदिवस पोस्ट';
+      if (cat === 'Festival Post') return 'उत्सव पोस्ट';
+      if (cat === 'Social Issue') return 'सामाजिक समस्या';
+      if (cat === 'Poll') return 'जनमत चाचणी';
+      if (cat === 'Live Video') return 'लाईव्ह व्हिडिओ';
+      if (cat === 'Campaign') return 'मोहीम';
+      if (cat === 'Repost') return 'रीपोस्ट';
+      if (cat === 'General') return 'सामान्य';
+    } else if (isHindi) {
+      if (cat === 'Birthday Post') return 'जन्मदिन पोस्ट';
+      if (cat === 'Festival Post') return 'त्योहार पोस्ट';
+      if (cat === 'Social Issue') return 'सामाजिक मुद्दा';
+      if (cat === 'Poll') return 'पोल';
+      if (cat === 'Live Video') return 'लाइव वीडियो';
+      if (cat === 'Campaign') return 'अभियान';
+      if (cat === 'Repost') return 'रीपोस्ट';
+      if (cat === 'General') return 'सामान्य';
+    }
+    return cat;
+  };
+
+  const translateAssignee = (name: string) => {
+    if (!name) return name;
+    if (isMarathi) {
+      if (name === 'Harshal Vora') return 'हर्षल व्होरा';
+      if (name === 'Dr. Amol Pawar') return 'डॉ. अमोल पवार';
+      if (name === 'Sagar') return 'सागर';
+    } else if (isHindi) {
+      if (name === 'Harshal Vora') return 'हर्षल वोरा';
+      if (name === 'Dr. Amol Pawar') return 'डॉ. अमोल पवार';
+      if (name === 'Sagar') return 'सागर';
+    }
+    return name;
+  };
+
+  const translateTitle = (title: string) => {
+    if (!title) return title;
+    if (isMarathi) {
+      if (title.includes('Ambedkar')) return 'आंबेडकर जयंती ग्राफिक';
+      if (title.includes('Water scarcity')) return 'पाणीटंचाईवरील रील';
+      if (title.includes('Ward development')) return 'प्रभाग विकास जनमत चाचणी';
+      if (title.includes('Google Meet')) return 'गुगल मीट + फेसबुक लाईव्ह';
+      if (title.includes('Monthly paid')) return 'मे महिन्याची पेड जाहिरात';
+      if (title.includes('Repost road')) return 'रस्ते कामाचे अपडेट रीपोस्ट करा';
+    } else if (isHindi) {
+      if (title.includes('Ambedkar')) return 'अंबेडकर जयंती ग्राफिक';
+      if (title.includes('Water scarcity')) return 'जल संकट रील';
+      if (title.includes('Ward development')) return 'वार्ड विकास पोल';
+      if (title.includes('Google Meet')) return 'गूगल मीट + फेसबुक लाइव';
+      if (title.includes('Monthly paid')) return 'मई का भुगतान किया गया विज्ञापन';
+      if (title.includes('Repost road')) return 'सड़क कार्य अपडेट रीपोस्ट करें';
+    }
+    return title;
+  };
+
   const displayTasks = tasks.slice(0, 15);
   const completedTasks = tasks.filter(t => t.status === 'done').length;
 
@@ -58,7 +116,7 @@ export const TeamTasksReport = forwardRef<HTMLDivElement, TeamTasksReportProps>(
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
           <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण कार्ये:' : isHindi ? 'कुल कार्य:' : 'Total Tasks:'} {tasks.length} ({completedTasks} {isMarathi ? 'पूर्ण' : isHindi ? 'पूरा हुआ' : 'Done'})</p>
+          <p>{isMarathi ? 'एकूण कार्ये:' : isHindi ? 'कुल कार्य:' : 'Total Tasks:'} {tasks.length.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')} ({completedTasks.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')} {isMarathi ? 'पूर्ण' : isHindi ? 'पूरा हुआ' : 'Done'})</p>
         </div>
       </div>
 
@@ -104,12 +162,16 @@ export const TeamTasksReport = forwardRef<HTMLDivElement, TeamTasksReportProps>(
 
             return (
               <tr key={task.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">{idx + 1}</td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-700 font-medium">
-                  {truncate(task.title, 40)}
-                  <span className="block text-[11px] text-gray-400 mt-1">{task.category}</span>
+                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">
+                  {isMarathi ? (idx + 1).toLocaleString('mr-IN') : isHindi ? (idx + 1).toLocaleString('hi-IN') : (idx + 1)}
                 </td>
-                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-600">{task.assignee}</td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-700 font-medium">
+                  {truncate(translateTitle(task.title), 40)}
+                  <span className="block text-[11px] text-gray-400 mt-1">{translateCategory(task.category)}</span>
+                </td>
+                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-600">
+                  {translateAssignee(task.assignee)}
+                </td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600">
                    <span className={`font-medium ${task.priority === 'high' ? 'text-red-600' : task.priority === 'medium' ? 'text-blue-600' : 'text-gray-500'}`}>
                     {priorityText}

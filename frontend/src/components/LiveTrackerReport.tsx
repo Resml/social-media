@@ -32,6 +32,18 @@ export const LiveTrackerReport = forwardRef<HTMLDivElement, LiveTrackerReportPro
     return str.length > len ? str.substring(0, len) + '...' : str;
   };
 
+  const translatePlatform = (platform: string) => {
+    if (!platform) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'Facebook';
+    const p = platform.toUpperCase();
+    if (p.includes('FB') || p.includes('FACEBOOK')) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'Facebook';
+    if (p.includes('INSTA')) return isMarathi ? 'इन्स्टाग्राम' : isHindi ? 'इंस्टाग्राम' : 'Instagram';
+    if (p.includes('TWITTER') || p === 'X') return isMarathi ? 'ट्विटर' : isHindi ? 'ट्विटर' : 'Twitter';
+    if (p.includes('LINKEDIN')) return isMarathi ? 'लिंक्डइन' : isHindi ? 'लिंक्डइन' : 'LinkedIn';
+    if (p.includes('YOUTUBE')) return isMarathi ? 'यूट्यूब' : isHindi ? 'यूट्यूब' : 'YouTube';
+    if (p.includes('BOTH')) return isMarathi ? 'दोन्ही' : isHindi ? 'दोनों' : 'Both';
+    return platform;
+  };
+
   const displaySessions = sessions.slice(0, 15);
 
   return (
@@ -100,13 +112,19 @@ export const LiveTrackerReport = forwardRef<HTMLDivElement, LiveTrackerReportPro
 
             return (
               <tr key={session.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">{idx + 1}</td>
-                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">{session.platform}</td>
+                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">
+                  {isMarathi ? (idx + 1).toLocaleString('mr-IN') : isHindi ? (idx + 1).toLocaleString('hi-IN') : (idx + 1)}
+                </td>
+                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">
+                  {translatePlatform(session.platform)}
+                </td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600 font-medium">
                   {truncate(session.topic, 50)}
                 </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-medium text-gray-600">{dateFmt}<br/><span className="text-gray-400 text-[11px]">{timeFmt}</span></td>
-                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{session.duration} {isMarathi ? 'मिनिटे' : isHindi ? 'मिनट' : 'mins'}</td>
+                <td className="px-4 py-4 border-r border-gray-200 text-gray-600">
+                  {session.duration.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')} {isMarathi ? 'मिनिटे' : isHindi ? 'मिनट' : 'mins'}
+                </td>
                 <td className="px-4 py-4">
                   <span className={`px-2 py-1 rounded font-medium text-[11px] ${statusColor}`}>
                     {statusText}

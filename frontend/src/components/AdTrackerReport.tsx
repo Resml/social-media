@@ -29,6 +29,37 @@ export const AdTrackerReport = forwardRef<HTMLDivElement, AdTrackerReportProps>(
     return str.length > len ? str.substring(0, len) + '...' : str;
   };
 
+  const translatePlatform = (platform: string) => {
+    if (!platform) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'Facebook';
+    const p = platform.toUpperCase();
+    if (p.includes('FB') || p.includes('FACEBOOK')) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'Facebook';
+    if (p.includes('INSTA')) return isMarathi ? 'इन्स्टाग्राम' : isHindi ? 'इंस्टाग्राम' : 'Instagram';
+    if (p.includes('TWITTER') || p === 'X') return isMarathi ? 'ट्विटर' : isHindi ? 'ट्विटर' : 'Twitter';
+    if (p.includes('LINKEDIN')) return isMarathi ? 'लिंक्डइन' : isHindi ? 'लिंक्डइन' : 'LinkedIn';
+    if (p.includes('YOUTUBE')) return isMarathi ? 'यूट्यूब' : isHindi ? 'यूट्यूब' : 'YouTube';
+    if (p.includes('GOOGLE')) return isMarathi ? 'गूगल' : isHindi ? 'गूगल' : 'Google';
+    return platform;
+  };
+
+  const translateMonth = (month: string) => {
+    if (!month) return month;
+    if (isMarathi) {
+      const mrMonths: Record<string, string> = {
+        'Jan': 'जाने', 'Feb': 'फेब्रु', 'Mar': 'मार्च', 'Apr': 'एप्रि', 'May': 'मे', 'Jun': 'जून',
+        'Jul': 'जुलै', 'Aug': 'ऑग', 'Sep': 'सप्टें', 'Oct': 'ऑक्टो', 'Nov': 'नोव्हें', 'Dec': 'डिसें'
+      };
+      return mrMonths[month.substring(0, 3)] || month;
+    }
+    if (isHindi) {
+      const hiMonths: Record<string, string> = {
+        'Jan': 'जन', 'Feb': 'फ़र', 'Mar': 'मार्च', 'Apr': 'अप्रै', 'May': 'मई', 'Jun': 'जून',
+        'Jul': 'जुला', 'Aug': 'अग', 'Sep': 'सितं', 'Oct': 'अक्टू', 'Nov': 'नवं', 'Dec': 'दिसं'
+      };
+      return hiMonths[month.substring(0, 3)] || month;
+    }
+    return month;
+  };
+
   const displayAds = ads.slice(0, 15);
   const totalSpend = ads.reduce((a, d) => a + d.spend, 0);
 
@@ -89,11 +120,15 @@ export const AdTrackerReport = forwardRef<HTMLDivElement, AdTrackerReportProps>(
 
             return (
               <tr key={ad.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">{idx + 1}</td>
-                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">{ad.month}</td>
+                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">
+                  {isMarathi ? (idx + 1).toLocaleString('mr-IN') : isHindi ? (idx + 1).toLocaleString('hi-IN') : (idx + 1)}
+                </td>
+                <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">
+                  {translateMonth(ad.month)}
+                </td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600 font-medium">
                   {truncate(ad.campaign, 40)}
-                  <span className="block text-[11px] text-gray-400 mt-1">{ad.platform}</span>
+                  <span className="block text-[11px] text-gray-400 mt-1">{translatePlatform(ad.platform)}</span>
                 </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-medium text-gray-600">₹{ad.spend.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')}</td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600">{ad.reach.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US')}</td>

@@ -26,6 +26,17 @@ export const PostSearchReport = forwardRef<HTMLDivElement, PostSearchReportProps
     return str.length > len ? str.substring(0, len) + '...' : str;
   };
 
+  const translatePlatform = (platform: string) => {
+    if (!platform) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'FB';
+    const p = platform.toUpperCase();
+    if (p.includes('FB') || p.includes('FACEBOOK')) return isMarathi ? 'फेसबुक' : isHindi ? 'फेसबुक' : 'FB';
+    if (p.includes('INSTA')) return isMarathi ? 'इन्स्टाग्राम' : isHindi ? 'इंस्टाग्राम' : 'Instagram';
+    if (p.includes('TWITTER') || p === 'X') return isMarathi ? 'ट्विटर' : isHindi ? 'ट्विटर' : 'Twitter';
+    if (p.includes('LINKEDIN')) return isMarathi ? 'लिंक्डइन' : isHindi ? 'लिंक्डइन' : 'LinkedIn';
+    if (p.includes('YOUTUBE')) return isMarathi ? 'यूट्यूब' : isHindi ? 'यूट्यूब' : 'YouTube';
+    return platform;
+  };
+
   // Limit to 15 to fit on A4
   const displayResults = results.slice(0, 15);
 
@@ -34,6 +45,10 @@ export const PostSearchReport = forwardRef<HTMLDivElement, PostSearchReportProps
     if (activeTab === 'PUBLISHED') subtitleText = 'स्थिती: प्रकाशित';
     else if (activeTab === 'SCHEDULED') subtitleText = 'स्थिती: नियोजित';
     else subtitleText = 'स्थिती: मसुदा';
+  } else if (isHindi) {
+    if (activeTab === 'PUBLISHED') subtitleText = 'स्थिति: प्रकाशित';
+    else if (activeTab === 'SCHEDULED') subtitleText = 'स्थिति: निर्धारित';
+    else subtitleText = 'स्थिति: ड्राफ्ट';
   } else {
     subtitleText = `Status: ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1).toLowerCase()}`;
   }
@@ -75,7 +90,7 @@ export const PostSearchReport = forwardRef<HTMLDivElement, PostSearchReportProps
             <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'प्लॅटफॉर्म' : isHindi ? 'प्लेटफ़ॉर्म' : 'Platform'}</th>
             <th className="px-4 py-4 border-r border-gray-200 w-64">{isMarathi ? 'मजकूर' : isHindi ? 'कंटेंट' : 'Content'}</th>
             <th className="px-4 py-4 border-r border-gray-200 w-24">{isMarathi ? 'दिनांक' : isHindi ? 'दिनांक' : 'Date'}</th>
-            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'व्ह्यूज' : isHindi ? 'दृश्यों' : 'Views'}</th>
+            <th className="px-4 py-4 border-r border-gray-200">{isMarathi ? 'व्ह्यूज' : isHindi ? 'दृश्य' : 'Views'}</th>
             <th className="px-4 py-4">{isMarathi ? 'संवाद' : isHindi ? 'इंटरैक्शन' : 'Interactions'}</th>
           </tr>
         </thead>
@@ -90,9 +105,11 @@ export const PostSearchReport = forwardRef<HTMLDivElement, PostSearchReportProps
 
             return (
               <tr key={idx} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">{idx + 1}</td>
+                <td className="px-3 py-4 border-r border-gray-200 text-center text-gray-500">
+                  {isMarathi ? (idx + 1).toLocaleString('mr-IN') : isHindi ? (idx + 1).toLocaleString('hi-IN') : (idx + 1)}
+                </td>
                 <td className="px-4 py-4 border-r border-gray-200 font-bold text-gray-700">
-                  {post.platform || (post.socialAccount?.platform) || 'FB'}
+                  {translatePlatform(post.platform || post.socialAccount?.platform)}
                 </td>
                 <td className="px-4 py-4 border-r border-gray-200 text-gray-600">
                   {truncate(post.caption || post.content || '', 40)}
