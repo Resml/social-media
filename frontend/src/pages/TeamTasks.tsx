@@ -57,6 +57,7 @@ export const TeamTasks = () => {
   const generatePDF = async () => {
     if (!reportRef.current) return;
     setIsGeneratingReport(true);
+    const toastId = toast.loading('Generating PDF report... Please wait.');
     
     try {
       const element = reportRef.current;
