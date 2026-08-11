@@ -22,6 +22,7 @@ import { ArticlePlanner } from './pages/ArticlePlanner';
 import { VideoProduction } from './pages/VideoProduction';
 import { AIAssistant } from './pages/AIAssistant';
 import { AIVideoMaker } from './pages/AIVideoMaker';
+import { PSDEditor } from './pages/PSDEditor';
 import { Toaster } from 'sonner';
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -61,6 +62,7 @@ function App() {
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/ai" element={<AIAssistant />} />
           <Route path="/ai-video" element={<AIVideoMaker />} />
+          <Route path="/psd-editor" element={<PSDEditor />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/export" element={<CommentExporter />} />
           <Route path="/quick-comment" element={<QuickCommenter />} />

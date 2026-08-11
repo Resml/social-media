@@ -41,7 +41,8 @@
     "profileAudit": "प्रोफाइल ऑडिट",
     "articles": "आर्टिकल प्लानर",
     "videos": "वीडियो ट्रैकर",
-    "aiVideoMaker": "एआई वीडियो मेकर"
+    "aiVideoMaker": "एआई वीडियो मेकर",
+    "psdEditor": "पीएसडी संपादक"
   },
   "dashboard": {
     "title": "एनालिटिक्स डैशबोर्ड",
@@ -1210,5 +1211,42 @@
         "note": "ड्रोन फुटेज की जरूरत है"
       }
     }
+  },
+  "psdEditor": {
+    "title": "Psdify",
+    "schedulePost": "पोस्ट शेड्यूल करें",
+    "exportPng": "PNG निर्यात करें",
+    "exportPdf": "PDF निर्यात करें",
+    "bulkGenerate": "थोक में बनाएं",
+    "properties": "गुण (Properties)",
+    "layersTitle": "परतें (Layers)",
+    "backgroundOptions": "पृष्ठभूमि विकल्प",
+    "addBlankLayer": "खाली परत जोड़ें",
+    "addImageLayer": "छवि परत जोड़ें",
+    "uploadPsdImage": "PSD या छवि अपलोड करें",
+    "clearCache": "कैश साफ़ करें और फिर से शुरू करें",
+    "brushSettings": "ब्रश सेटिंग्स",
+    "eraserSettings": "इरेज़र सेटिंग्स",
+    "size": "आकार",
+    "color": "रंग",
+    "opacity": "अपारदर्शिता",
+    "blendMode": "ब्लेंड मोड",
+    "imageAdjustments": "छवि समायोजन",
+    "brightness": "चमक",
+    "contrast": "कंट्रास्ट",
+    "blur": "धुंधलापन (Blur)",
+    "cancel": "रद्द करें",
+    "generateBanners": "बैनर बनाएं",
+    "generating": "बनाया जा रहा है...",
+    "addContentJob": "सामग्री कार्य जोड़ें",
+    "selectTargetText": "लक्षित पाठ परतें चुनें:",
+    "extractingLayers": "PSD परतें निकाली जा रही हैं...",
+    "replace": "बदलें",
+    "selectedLayer": "चयनित परत",
+    "layersPlain": "परतें",
+    "supportsMsg": "समर्थित: .psd, .png, .jpg, .webp",
+    "addNewLayer": "नई परत जोड़ें",
+    "textProperties": "पाठ गुण",
+    "noTextLayers": "इस PSD में कोई पाठ परत नहीं मिली।"
   }
 }

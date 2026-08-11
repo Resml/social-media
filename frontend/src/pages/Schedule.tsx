@@ -3,6 +3,7 @@ import { api } from '../api/axios';
 import { ImagePlus } from 'lucide-react';
 import { FaInstagram, FaFacebookF, FaTwitter } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const Schedule = () => {
   const { t, i18n } = useTranslation();
@@ -15,6 +16,15 @@ export const Schedule = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
   const [mediaUrl, setMediaUrl] = useState<string | null>(null);
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.state?.preloadedMediaUrl) {
+      setMediaUrl(location.state.preloadedMediaUrl);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     api.get('/oauth/accounts')
@@ -276,18 +286,30 @@ export const Schedule = () => {
                 </div>
               </div>
 
-              {/* Cancel button */}
-              {p.status !== 'PUBLISHED' && (
-                <button
-                  onClick={async () => { await api.delete(`/schedule/${p.id}`); fetchPosts(); }}
-                  className="text-xs font-bold uppercase tracking-widest px-3 py-2 rounded-lg transition-colors"
-                  style={{ color: '#ef4444', border: '1px solid transparent' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#fef2f2'; (e.currentTarget as HTMLElement).style.borderColor = '#fecaca'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.borderColor = 'transparent'; }}
-                >
-                  {t('schedule.cancel', 'Cancel')}
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {p.mediaUrls && p.mediaUrls.length > 0 && (
+                  <button
+                    onClick={() => navigate('/psd-editor', { state: { backgroundImageUrl: p.mediaUrls[0] } })}
+                    className="text-xs font-bold uppercase tracking-widest px-3 py-2 rounded-lg transition-colors"
+                    style={{ color: 'var(--brand-600)', border: '1px solid transparent' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--brand-50)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--brand-200)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.borderColor = 'transparent'; }}
+                  >
+                    {t('schedule.editImage', 'Edit Image')}
+                  </button>
+                )}
+                {p.status !== 'PUBLISHED' && (
+                  <button
+                    onClick={async () => { await api.delete(`/schedule/${p.id}`); fetchPosts(); }}
+                    className="text-xs font-bold uppercase tracking-widest px-3 py-2 rounded-lg transition-colors"
+                    style={{ color: '#ef4444', border: '1px solid transparent' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#fef2f2'; (e.currentTarget as HTMLElement).style.borderColor = '#fecaca'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.borderColor = 'transparent'; }}
+                  >
+                    {t('schedule.cancel', 'Cancel')}
+                  </button>
+                )}
+              </div>
             </div>
           ))}
 

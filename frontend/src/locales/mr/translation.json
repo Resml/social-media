@@ -41,7 +41,8 @@
     "profileAudit": "प्रोफाईल ऑडिट",
     "articles": "आर्टिकल प्लॅनर",
     "videos": "व्हिडिओ ट्रॅकर",
-    "aiVideoMaker": "एआय व्हिडिओ मेकर"
+    "aiVideoMaker": "एआय व्हिडिओ मेकर",
+    "psdEditor": "पीएसडी संपादक"
   },
   "dashboard": {
     "title": "अनालिटिक्स डॅशबोर्ड",
@@ -1205,5 +1206,42 @@
         "note": "ड्रोन फुटेज आवश्यक आहे"
       }
     }
+  },
+  "psdEditor": {
+    "title": "Psdify",
+    "schedulePost": "पोस्ट शेड्युल करा",
+    "exportPng": "PNG एक्सपोर्ट करा",
+    "exportPdf": "PDF एक्सपोर्ट करा",
+    "bulkGenerate": "मोठ्या प्रमाणात तयार करा",
+    "properties": "गुणधर्म (Properties)",
+    "layersTitle": "स्तर (Layers)",
+    "backgroundOptions": "पार्श्वभूमी पर्याय",
+    "addBlankLayer": "रिकामे स्तर जोडा",
+    "addImageLayer": "चित्र स्तर जोडा",
+    "uploadPsdImage": "PSD किंवा प्रतिमा अपलोड करा",
+    "clearCache": "कॅशे साफ करा आणि पुन्हा सुरू करा",
+    "brushSettings": "ब्रश सेटिंग्ज",
+    "eraserSettings": "इरेजर सेटिंग्ज",
+    "size": "आकार",
+    "color": "रंग",
+    "opacity": "अपारदर्शकता",
+    "blendMode": "ब्लेंड मोड",
+    "imageAdjustments": "चित्र समायोजन",
+    "brightness": "ब्राइटनेस",
+    "contrast": "कॉन्ट्रास्ट",
+    "blur": "अस्पष्टता (Blur)",
+    "cancel": "रद्द करा",
+    "generateBanners": "बॅनर तयार करा",
+    "generating": "तयार होत आहे...",
+    "addContentJob": "सामग्री कार्य जोडा",
+    "selectTargetText": "लक्षित मजकूर स्तर निवडा:",
+    "extractingLayers": "PSD स्तर काढले जात आहेत...",
+    "replace": "बदला",
+    "selectedLayer": "निवडलेला स्तर",
+    "layersPlain": "स्तर",
+    "supportsMsg": "समर्थित: .psd, .png, .jpg, .webp",
+    "addNewLayer": "नवीन लेयर जोडा",
+    "textProperties": "मजकूर गुणधर्म",
+    "noTextLayers": "या PSD मध्ये कोणतीही मजकूर लेयर आढळली नाही."
   }
 }

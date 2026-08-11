@@ -1,0 +1,1490 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { api } from '../api/axios';
+import { useTranslation } from 'react-i18next';
+
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import { jsPDF } from 'jspdf';
+import localforage from 'localforage';
+import { Stage, Layer, Image as KonvaImage, Text as KonvaText, Rect, Group, Shape, Transformer, Line as KonvaLine } from 'react-konva';
+import Konva from 'konva';
+import { MousePointer2, Move, Type, Crop, Eraser, PenTool, Eye, EyeOff, Layers, ImageIcon, Zap, UploadCloud, Trash2, FolderOpen, Save, Download, FileText, X, Copy, Palette, Undo, Redo, ZoomIn, ZoomOut, Menu, Plus } from 'lucide-react';
+import { readPsd, writePsdUint8Array } from 'ag-psd';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import './PSDEditor.css';
+
+function SortableLayerItem({ layer, index, selectedNodeId, setSelectedNodeId, setHoveredLayerId, toggleLayerVisibility, duplicateLayer, deleteLayer }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: layer.uniqueId });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 100 : 'auto',
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      {...attributes} 
+      {...listeners}
+      className={`layer-item ${selectedNodeId === layer.uniqueId ? 'active' : ''}`}
+      onClick={() => setSelectedNodeId(layer.uniqueId)}
+      onMouseEnter={() => setHoveredLayerId(layer.uniqueId)}
+      onMouseLeave={() => setHoveredLayerId(null)}
+    >
+      <div style={{ cursor: 'pointer' }} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); toggleLayerVisibility(index); }}>
+        {!layer.hidden ? <Eye size={16} /> : <EyeOff size={16} color="#666" />}
+      </div>
+      
+      <div 
+        draggable="true"
+        onDragStart={(e) => {
+          e.stopPropagation();
+          e.dataTransfer.setData('text/plain', layer.uniqueId);
+          e.dataTransfer.effectAllowed = 'copy';
+        }}
+        style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden', flexShrink: 0, cursor: 'grab' }}
+      >
+        {layer.text ? (
+          <div style={{ color: layer.editableFill || layer.text.fill || 'var(--text-light)', fontSize: '14px', fontWeight: 'bold' }}>T</div>
+        ) : layer.imageElement ? (
+          <img src={layer.imageElement.src} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="thumb" draggable="false" />
+        ) : (
+          <ImageIcon size={14} color="var(--text-main)" />
+        )}
+      </div>
+
+      <div style={{ flex: 1, userSelect: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {layer.name}
+      </div>
+      <div style={{ display: 'flex', gap: '4px' }} onPointerDown={(e) => e.stopPropagation()}>
+        <Copy size={14} style={{ cursor: 'pointer', color: 'var(--text-main)' }} onClick={(e) => { e.stopPropagation(); duplicateLayer(layer.uniqueId); }} />
+        <Trash2 size={14} style={{ cursor: 'pointer', color: '#ff4444' }} onClick={(e) => { e.stopPropagation(); deleteLayer(layer.uniqueId); }} />
+      </div>
+    </div>
+  );
+}
+
+const IMAGE_FILTERS = [Konva.Filters.Brighten, Konva.Filters.Contrast, Konva.Filters.Blur];
+const NO_FILTERS = [];
+
+const getLayerFontData = (layer) => {
+  let fontSize = 48;
+  let fill = '#ffffff';
+  let fontFamily = 'sans-serif';
+  let fontStyle = 'normal';
+
+  if (layer && layer.text) {
+    const style = layer.text.style || (layer.text.styleRuns && layer.text.styleRuns[0]?.style);
+    if (style) {
+      if (style.fontSize) {
+        let scale = 1;
+        if (layer.text.transform && layer.text.transform.length >= 4) {
+          const yx = layer.text.transform[2];
+          const yy = layer.text.transform[3];
+          scale = Math.sqrt(yx*yx + yy*yy);
+        }
+        fontSize = Math.round(style.fontSize * scale);
+      }
+      if (style.fillColor && 'r' in style.fillColor) {
+        const r = Math.round(style.fillColor.r).toString(16).padStart(2, '0');
+        const g = Math.round(style.fillColor.g).toString(16).padStart(2, '0');
+        const b = Math.round(style.fillColor.b).toString(16).padStart(2, '0');
+        fill = `#${r}${g}${b}`;
+      }
+      if (style.font?.name) {
+        const rawName = style.font.name;
+        
+        // Clean up font name for better web font matching (e.g. "Montserrat-Bold" -> "Montserrat")
+        let cleanFamily = rawName.split('-')[0];
+        // Insert space before capital letters if there are no spaces (e.g. "OpenSans" -> "Open Sans")
+        if (!cleanFamily.includes(' ')) {
+           cleanFamily = cleanFamily.replace(/([a-z])([A-Z])/g, '$1 $2');
+        }
+        // Remove trailing abbreviations like MT, PSMT, MS
+        cleanFamily = cleanFamily.replace(/\s?(MT|PSMT|MS)$/i, '').trim();
+        
+        fontFamily = cleanFamily || rawName;
+
+        const lower = rawName.toLowerCase();
+        const isBold = lower.includes('bold');
+        const isItalic = lower.includes('italic');
+        
+        if (isBold && isItalic) fontStyle = 'italic bold';
+        else if (isBold) fontStyle = 'bold';
+        else if (isItalic) fontStyle = 'italic';
+
+        // Attempt to dynamically load from Google Fonts for perfect matching
+        if (typeof window !== 'undefined' && fontFamily !== 'sans-serif') {
+          if (!window.__loadedFonts) window.__loadedFonts = new Set();
+          if (!window.__loadedFonts.has(fontFamily)) {
+            window.__loadedFonts.add(fontFamily);
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
+            document.head.appendChild(link);
+          }
+        }
+      }
+    }
+  }
+  return { fontSize, fill, fontFamily, fontStyle };
+};
+
+const FilteredImage = React.memo(({ layer, imgW, imgH }) => {
+  const imageRef = useRef(null);
+
+  const hasFilters = (layer.brightness || 0) !== 0 || (layer.contrast || 0) !== 0 || (layer.blur || 0) !== 0;
+
+  useEffect(() => {
+    if (imageRef.current) {
+      // Always clear cache first when properties or image change
+      imageRef.current.clearCache();
+      if (hasFilters) {
+        imageRef.current.cache();
+      }
+    }
+  }, [layer.brightness, layer.contrast, layer.blur, hasFilters, layer.imageElement]);
+
+  return (
+    <KonvaImage
+      ref={imageRef}
+      image={layer.imageElement}
+      width={imgW}
+      height={imgH}
+      filters={hasFilters ? IMAGE_FILTERS : NO_FILTERS}
+      brightness={layer.brightness || 0}
+      contrast={layer.contrast || 0}
+      blurRadius={layer.blur || 0}
+    />
+  );
+});
+
+export const PSDEditor = () => {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [activeTool, setActiveTool] = useState('move');
+  const [psdData, setPsdData] = useState(null);
+  const [layers, setLayers] = useState([]);
+  const [scale, setScale] = useState(1);
+  const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
+  const [showMobilePanel, setShowMobilePanel] = useState(false);
+  
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [selectedLayerIds, setSelectedLayerIds] = useState([]);
+  const [bulkJobs, setBulkJobs] = useState([{ id: Date.now(), data: {} }]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const [previewData, setPreviewData] = useState(null);
+  const [isParsing, setIsParsing] = useState(false);
+
+  // Canvas interaction states
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [hoveredLayerId, setHoveredLayerId] = useState(null);
+  const trRef = useRef(null);
+  
+  // Drawing states
+  const [brushColor, setBrushColor] = useState('#ff0000');
+  const [brushSize, setBrushSize] = useState(5);
+  const isDrawing = useRef(false);
+
+  // History states
+  const historyRef = useRef([]);
+  const historyIndexRef = useRef(-1);
+  const isHistoryUpdate = useRef(false);
+  const [historyVersion, setHistoryVersion] = useState(0);
+
+  useEffect(() => {
+    if (isHistoryUpdate.current) {
+      isHistoryUpdate.current = false;
+      return;
+    }
+    if (layers.length === 0) return;
+
+    const timer = setTimeout(() => {
+      const hist = historyRef.current;
+      const idx = historyIndexRef.current;
+      if (hist.length > 0 && hist[idx] === layers) return;
+
+      const newHist = hist.slice(0, idx + 1);
+      newHist.push(layers);
+      if (newHist.length > 50) newHist.shift();
+      
+      historyRef.current = newHist;
+      historyIndexRef.current = newHist.length - 1;
+      
+      setHistoryVersion(v => v + 1);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [layers]);
+
+  const handleUndo = () => {
+    if (historyIndexRef.current > 0) {
+      isHistoryUpdate.current = true;
+      historyIndexRef.current -= 1;
+      setLayers(historyRef.current[historyIndexRef.current]);
+      setHistoryVersion(v => v + 1);
+      setSelectedNodeId(null);
+    }
+  };
+
+  const handleRedo = () => {
+    if (historyIndexRef.current < historyRef.current.length - 1) {
+      isHistoryUpdate.current = true;
+      historyIndexRef.current += 1;
+      setLayers(historyRef.current[historyIndexRef.current]);
+      setHistoryVersion(v => v + 1);
+      setSelectedNodeId(null);
+    }
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      setLayers((items) => {
+        const oldIndex = items.findIndex(item => item.uniqueId === active.id);
+        const newIndex = items.findIndex(item => item.uniqueId === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
+  // Layout resizing states
+  const [leftPanelWidth, setLeftPanelWidth] = useState(260);
+  const [rightPanelWidth, setRightPanelWidth] = useState(260);
+  const [isResizingLeft, setIsResizingLeft] = useState(false);
+  const [isResizingRight, setIsResizingRight] = useState(false);
+
+
+  const fileInputRef = useRef(null);
+  const containerRef = useRef(null);
+  const stageRef = useRef(null);
+
+  const updateScale = () => {
+    if (containerRef.current && psdData) {
+      const containerW = Math.max(100, containerRef.current.clientWidth);
+      const containerH = Math.max(100, containerRef.current.clientHeight);
+      const scaleX = (containerW - 40) / (psdData.width || 1);
+      const scaleY = (containerH - 40) / (psdData.height || 1);
+      const minScale = Math.max(0.01, Math.min(scaleX, scaleY, 1));
+      
+      setScale(minScale);
+      setStagePos({
+        x: (containerW - (psdData.width || 0) * minScale) / 2,
+        y: (containerH - (psdData.height || 0) * minScale) / 2
+      });
+    }
+  };
+
+  useEffect(() => {
+    updateScale();
+  }, [psdData, leftPanelWidth, rightPanelWidth]);
+
+  // Handle panel resizing
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isResizingLeft) {
+        // Toolbar is 50px wide
+        const newWidth = Math.max(150, Math.min(500, e.clientX - 50));
+        setLeftPanelWidth(newWidth);
+      }
+      if (isResizingRight) {
+        const newWidth = Math.max(150, Math.min(500, window.innerWidth - e.clientX));
+        setRightPanelWidth(newWidth);
+      }
+    };
+    const handleMouseUp = () => {
+      setIsResizingLeft(false);
+      setIsResizingRight(false);
+    };
+
+    if (isResizingLeft || isResizingRight) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      // Disable text selection while resizing
+      document.body.style.userSelect = 'none';
+    } else {
+      document.body.style.userSelect = 'auto';
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = 'auto';
+    };
+  }, [isResizingLeft, isResizingRight]);
+
+  // Attach transformer to selected node
+  useEffect(() => {
+    if (selectedNodeId && trRef.current && stageRef.current) {
+      const node = stageRef.current.findOne('#' + selectedNodeId);
+      if (node) {
+        trRef.current.nodes([node]);
+        trRef.current.getLayer().batchDraw();
+      }
+    }
+  }, [selectedNodeId]);
+
+  useEffect(() => {
+    const initApp = async () => {
+      try {
+        const savedBuffer = await localforage.getItem('saved_psd');
+        if (savedBuffer) {
+          await parsePsdBuffer(savedBuffer);
+        }
+      } catch (err) {
+        console.error("Failed to load saved PSD", err);
+      }
+    };
+    initApp();
+  }, []);
+
+  const handleOpenClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleClearCache = async () => {
+    if (window.confirm("Are you sure you want to clear the saved PSD and start over?")) {
+      await localforage.removeItem('saved_psd');
+      setPsdData(null);
+      setLayers([]);
+    }
+  };
+
+  const parsePsdBuffer = async (buffer) => {
+    try {
+      const psd = readPsd(buffer);
+      
+      setPsdData({
+        width: psd.width,
+        height: psd.height,
+        channels: psd.channels,
+        bitsPerChannel: psd.bitsPerChannel,
+        colorMode: psd.colorMode
+      });
+      
+      const flattenLayers = (node) => {
+        let result = [];
+        if (node.children) {
+          node.children.forEach(child => {
+            if (child.children) {
+              result = result.concat(flattenLayers(child));
+            } else {
+              result.push(child);
+            }
+          });
+        }
+        return result;
+      };
+
+      const extracted = flattenLayers(psd);
+      
+      const layersWithId = await Promise.all(extracted.map(async (l, i) => {
+        let imageElement = null;
+        if (l.canvas) {
+          await new Promise((resolve) => {
+            imageElement = new window.Image();
+            imageElement.onload = resolve;
+            imageElement.onerror = resolve; 
+            imageElement.src = l.canvas.toDataURL();
+          });
+        }
+        
+        return {
+          ...l,
+          imageElement,
+          uniqueId: `layer-${i}`
+        };
+      }));
+      
+      setLayers(layersWithId.reverse());
+    } catch (error) {
+      console.error('Error parsing PSD:', error);
+      alert('Failed to parse PSD file. See console for details.');
+    } finally {
+      setIsParsing(false);
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setIsParsing(true);
+
+    try {
+      // Yield to the browser event loop so it can render the loading UI
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      let buffer;
+
+      if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/webp') {
+        const img = new window.Image();
+        const objUrl = URL.createObjectURL(file);
+        
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = objUrl;
+        });
+        
+        URL.revokeObjectURL(objUrl);
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        
+        const psdObject = {
+          width: canvas.width,
+          height: canvas.height,
+          channels: 3,
+          bitsPerChannel: 8,
+          colorMode: 3, // RGB
+          children: [
+            {
+              name: file.name,
+              canvas: canvas,
+              opacity: 255,
+              blendMode: 'normal',
+              left: 0,
+              top: 0,
+              right: canvas.width,
+              bottom: canvas.height
+            }
+          ]
+        };
+        
+        buffer = writePsdUint8Array(psdObject).buffer;
+      } else {
+        buffer = await file.arrayBuffer();
+      }
+
+      await localforage.setItem('saved_psd', buffer);
+      await parsePsdBuffer(buffer);
+    } catch (error) {
+      console.error(error);
+      alert('Failed to process uploaded file.');
+      setIsParsing(false);
+    }
+  };
+
+  const toggleLayerVisibility = (index) => {
+    const newLayers = [...layers];
+    newLayers[index].hidden = !newLayers[index].hidden;
+    setLayers(newLayers);
+  };
+
+  const duplicateLayer = (id, dropX = null, dropY = null) => {
+    const layerIndex = layers.findIndex(l => l.uniqueId === id);
+    if (layerIndex === -1) return;
+    const baseLayer = layers[layerIndex];
+    
+    let newLeft = baseLayer.left || 0;
+    let newTop = baseLayer.top || 0;
+    
+    if (dropX !== null && dropY !== null) {
+      const w = baseLayer.imageElement ? baseLayer.imageElement.width : (baseLayer.right - baseLayer.left);
+      const h = baseLayer.imageElement ? baseLayer.imageElement.height : (baseLayer.bottom - baseLayer.top);
+      newLeft = dropX - (w / 2 || 0);
+      newTop = dropY - (h / 2 || 0);
+    } else {
+      newLeft += 20;
+      newTop += 20;
+    }
+
+    const newLayer = { 
+      ...baseLayer, 
+      uniqueId: Math.random().toString(36).substr(2, 9), 
+      name: baseLayer.name + ' copy',
+      left: newLeft,
+      top: newTop,
+      right: newLeft + (baseLayer.right - baseLayer.left),
+      bottom: newTop + (baseLayer.bottom - baseLayer.top)
+    };
+    
+    const newLayers = [...layers];
+    newLayers.splice(layerIndex, 0, newLayer);
+    setLayers(newLayers);
+    setSelectedNodeId(newLayer.uniqueId);
+  };
+
+  const deleteLayer = (id) => {
+    setLayers(layers.filter(l => l.uniqueId !== id));
+    if (selectedNodeId === id) setSelectedNodeId(null);
+  };
+
+  const handleExportPNG = () => {
+    if (!stageRef.current) return;
+    const prevHover = hoveredLayerId;
+    const prevSelect = selectedNodeId;
+    setHoveredLayerId(null);
+    setSelectedNodeId(null);
+    setTimeout(() => {
+      if (stageRef.current) {
+        const dataURL = stageRef.current.toDataURL({ pixelRatio: 2 });
+        saveAs(dataURL, "export.png");
+      }
+      setHoveredLayerId(prevHover);
+      setSelectedNodeId(prevSelect);
+    }, 100);
+  };
+
+  const handleExportPDF = () => {
+    if (!stageRef.current) return;
+    const prevHover = hoveredLayerId;
+    const prevSelect = selectedNodeId;
+    setHoveredLayerId(null);
+    setSelectedNodeId(null);
+    setTimeout(() => {
+      if (stageRef.current) {
+        const dataURL = stageRef.current.toDataURL({ pixelRatio: 2 });
+        const width = psdData ? psdData.width : stageRef.current.width();
+        const height = psdData ? psdData.height : stageRef.current.height();
+        
+        const pdf = new jsPDF({
+          orientation: width > height ? 'landscape' : 'portrait',
+          unit: 'px',
+          format: [width, height]
+        });
+        
+        pdf.addImage(dataURL, 'PNG', 0, 0, width, height);
+        pdf.save("export.pdf");
+      }
+      setHoveredLayerId(prevHover);
+      setSelectedNodeId(prevSelect);
+    }, 100);
+  };
+
+  const handleAddImageLayer = () => {
+    if (!psdData) {
+      handleOpenClick();
+      return;
+    }
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.onload = () => {
+          isHistoryUpdate.current = true;
+          const stageW = psdData ? psdData.width : 800;
+          const stageH = psdData ? psdData.height : 600;
+          const newLayer = {
+            uniqueId: Math.random().toString(36).substr(2, 9),
+            name: file.name,
+            hidden: false,
+            opacity: 1,
+            blendMode: 'source-over',
+            left: stageW / 2 - img.width / 2,
+            top: stageH / 2 - img.height / 2,
+            right: (stageW / 2) + img.width / 2,
+            bottom: (stageH / 2) + img.height / 2,
+            imageElement: img
+          };
+          setLayers(prev => [newLayer, ...prev]);
+          setSelectedNodeId(newLayer.uniqueId);
+          setHistoryVersion(v => v + 1);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  };
+
+  const handleReplaceImageClick = (layerId) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.onload = () => {
+          isHistoryUpdate.current = true;
+          setLayers(prev => prev.map(l => {
+            if (l.uniqueId === layerId) {
+              return { ...l, imageElement: img, canvas: undefined };
+            }
+            return l;
+          }));
+          setHistoryVersion(v => v + 1);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  };
+
+  const closeBulkModal = () => {
+    setBulkJobs([{ id: Date.now(), data: {} }]);
+    setSelectedLayerIds([]);
+    setShowBulkModal(false);
+  };
+
+  const handleGenerateZip = async () => {
+    if (selectedLayerIds.length === 0 || bulkJobs.length === 0) {
+      alert("Please select at least one target layer and create at least one job.");
+      return;
+    }
+    setIsGenerating(true);
+    setGenerationProgress(0);
+    
+    try {
+      const zip = new JSZip();
+      const stage = stageRef.current;
+      
+      for (let i = 0; i < bulkJobs.length; i++) {
+        const job = bulkJobs[i];
+        setPreviewData(job.data);
+        await new Promise(resolve => setTimeout(resolve, 150));
+        const dataURL = stage.toDataURL({ pixelRatio: 2 }); // Use higher quality for PDF
+        const width = psdData ? psdData.width : stage.width();
+        const height = psdData ? psdData.height : stage.height();
+        
+        const pdf = new jsPDF({
+          orientation: width > height ? 'landscape' : 'portrait',
+          unit: 'px',
+          format: [width, height]
+        });
+        
+        pdf.addImage(dataURL, 'PNG', 0, 0, width, height);
+        const pdfBlob = pdf.output('blob');
+        zip.file(`banner_${i + 1}.pdf`, pdfBlob);
+        
+        setGenerationProgress(Math.round(((i + 1) / bulkJobs.length) * 100));
+      }
+      setPreviewData(null);
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, "generated_banners.zip");
+      closeBulkModal();
+    } catch (error) {
+      console.error("Error during generation:", error);
+      alert("An error occurred during generation.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const textLayers = layers.filter(l => l.text !== undefined || l.canvas !== undefined);
+
+  const handleStagePointerDown = (e) => {
+    if (activeTool === 'brush' || activeTool === 'eraser') {
+      if (!selectedNodeId) {
+        alert("Please select a layer from the right panel to draw on.");
+        return;
+      }
+      isDrawing.current = true;
+      const stage = e.target.getStage();
+      const pos = stage.getPointerPosition();
+      if (!pos) return;
+      const targetLayer = layers.find(l => l.uniqueId === selectedNodeId);
+      if (!targetLayer) return;
+
+      const transform = stage.getAbsoluteTransform().copy().invert();
+      const localPos = transform.point(pos);
+      const layerX = localPos.x - (targetLayer.left || 0);
+      const layerY = localPos.y - (targetLayer.top || 0);
+
+      const newLine = {
+        tool: activeTool,
+        color: brushColor,
+        size: brushSize,
+        points: [layerX, layerY]
+      };
+      
+      setLayers(prev => prev.map(l => {
+        if (l.uniqueId === selectedNodeId) {
+          return { ...l, lines: [...(l.lines || []), newLine] };
+        }
+        return l;
+      }));
+    } else {
+      const clickedOnEmpty = e.target === e.target.getStage();
+      if (clickedOnEmpty) {
+        setSelectedNodeId(null);
+      }
+    }
+  };
+
+  const handleStagePointerMove = (e) => {
+    if (!isDrawing.current || (activeTool !== 'brush' && activeTool !== 'eraser') || !selectedNodeId) return;
+    const stage = e.target.getStage();
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+    const transform = stage.getAbsoluteTransform().copy().invert();
+    const localPos = transform.point(pos);
+    const targetLayer = layers.find(l => l.uniqueId === selectedNodeId);
+    if (!targetLayer) return;
+    const layerX = localPos.x - (targetLayer.left || 0);
+    const layerY = localPos.y - (targetLayer.top || 0);
+
+    setLayers(prev => prev.map(l => {
+      if (l.uniqueId === selectedNodeId) {
+        const lines = [...(l.lines || [])];
+        const lastLine = { ...lines[lines.length - 1] };
+        lastLine.points = lastLine.points.concat([layerX, layerY]);
+        lines[lines.length - 1] = lastLine;
+        return { ...l, lines };
+      }
+      return l;
+    }));
+  };
+
+  const handleStagePointerUp = () => {
+    isDrawing.current = false;
+  };
+
+  return (
+    <div className="app-container">
+      <div className="topbar">
+        <div className="topbar-brand">
+          <img src="/logo.png" alt="Psdify Logo" className="brand-logo" />
+          <span className="brand-name">{t('psdEditor.title', 'Psdify')}</span>
+        </div>
+        <div className="topbar-menu" style={{ alignItems: 'center' }}>
+
+          <button 
+            className="topbar-action-btn"
+            onClick={handleExportPNG} 
+          >
+            <Download size={14} /> <span className="hide-on-mobile">{t('psdEditor.exportPng', 'Export PNG')}</span>
+          </button>
+
+          <button 
+            className="topbar-action-btn"
+            onClick={handleExportPDF} 
+          >
+            <FileText size={14} /> <span className="hide-on-mobile">{t('psdEditor.exportPdf', 'Export PDF')}</span>
+          </button>
+          
+          <button 
+            className="topbar-action-btn primary"
+            onClick={() => setShowBulkModal(true)} 
+          >
+            <Zap size={14} /> <span className="hide-on-mobile">{t('psdEditor.bulkGenerate', 'Bulk Generate')}</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="main-content">
+        <div className="toolbar">
+          <div className={`tool-button ${activeTool === 'select' ? 'active' : ''}`} onClick={() => setActiveTool('select')}><MousePointer2 size={18} /></div>
+          <div className={`tool-button ${activeTool === 'move' ? 'active' : ''}`} onClick={() => setActiveTool('move')}><Move size={18} /></div>
+          <div className={`tool-button ${activeTool === 'text' ? 'active' : ''}`} onClick={() => setActiveTool('text')}><Type size={18} /></div>
+          <div className={`tool-button ${activeTool === 'brush' ? 'active' : ''}`} onClick={() => setActiveTool('brush')}><PenTool size={18} /></div>
+          <div className={`tool-button ${activeTool === 'eraser' ? 'active' : ''}`} onClick={() => setActiveTool('eraser')}><Eraser size={18} /></div>
+          <div style={{ height: '1px', width: '24px', background: 'var(--border-color)', margin: '8px 0' }}></div>
+          <div className={`tool-button ${historyIndexRef.current <= 0 ? 'disabled' : ''}`} onClick={handleUndo} style={{ opacity: historyIndexRef.current <= 0 ? 0.3 : 1 }}><Undo size={18} /></div>
+          <div className={`tool-button ${historyIndexRef.current >= historyRef.current.length - 1 ? 'disabled' : ''}`} onClick={handleRedo} style={{ opacity: historyIndexRef.current >= historyRef.current.length - 1 ? 0.3 : 1 }}><Redo size={18} /></div>
+          <div className="mobile-only-btn tool-button" onClick={() => setShowMobilePanel(!showMobilePanel)}><Layers size={18} /></div>
+        </div>
+
+        {selectedNodeId && (
+          <>
+            <div className="left-panel" style={{ width: leftPanelWidth, backgroundColor: 'var(--bg-panel)', borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+              <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>{t('psdEditor.properties', 'Properties')}</span>
+                <X size={14} style={{ cursor: 'pointer' }} onClick={() => setSelectedNodeId(null)} />
+              </div>
+
+              {(activeTool === 'brush' || activeTool === 'eraser') && (
+                <div style={{ padding: '16px', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-dark)' }}>
+                  <div style={{ color: '#ffb000', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+                    {activeTool === 'brush' ? t('psdEditor.brushSettings', 'Brush Settings') : t('psdEditor.eraserSettings', 'Eraser Settings')}
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+                      <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>{t('psdEditor.size', 'Size')}</label>
+                      <input type="range" min="1" max="100" value={brushSize} onChange={e => setBrushSize(Number(e.target.value))} style={{ width: '100%' }} />
+                    </div>
+                    {activeTool === 'brush' && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+                        <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>{t('psdEditor.color', 'Color')}</label>
+                        <input type="color" value={brushColor} onChange={e => setBrushColor(e.target.value)} style={{ width: '100%', height: '28px', background: 'transparent', border: 'none', cursor: 'pointer' }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                <div style={{ color: 'var(--text-light)', fontSize: '13px', fontWeight: 'bold', wordBreak: 'break-all' }}>
+                  {layers.find(l => l.uniqueId === selectedNodeId)?.name || t('psdEditor.selectedLayer', 'Selected Layer')}
+                </div>
+                {!layers.find(l => l.uniqueId === selectedNodeId)?.text && (
+                  <button 
+                    className="btn-primary" 
+                    style={{ padding: '4px 8px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}
+                    onClick={() => handleReplaceImageClick(selectedNodeId)}
+                  >
+                    <UploadCloud size={12} /> {t('psdEditor.replace', 'Replace')}
+                  </button>
+                )}
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>{t('psdEditor.opacity', 'Opacity')}</label>
+                <input 
+                  type="range" 
+                  min="0" max="1" step="0.01"
+                  value={layers.find(l => l.uniqueId === selectedNodeId)?.opacity ?? 1} 
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setLayers(prev => prev.map(l => 
+                      l.uniqueId === selectedNodeId ? { ...l, opacity: val } : l
+                    ));
+                  }}
+                  style={{ width: '100%' }} 
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>{t('psdEditor.blendMode', 'Blend Mode')}</label>
+                <select
+                  value={layers.find(l => l.uniqueId === selectedNodeId)?.blendMode ?? 'source-over'}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setLayers(prev => prev.map(l => 
+                      l.uniqueId === selectedNodeId ? { ...l, blendMode: val } : l
+                    ));
+                  }}
+                  style={{ width: '100%', background: 'var(--bg-toolbar)', color: 'var(--text-light)', border: '1px solid var(--border-color)', padding: '6px', borderRadius: '4px' }}
+                >
+                  <option value="source-over">Normal</option>
+                  <option value="multiply">Multiply</option>
+                  <option value="screen">Screen</option>
+                  <option value="overlay">Overlay</option>
+                  <option value="darken">Darken</option>
+                  <option value="lighten">Lighten</option>
+                  <option value="color-dodge">Color Dodge</option>
+                  <option value="color-burn">Color Burn</option>
+                  <option value="hard-light">Hard Light</option>
+                  <option value="soft-light">Soft Light</option>
+                  <option value="difference">Difference</option>
+                  <option value="exclusion">Exclusion</option>
+                  <option value="hue">Hue</option>
+                  <option value="saturation">Saturation</option>
+                  <option value="color">Color</option>
+                  <option value="luminosity">Luminosity</option>
+                </select>
+              </div>
+
+              {!layers.find(l => l.uniqueId === selectedNodeId)?.text && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px', borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
+                  <div style={{ color: 'var(--text-light)', fontSize: '12px', fontWeight: 'bold' }}>{t('psdEditor.imageAdjustments', 'Image Adjustments')}</div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>{t('psdEditor.brightness', 'Brightness')}</label>
+                    <input type="range" min="-1" max="1" step="0.05" value={layers.find(l => l.uniqueId === selectedNodeId)?.brightness ?? 0} onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setLayers(prev => prev.map(l => l.uniqueId === selectedNodeId ? { ...l, brightness: val } : l));
+                    }} />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>{t('psdEditor.contrast', 'Contrast')}</label>
+                    <input type="range" min="-100" max="100" step="1" value={layers.find(l => l.uniqueId === selectedNodeId)?.contrast ?? 0} onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setLayers(prev => prev.map(l => l.uniqueId === selectedNodeId ? { ...l, contrast: val } : l));
+                    }} />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>{t('psdEditor.blur', 'Blur')}</label>
+                    <input type="range" min="0" max="40" step="1" value={layers.find(l => l.uniqueId === selectedNodeId)?.blur ?? 0} onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setLayers(prev => prev.map(l => l.uniqueId === selectedNodeId ? { ...l, blur: val } : l));
+                    }} />
+                  </div>
+                </div>
+              )}
+              
+              {layers.find(l => l.uniqueId === selectedNodeId)?.text && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px', borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
+                  <div style={{ color: 'var(--text-light)', fontSize: '12px', fontWeight: 'bold' }}>{t('psdEditor.textProperties', 'Text Properties')}</div>
+                  
+                  <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>Content</label>
+                  <textarea 
+                    rows={3} 
+                    value={layers.find(l => l.uniqueId === selectedNodeId).editableText ?? layers.find(l => l.uniqueId === selectedNodeId).text.text}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setLayers(prev => prev.map(l => {
+                        if (l.uniqueId === selectedNodeId) {
+                          const { fontSize, fill, fontFamily, fontStyle } = getLayerFontData(l);
+                          return {
+                            ...l, 
+                            editableText: val,
+                            editableFontSize: l.editableFontSize || fontSize,
+                            editableFill: l.editableFill || fill,
+                            editableFontFamily: l.editableFontFamily || fontFamily,
+                            editableFontStyle: l.editableFontStyle || fontStyle
+                          };
+                        }
+                        return l;
+                      }));
+                    }}
+                    style={{ width: '100%', background: 'var(--bg-toolbar)', color: 'var(--text-light)', border: '1px solid var(--border-color)', padding: '6px', borderRadius: '4px', resize: 'vertical' }}
+                  />
+                  
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+                      <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>Font Size</label>
+                      <input 
+                        type="number" 
+                        value={layers.find(l => l.uniqueId === selectedNodeId).editableFontSize || getLayerFontData(layers.find(l => l.uniqueId === selectedNodeId)).fontSize}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setLayers(prev => prev.map(l => l.uniqueId === selectedNodeId ? {
+                            ...l,
+                            editableFontSize: val,
+                            editableText: l.editableText ?? l.text.text
+                          } : l));
+                        }}
+                        style={{ width: '100%', background: 'var(--bg-toolbar)', color: 'var(--text-light)', border: '1px solid var(--border-color)', padding: '6px', borderRadius: '4px' }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+                      <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>{t('psdEditor.color', 'Color')}</label>
+                      <input 
+                        type="color" 
+                        value={layers.find(l => l.uniqueId === selectedNodeId).editableFill || getLayerFontData(layers.find(l => l.uniqueId === selectedNodeId)).fill}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setLayers(prev => prev.map(l => l.uniqueId === selectedNodeId ? {
+                            ...l,
+                            editableFill: val,
+                            editableText: l.editableText ?? l.text.text
+                          } : l));
+                        }}
+                        style={{ width: '100%', height: '28px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '10px' }}>
+                    <label style={{ fontSize: '11px', color: 'var(--text-main)' }}>Font Family</label>
+                    <select 
+                      value={layers.find(l => l.uniqueId === selectedNodeId).editableFontFamily || getLayerFontData(layers.find(l => l.uniqueId === selectedNodeId)).fontFamily}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setLayers(prev => prev.map(l => l.uniqueId === selectedNodeId ? {
+                          ...l,
+                          editableFontFamily: val,
+                          editableText: l.editableText ?? l.text.text
+                        } : l));
+                      }}
+                      style={{ width: '100%', background: 'var(--bg-toolbar)', color: 'var(--text-light)', border: '1px solid var(--border-color)', padding: '6px', borderRadius: '4px' }}
+                    >
+                      {/* Dynamically add the current font if it's not in the default list */}
+                      {(() => {
+                        const currentFont = layers.find(l => l.uniqueId === selectedNodeId).editableFontFamily || getLayerFontData(layers.find(l => l.uniqueId === selectedNodeId)).fontFamily;
+                        const defaultFonts = ["sans-serif", "serif", "monospace", "Arial", "Helvetica", "Times New Roman", "Courier New", "Verdana", "Georgia", "Palatino", "Garamond", "Comic Sans MS", "Trebuchet MS", "Arial Black", "Impact"];
+                        if (!defaultFonts.includes(currentFont)) {
+                          return <option value={currentFont}>{currentFont} (PSD Font)</option>;
+                        }
+                        return null;
+                      })()}
+                      <option value="sans-serif">Sans Serif</option>
+                      <option value="serif">Serif</option>
+                      <option value="monospace">Monospace</option>
+                      <option value="Arial">Arial</option>
+                      <option value="Helvetica">Helvetica</option>
+                      <option value="Times New Roman">Times New Roman</option>
+                      <option value="Courier New">Courier</option>
+                      <option value="Verdana">Verdana</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Palatino">Palatino</option>
+                      <option value="Garamond">Garamond</option>
+                      <option value="Comic Sans MS">Comic Sans</option>
+                      <option value="Trebuchet MS">Trebuchet MS</option>
+                      <option value="Arial Black">Arial Black</option>
+                      <option value="Impact">Impact</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div 
+            onMouseDown={() => setIsResizingLeft(true)} 
+            style={{ width: '12px', cursor: 'col-resize', backgroundColor: isResizingLeft ? 'var(--accent)' : 'transparent', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid var(--border-color)', transition: 'background-color 0.2s' }} 
+          >
+            <div style={{ width: '4px', height: '24px', backgroundColor: 'var(--border-color)', borderRadius: '2px' }} />
+          </div>
+        </>
+      )}
+
+        <div className="canvas-area" ref={containerRef} style={{ minWidth: 0 }}>
+          {layers.length === 0 ? (
+            <div className="empty-state" onClick={handleOpenClick} style={{ color: 'var(--text-main)', textAlign: 'center' }}>
+              <div className="upload-icon-wrapper" style={{ display: 'inline-block', padding: '20px', backgroundColor: 'var(--bg-toolbar)', borderRadius: '50%', boxShadow: 'var(--shadow)', marginBottom: '16px' }}>
+                <UploadCloud size={64} color="var(--accent)" />
+              </div>
+              <h3 style={{ color: 'var(--text-light)', marginBottom: '8px' }}>{t('psdEditor.uploadPsdImage', 'Upload a PSD or Image')}</h3>
+              <p>{t('psdEditor.supportsMsg', 'Supports .psd, .png, .jpg, .webp')}</p>
+            </div>
+          ) : (
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+              <div className="floating-zoom-controls">
+                <button className="zoom-btn" onClick={() => setScale(s => Math.min(s * 1.2, 5))}><ZoomIn size={20} /></button>
+                <button className="zoom-btn" onClick={() => setScale(s => Math.max(s / 1.2, 0.1))}><ZoomOut size={20} /></button>
+              </div>
+              <button 
+                onClick={handleClearCache}
+                style={{ position: 'absolute', top: 10, right: 10, zIndex: 100, display: 'flex', alignItems: 'center', gap: '5px', padding: '8px 12px', background: 'var(--bg-panel)', border: '1px solid var(--border-color)', color: 'var(--text-light)', borderRadius: '4px', cursor: 'pointer', boxShadow: 'var(--shadow)' }}
+              >
+                <Trash2 size={16} color="#ff4444" /> Clear Saved PSD
+              </button>
+              <div 
+                className="canvas-container" 
+                style={{ 
+                  width: psdData.width * scale, 
+                  height: psdData.height * scale,
+                  position: 'absolute',
+                  left: stagePos.x,
+                  top: stagePos.y,
+                  boxShadow: '0 0 20px rgba(0,0,0,0.8)'
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'copy';
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const layerId = e.dataTransfer.getData('text/plain');
+                  if (layerId) {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const dropX = (e.clientX - rect.left) / scale;
+                    const dropY = (e.clientY - rect.top) / scale;
+                    duplicateLayer(layerId, dropX, dropY);
+                  }
+                }}
+              >
+                <Stage 
+                  width={Math.max(1, psdData.width * scale)} 
+                  height={Math.max(1, psdData.height * scale)} 
+                  scaleX={scale} 
+                  scaleY={scale} 
+                  ref={stageRef}
+                  onMouseDown={handleStagePointerDown}
+                  onTouchStart={handleStagePointerDown}
+                  onMouseMove={handleStagePointerMove}
+                  onTouchMove={handleStagePointerMove}
+                  onMouseUp={handleStagePointerUp}
+                  onTouchEnd={handleStagePointerUp}
+                  onMouseLeave={handleStagePointerUp}
+                >
+                  <Layer>
+                    {[...layers].reverse().map((layer) => {
+                    if (layer.hidden) return null;
+                    
+                    // If this is a targeted text layer for bulk generation, render a KonvaText instead of the raster image
+                    if (previewData !== null && previewData[layer.uniqueId] !== undefined) {
+                      const imgW = layer.imageElement ? layer.imageElement.width : (layer.right - layer.left || 1);
+                      return (
+                        <KonvaText
+                          key={layer.uniqueId}
+                          id={layer.uniqueId}
+                          text={previewData[layer.uniqueId]}
+                          x={layer.left || 0}
+                          y={layer.top || 0}
+                          opacity={layer.opacity ?? 1}
+                          globalCompositeOperation={layer.blendMode ?? 'source-over'}
+                          fontSize={layer.editableFontSize || getLayerFontData(layer).fontSize}
+                          fill={layer.editableFill || getLayerFontData(layer).fill}
+                          fontFamily={layer.editableFontFamily || getLayerFontData(layer).fontFamily}
+                          fontStyle={layer.editableFontStyle || getLayerFontData(layer).fontStyle}
+                          width={imgW}
+                          draggable={activeTool === 'move' || activeTool === 'select'}
+                          onMouseEnter={(e) => {
+                            if (activeTool === 'move' || (activeTool === 'select' && selectedNodeId === layer.uniqueId)) {
+                              e.target.getStage().container().style.cursor = 'move';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.getStage().container().style.cursor = activeTool === 'move' ? 'move' : 'default';
+                          }}
+                          onDragEnd={(e) => {
+                            const updatedLayers = [...layers];
+                            const targetLayer = updatedLayers.find(l => l.uniqueId === layer.uniqueId);
+                            if (targetLayer) {
+                              targetLayer.left = e.target.x();
+                              targetLayer.top = e.target.y();
+                              setLayers(updatedLayers);
+                            }
+                          }}
+                        />
+                      );
+                    }
+                    
+                    if (layer.imageElement) {
+                      const imgW = layer.imageElement.width || (layer.right - layer.left) || 1;
+                      const imgH = layer.imageElement.height || (layer.bottom - layer.top) || 1;
+                      
+                      const isTextEdited = layer.text !== undefined && layer.editableText !== undefined;
+
+                      return (
+                        <Group 
+                          key={layer.uniqueId}
+                          id={layer.uniqueId}
+                          x={layer.left || 0}
+                          y={layer.top || 0}
+                          opacity={layer.opacity ?? 1}
+                          globalCompositeOperation={layer.blendMode ?? 'source-over'}
+                          draggable={activeTool === 'move' || activeTool === 'select'}
+                          onMouseEnter={(e) => {
+                            if (activeTool === 'move' || (activeTool === 'select' && selectedNodeId === layer.uniqueId)) {
+                              e.target.getStage().container().style.cursor = 'move';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.getStage().container().style.cursor = activeTool === 'move' ? 'move' : 'default';
+                          }}
+                          onClick={() => activeTool === 'select' && setSelectedNodeId(layer.uniqueId)}
+                          onTap={() => activeTool === 'select' && setSelectedNodeId(layer.uniqueId)}
+                          onDblClick={() => {
+                            if (layer.text) {
+                              const newLayers = [...layers];
+                              const target = newLayers.find(l => l.uniqueId === layer.uniqueId);
+                              if (target.editableText === undefined) {
+                                const { fontSize, fill, fontFamily, fontStyle } = getLayerFontData(target);
+                                target.editableText = target.text.text;
+                                target.editableFontSize = fontSize;
+                                target.editableFill = fill;
+                                target.editableFontFamily = fontFamily;
+                                target.editableFontStyle = fontStyle;
+                                setLayers(newLayers);
+                              }
+                            }
+                          }}
+                          onDragEnd={(e) => {
+                            const updatedLayers = [...layers];
+                            const targetLayer = updatedLayers.find(l => l.uniqueId === layer.uniqueId);
+                            if (targetLayer) {
+                              targetLayer.left = e.target.x();
+                              targetLayer.top = e.target.y();
+                              setLayers(updatedLayers);
+                            }
+                          }}
+                        >
+                          {isTextEdited ? (
+                            <KonvaText 
+                              text={layer.editableText}
+                              fontSize={layer.editableFontSize || getLayerFontData(layer).fontSize}
+                              fill={layer.editableFill || getLayerFontData(layer).fill}
+                              fontFamily={layer.editableFontFamily || getLayerFontData(layer).fontFamily}
+                              fontStyle={layer.editableFontStyle || getLayerFontData(layer).fontStyle}
+                              width={imgW}
+                            />
+                          ) : (
+                            <FilteredImage layer={layer} imgW={imgW} imgH={imgH} />
+                          )}
+                          {layer.lines && layer.lines.map((line, i) => (
+                            <KonvaLine
+                              key={i}
+                              points={line.points}
+                              stroke={line.color}
+                              strokeWidth={line.size}
+                              tension={0.5}
+                              lineCap="round"
+                              lineJoin="round"
+                              globalCompositeOperation={line.tool === 'eraser' ? 'destination-out' : 'source-over'}
+                            />
+                          ))}
+                        </Group>
+                      );
+                    }
+                    return null;
+                  })}
+                  {selectedNodeId && activeTool === 'select' && (
+                    <Transformer 
+                      ref={trRef}
+                      anchorSize={12}
+                      anchorCornerRadius={6}
+                      borderStroke="#007acc"
+                      anchorStroke="#007acc"
+                      anchorFill="#ffffff"
+                      borderDash={[4, 4]}
+                      rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
+                      boundBoxFunc={(oldBox, newBox) => {
+                        if (newBox.width < 5 || newBox.height < 5) {
+                          return oldBox;
+                        }
+                        return newBox;
+                      }}
+                      anchorStyleFunc={(anchor) => {
+                        if (anchor.hasName('rotater')) {
+                          // Visual rendering of the rotater
+                          anchor.sceneFunc((ctx, shape) => {
+                            const cx = shape.width() / 2;
+                            const cy = shape.height() / 2;
+                            const r = 7;
+                            
+                            // Draw black circular arrow
+                            ctx.beginPath();
+                            ctx.strokeStyle = '#000000';
+                            ctx.lineWidth = 2.5;
+                            ctx.arc(cx, cy, r, Math.PI / 4, 0, false);
+                            ctx.stroke();
+                            
+                            // Draw black arrow head
+                            ctx.beginPath();
+                            ctx.fillStyle = '#000000';
+                            ctx.moveTo(cx + r, cy + 4);
+                            ctx.lineTo(cx + r - 4, cy - 2);
+                            ctx.lineTo(cx + r + 4, cy - 2);
+                            ctx.fill();
+                          });
+                          
+                          // Invisible expanded hit region so the whole icon area is clickable
+                          anchor.hitFunc((ctx, shape) => {
+                            ctx.beginPath();
+                            ctx.rect(-10, -10, shape.width() + 20, shape.height() + 20);
+                            ctx.fillStrokeShape(shape);
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                  {hoveredLayerId && layers.some(l => l.uniqueId === hoveredLayerId && !l.hidden) && (() => {
+                    const hlLayer = layers.find(l => l.uniqueId === hoveredLayerId);
+                    if (!hlLayer) return null;
+                    const w = hlLayer.imageElement ? hlLayer.imageElement.width : (hlLayer.right - hlLayer.left);
+                    const h = hlLayer.imageElement ? hlLayer.imageElement.height : (hlLayer.bottom - hlLayer.top);
+                    return (
+                      <Group listening={false}>
+                        {/* White contrast outline so it doesn't get lost on blue backgrounds */}
+                        <Rect
+                          x={hlLayer.left || 0}
+                          y={hlLayer.top || 0}
+                          width={w || 100}
+                          height={h || 100}
+                          stroke="#ffffff"
+                          strokeWidth={4 / scale}
+                        />
+                        <Rect
+                          x={hlLayer.left || 0}
+                          y={hlLayer.top || 0}
+                          width={w || 100}
+                          height={h || 100}
+                          stroke="#007acc"
+                          strokeWidth={2 / scale}
+                        />
+                        {/* Corner Markers */}
+                        <Rect x={(hlLayer.left || 0) - 3/scale} y={(hlLayer.top || 0) - 3/scale} width={6/scale} height={6/scale} fill="#007acc" stroke="#fff" strokeWidth={1/scale} />
+                        <Rect x={(hlLayer.left || 0) + (w || 100) - 3/scale} y={(hlLayer.top || 0) - 3/scale} width={6/scale} height={6/scale} fill="#007acc" stroke="#fff" strokeWidth={1/scale} />
+                        <Rect x={(hlLayer.left || 0) - 3/scale} y={(hlLayer.top || 0) + (h || 100) - 3/scale} width={6/scale} height={6/scale} fill="#007acc" stroke="#fff" strokeWidth={1/scale} />
+                        <Rect x={(hlLayer.left || 0) + (w || 100) - 3/scale} y={(hlLayer.top || 0) + (h || 100) - 3/scale} width={6/scale} height={6/scale} fill="#007acc" stroke="#fff" strokeWidth={1/scale} />
+                      </Group>
+                    );
+                  })()}
+                </Layer>
+              </Stage>
+            </div>
+          </div>
+        )}
+      </div>
+
+        <div 
+          className="panel-resizer"
+          onMouseDown={() => setIsResizingRight(true)} 
+          style={{ width: '12px', cursor: 'col-resize', backgroundColor: isResizingRight ? 'var(--accent)' : 'transparent', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', borderLeft: '1px solid var(--border-color)', transition: 'background-color 0.2s' }} 
+        >
+          <div style={{ width: '4px', height: '24px', backgroundColor: 'var(--border-color)', borderRadius: '2px' }} />
+        </div>
+
+        {/* Mobile Overlay */}
+        <div className={`mobile-overlay ${showMobilePanel ? 'show' : ''}`} onClick={() => setShowMobilePanel(false)}></div>
+
+        <div className={`right-panel ${showMobilePanel ? 'show' : ''}`} style={{ width: rightPanelWidth, backgroundColor: 'var(--bg-panel)', borderLeft: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+          <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Layers size={18} color="var(--accent)" /> {t('psdEditor.layersPlain', 'Layers')}
+            </h3>
+            <button 
+              onClick={handleAddImageLayer}
+              title="Add new image layer"
+              className="add-layer-btn"
+            >
+              <Plus size={12} /> {t('psdEditor.addNewLayer', 'Add new layer')}
+            </button>
+          </div>
+          <div className="layer-list">
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={layers.map(l => l.uniqueId)} strategy={verticalListSortingStrategy}>
+                {layers.map((layer, index) => (
+                  <SortableLayerItem
+                    key={layer.uniqueId}
+                    layer={layer}
+                    index={index}
+                    selectedNodeId={selectedNodeId}
+                    setSelectedNodeId={setSelectedNodeId}
+                    setHoveredLayerId={setHoveredLayerId}
+                    toggleLayerVisibility={toggleLayerVisibility}
+                    duplicateLayer={duplicateLayer}
+                    deleteLayer={deleteLayer}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
+          <input type="file" accept=".psd, image/png, image/jpeg, image/jpg, image/webp" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileUpload} />
+        </div>
+      </div>
+
+      {/* Parsing Loading Toast */}
+      {isParsing && (
+        <div style={{
+          position: 'fixed',
+          top: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          background: 'var(--bg-panel)',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          border: '1px solid var(--border-color)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }}>
+          <div className="spinner" style={{ border: '2px solid rgba(255, 255, 255, 0.1)', borderTop: '2px solid var(--accent)', borderRadius: '50%', width: '20px', height: '20px', animation: 'spin 1s linear infinite' }}></div>
+          <span style={{ color: 'var(--text-main)', fontSize: '14px', fontWeight: '500' }}>{t('psdEditor.extractingLayers', 'Extracting PSD Layers...')}</span>
+          <style>{`
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+          `}</style>
+        </div>
+      )}
+
+      {/* Bulk Generation Modal */}
+      {showBulkModal && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxHeight: '90vh' }}>
+            <div className="modal-header">
+              <span>{t('psdEditor.bulkGenerate', 'Bulk Banner Generation')}</span>
+              <X size={20} style={{ cursor: 'pointer' }} onClick={closeBulkModal} />
+            </div>
+            
+            <div className="modal-body" style={{ flex: 1, overflowY: 'auto', paddingRight: '8px' }}>
+              <label style={{ fontSize: '14px', color: 'var(--text-light)', fontWeight: '500', marginBottom: '8px', display: 'block' }}>{t('psdEditor.selectTargetText', 'Select Target Text Layers:')}</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'var(--bg-panel)', padding: '12px', borderRadius: '4px', border: '1px solid var(--border-color)', maxHeight: '150px', overflowY: 'auto', marginBottom: '16px' }}>
+                {textLayers.map(l => (
+                  <label key={l.uniqueId} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', fontSize: '13px', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={selectedLayerIds.includes(l.uniqueId)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedLayerIds(prev => [...prev, l.uniqueId]);
+                        } else {
+                          setSelectedLayerIds(prev => prev.filter(id => id !== l.uniqueId));
+                        }
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    {l.name}
+                  </label>
+                ))}
+                {textLayers.length === 0 && <span style={{ color: 'var(--text-main)', fontSize: '12px' }}>{t('psdEditor.noTextLayers', 'No text layers found in this PSD.')}</span>}
+              </div>
+
+              {selectedLayerIds.length > 0 && (
+                <>
+                  <label style={{ fontSize: '14px', color: 'var(--text-light)', fontWeight: '500', marginBottom: '8px', display: 'block' }}>
+                    2. Configure Generation Jobs:
+                  </label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+                    {bulkJobs.map((job, jobIndex) => (
+                      <div key={job.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', background: 'var(--bg-toolbar)', borderRadius: '6px', border: '1px solid var(--border-color)', position: 'relative' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+                          <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-light)', paddingBottom: '4px', borderBottom: '1px solid var(--border-color)', marginBottom: '4px' }}>
+                            Banner {jobIndex + 1}
+                          </div>
+                          {selectedLayerIds.map(layerId => {
+                            const layer = textLayers.find(l => l.uniqueId === layerId);
+                            return (
+                              <div key={layerId} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <span style={{ fontSize: '11px', color: 'var(--text-main)' }}>{layer?.name || 'Unknown'}</span>
+                                <input 
+                                  type="text" 
+                                  placeholder={`Text for ${layer?.name}`}
+                                  value={job.data[layerId] || ''}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setBulkJobs(prev => prev.map((j, idx) => {
+                                      if (idx === jobIndex) {
+                                        return { ...j, data: { ...j.data, [layerId]: val } };
+                                      }
+                                      return j;
+                                    }));
+                                  }}
+                                  style={{ padding: '6px', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'var(--bg-panel)', color: 'var(--text-light)' }}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <button 
+                          onClick={() => {
+                            setBulkJobs(prev => prev.filter((_, idx) => idx !== jobIndex));
+                          }}
+                          style={{ background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer', padding: '4px' }}
+                          title="Remove Job"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button 
+                    onClick={() => setBulkJobs(prev => [...prev, { id: Date.now(), data: {} }])}
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-toolbar)', border: '1px dashed var(--accent)', color: 'var(--accent)', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', marginBottom: '16px', fontSize: '13px', fontWeight: '500' }}
+                  >
+                    + Add Another Job
+                  </button>
+                </>
+              )}
+
+            </div>
+            
+            <div className="modal-footer" style={{ paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
+              <button 
+                className="btn-primary" 
+                onClick={handleGenerateZip}
+                disabled={isGenerating || selectedLayerIds.length === 0 || bulkJobs.length === 0}
+                style={{ width: '100%' }}
+              >
+                {isGenerating ? `Generating... ${generationProgress}%` : 'Generate & Download Zip'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+

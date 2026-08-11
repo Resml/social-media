@@ -23,7 +23,8 @@ import {
   ClipboardList,
   FileText,
   Clapperboard,
-  Film
+  Film,
+  Palette
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 import { useTranslation } from 'react-i18next';
@@ -55,6 +56,7 @@ const navGroups = [
     items: [
       { to: '/ai',            labelKey: 'sidebar.aiAssistant',      defaultLabel: 'AI Assistant',           Icon: Bot },
       { to: '/ai-video',      labelKey: 'sidebar.aiVideoMaker',     defaultLabel: 'AI Video Maker',         Icon: Film },
+      { to: '/psd-editor',    labelKey: 'sidebar.psdEditor',        defaultLabel: 'PSD Editor',             Icon: Palette },
       { to: '/quick-comment', labelKey: 'sidebar.quickCommenter',   defaultLabel: 'Quick Commenter',        Icon: MessageSquarePlus },
       { to: '/export',        labelKey: 'sidebar.commentExporter',  defaultLabel: 'Comment Exporter',       Icon: Download },
       { to: '/polls',         labelKey: 'sidebar.polls',            defaultLabel: 'Poll Manager',           Icon: BarChart2 },

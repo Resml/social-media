@@ -29,3 +29,4 @@ i18n
   });
 
 export default i18n;
+// Force HMR reload again 2
