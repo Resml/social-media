@@ -22,6 +22,42 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
   const isMarathi = i18n.language.startsWith('mr');
   const isHindi = i18n.language.startsWith('hi');
   
+  const toDevanagari = (numStr: string) => {
+    if (!isMarathi && !isHindi) return numStr;
+    const devDigits = ['०','१','२','३','४','५','६','७','८','९'];
+    return numStr.replace(/\d/g, d => devDigits[parseInt(d)]);
+  };
+
+  const translateMonth = (month: string) => {
+    if (!month) return month;
+    if (isMarathi) {
+      const mrMonths: Record<string, string> = {
+        'Jan': 'जाने', 'Feb': 'फेब्रु', 'Mar': 'मार्च', 'Apr': 'एप्रि', 'May': 'मे', 'Jun': 'जून',
+        'Jul': 'जुलै', 'Aug': 'ऑग', 'Sep': 'सप्टें', 'Oct': 'ऑक्टो', 'Nov': 'नोव्हें', 'Dec': 'डिसें'
+      };
+      return mrMonths[month.substring(0, 3)] || month;
+    }
+    if (isHindi) {
+      const hiMonths: Record<string, string> = {
+        'Jan': 'जन', 'Feb': 'फ़र', 'Mar': 'मार्च', 'Apr': 'अप्रै', 'May': 'मई', 'Jun': 'जून',
+        'Jul': 'जुला', 'Aug': 'अग', 'Sep': 'सितं', 'Oct': 'अक्टू', 'Nov': 'नवं', 'Dec': 'दिसं'
+      };
+      return hiMonths[month.substring(0, 3)] || month;
+    }
+    return month;
+  };
+
+  const translateDate = (dateStr: string) => {
+    if (!dateStr) return dateStr;
+    const parts = dateStr.split(' ');
+    if (parts.length === 2) {
+      const day = toDevanagari(parts[0]);
+      const month = translateMonth(parts[1]);
+      return `${day} ${month}`;
+    }
+    return toDevanagari(dateStr);
+  };
+
   // Create table rows
   const tableRows = [];
   const limit = Math.min(15, Math.max(growth.length, engagement.length));
@@ -53,17 +89,27 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
       statusColor = 'bg-blue-100 text-blue-700';
     }
 
+    const followersStr = toDevanagari(gData.followers.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'));
+    const viewsStr = toDevanagari((eData.views || Math.floor(Math.random() * 25000 + 5000)).toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'));
+    const likesStr = toDevanagari((eData.likes || Math.floor(Math.random() * 5000 + 1000)).toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'));
+    let growthStr = growthDiff > 0 ? `+${growthDiff}` : growthDiff.toString();
+    growthStr = growthStr !== '0' ? toDevanagari(growthStr) : '-';
+
     tableRows.push({
-      sr: i + 1,
-      date: gData.date,
-      followers: gData.followers.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'),
-      views: (eData.views || Math.floor(Math.random() * 25000 + 5000)).toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'),
-      likes: (eData.likes || Math.floor(Math.random() * 5000 + 1000)).toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'),
+      sr: toDevanagari((i + 1).toString()),
+      date: translateDate(gData.date),
+      followers: followersStr,
+      views: viewsStr,
+      likes: likesStr,
       status: statusText,
       statusColor,
-      growth: growthDiff > 0 ? `+${growthDiff}` : growthDiff.toString()
+      growth: growthStr,
+      isPositive: growthDiff > 0,
+      isZero: growthDiff === 0
     });
   }
+
+  const totalFollowersStr = toDevanagari((summary?.totalFollowers || 0).toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US'));
 
   return (
     <div 
@@ -80,7 +126,7 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
       <div className="flex justify-between items-end mb-2">
         <div>
           <h1 className="text-3xl font-bold text-[#0066cc] mb-1">
-            {isMarathi ? 'सोशल मीडिया रिपोर्ट' : isHindi ? 'सोशल मीडिया रिपोर्ट' : 'Social Media Report'}
+            {isMarathi ? 'सोशल मीडिया अहवाल' : isHindi ? 'सोशल मीडिया रिपोर्ट' : 'Social Media Report'}
           </h1>
           <p className="text-lg text-gray-500">
             {isMarathi ? 'विश्लेषण अहवाल' : isHindi ? 'एनालिटिक्स रिपोर्ट' : 'Analytics Report'}
@@ -88,7 +134,7 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
         </div>
         <div className="text-right text-sm text-gray-500 space-y-1 pb-1">
           <p>{isMarathi ? 'दिनांक:' : isHindi ? 'दिनांक:' : 'Date:'} {dateStr} {timeStr}</p>
-          <p>{isMarathi ? 'एकूण फॉलोअर्स:' : isHindi ? 'कुल फॉलोअर्स:' : 'Total Followers:'} {summary?.totalFollowers?.toLocaleString(isMarathi ? 'mr-IN' : isHindi ? 'hi-IN' : 'en-US') || 0}</p>
+          <p>{isMarathi ? 'एकूण फॉलोअर्स:' : isHindi ? 'कुल फॉलोअर्स:' : 'Total Followers:'} {totalFollowersStr}</p>
         </div>
       </div>
 
@@ -120,8 +166,8 @@ export const DashboardReport = forwardRef<HTMLDivElement, DashboardReportProps>(
                   {row.status}
                 </span>
               </td>
-              <td className={`px-4 py-4 font-medium ${row.growth.startsWith('+') ? 'text-green-600' : row.growth === '0' ? 'text-gray-400' : 'text-red-600'}`}>
-                {row.growth !== '0' ? row.growth : '-'}
+              <td className={`px-4 py-4 font-medium ${row.isPositive ? 'text-green-600' : row.isZero ? 'text-gray-400' : 'text-red-600'}`}>
+                {row.growth}
               </td>
             </tr>
           ))}
