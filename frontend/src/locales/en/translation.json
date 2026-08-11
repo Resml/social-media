@@ -32,7 +32,8 @@
     "articles": "Article Planner",
     "videos": "Video Tracker",
     "contentCalendar": "Content Calendar",
-    "settings": "Settings"
+    "settings": "Settings",
+    "aiVideoMaker": "AI Video Maker"
   },
   "dashboard": {
     "title": "Analytics Dashboard",
@@ -174,6 +175,26 @@
       "Marathi": "मराठी (Marathi)",
       "Hindi": "हिंदी (Hindi)"
     }
+  },
+  "aiVideo": {
+    "title": "AI Video Maker",
+    "subtitle": "Create stunning videos from text prompts",
+    "configTitle": "Video Configuration",
+    "promptLabel": "Video Prompt",
+    "promptPlaceholder": "Describe what you want to generate...",
+    "styleLabel": "Video Style",
+    "formatLabel": "Format",
+    "generating": "Generating Video...",
+    "generateBtn": "Generate Video",
+    "previewTitle": "Video Preview & Pipeline",
+    "noVideo": "Click generate to see your video.",
+    "postTitle": "Schedule this video",
+    "captionPlaceholder": "Write video caption...",
+    "missingPrompt": "Please enter a video prompt",
+    "successGenerated": "Video generated successfully!",
+    "historyTitle": "History",
+    "searchHistory": "Search history...",
+    "noHistory": "No history yet"
   },
   "schedule": {
     "createDeployment": "Create Deployment",

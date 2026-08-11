@@ -41,7 +41,7 @@ export const PostSearch = () => {
       });
       
       if (!imgData || imgData === 'data:,') {
-        toast.error("Failed to capture report. Image is empty.");
+        toast.error("Failed to capture report. Image is empty.", { id: toastId });
         return;
       }
       
@@ -51,10 +51,10 @@ export const PostSearch = () => {
       
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`Content_Library_${activeTab}_${new Date().toISOString().split('T')[0]}.pdf`);
-      toast.success("Report downloaded successfully!");
+      toast.success("Report downloaded successfully!", { id: toastId });
     } catch (err: any) {
       console.error('Failed to generate PDF', err);
-      toast.error("Error generating PDF: " + (err?.message || "Unknown error"));
+      toast.error("Error generating PDF: " + (err?.message || "Unknown error"), { id: toastId });
     } finally {
       setIsGeneratingReport(false);
     }

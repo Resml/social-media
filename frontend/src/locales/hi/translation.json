@@ -40,7 +40,8 @@
     "groups": "ग्रुप्स मैनेजर",
     "profileAudit": "प्रोफाइल ऑडिट",
     "articles": "आर्टिकल प्लानर",
-    "videos": "वीडियो ट्रैकर"
+    "videos": "वीडियो ट्रैकर",
+    "aiVideoMaker": "एआई वीडियो मेकर"
   },
   "dashboard": {
     "title": "एनालिटिक्स डैशबोर्ड",
@@ -180,6 +181,26 @@
       "Marathi": "मराठी (Marathi)",
       "Hindi": "हिंदी (Hindi)"
     }
+  },
+  "aiVideo": {
+    "title": "एआई वीडियो मेकर",
+    "subtitle": "टेक्स्ट प्रॉम्प्ट से शानदार वीडियो बनाएं",
+    "configTitle": "वीडियो सेटिंग्स",
+    "promptLabel": "वीडियो प्रॉम्प्ट",
+    "promptPlaceholder": "आप क्या बनाना चाहते हैं? इसका वर्णन करें...",
+    "styleLabel": "वीडियो स्टाइल",
+    "formatLabel": "प्रारूप",
+    "generating": "वीडियो बनाया जा रहा है...",
+    "generateBtn": "वीडियो बनाएं",
+    "previewTitle": "वीडियो प्रीव्यू",
+    "noVideo": "वीडियो देखने के लिए जनरेट पर क्लिक करें।",
+    "postTitle": "सोशल मीडिया पर पोस्ट करें",
+    "captionPlaceholder": "वीडियो कैप्शन लिखें...",
+    "missingPrompt": "कृपया वीडियो प्रॉम्प्ट दर्ज करें",
+    "successGenerated": "वीडियो सफलतापूर्वक बनाया गया!",
+    "historyTitle": "इतिहास",
+    "searchHistory": "इतिहास खोजें...",
+    "noHistory": "अभी तक कोई इतिहास नहीं"
   },
   "schedule": {
     "createDeployment": "नया शेड्यूल बनाएं",
