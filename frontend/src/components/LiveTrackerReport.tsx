@@ -5,6 +5,7 @@ type LiveStatus = 'scheduled' | 'live' | 'done' | 'cancelled';
 
 interface LiveSession {
   id: string; topic: string; platform: 'Facebook' | 'Instagram' | 'Both';
+  via?: string;
   scheduledAt: string; duration: number;
   status: LiveStatus; notes: string;
 }

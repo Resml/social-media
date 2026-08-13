@@ -91,6 +91,7 @@ export const ProfileAudit = () => {
   const generatePDF = async () => {
     if (!reportRef.current) return;
     setIsGeneratingReport(true);
+    const toastId = toast.loading('Generating PDF report... Please wait.');
     
     try {
       const element = reportRef.current;
@@ -108,9 +109,22 @@ export const ProfileAudit = () => {
       
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
       const pdfHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth;
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      let heightLeft = pdfHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - pdfHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pageHeight;
+      }
+
       pdf.save(`Profile_Audit_${new Date().toISOString().split('T')[0]}.pdf`);
       toast.success("Report downloaded successfully!", { id: toastId });
     } catch (err: any) {

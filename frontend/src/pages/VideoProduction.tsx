@@ -80,6 +80,7 @@ export const VideoProduction = () => {
   const generatePDF = async () => {
     if (!reportRef.current) return;
     setIsGeneratingReport(true);
+    const toastId = toast.loading('Generating PDF report... Please wait.');
     try {
       const element = reportRef.current;
       const imgData = await htmlToImage.toPng(element, { pixelRatio: 2, backgroundColor: '#ffffff', style: { opacity: '1' } });

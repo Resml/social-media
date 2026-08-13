@@ -53,29 +53,29 @@ export const ProfileAuditReport = forwardRef<HTMLDivElement, ProfileAuditReportP
         </div>
       </div>
 
-      <div className="border-b-[3px] border-[#00aaff] mb-8 w-full"></div>
+      <div className="border-b-[3px] border-[#00aaff] mb-4 w-full"></div>
 
       <table className="w-full text-sm text-left border-collapse border border-gray-200">
         <thead className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-300">
           <tr>
-            <th className="px-4 py-4 border-r border-gray-200 w-64">{isMarathi ? 'ऑडिट विभाग / तपासणी' : isHindi ? 'ऑडिट अनुभाग / आइटम' : 'Audit Section / Item'}</th>
-            <th className="px-4 py-4 w-24 text-center">{isMarathi ? 'स्थिती' : isHindi ? 'स्थिति' : 'Status'}</th>
+            <th className="px-4 py-2 border-r border-gray-200 w-64">{isMarathi ? 'ऑडिट विभाग / तपासणी' : isHindi ? 'ऑडिट अनुभाग / आइटम' : 'Audit Section / Item'}</th>
+            <th className="px-4 py-2 w-24 text-center">{isMarathi ? 'स्थिती' : isHindi ? 'स्थिति' : 'Status'}</th>
           </tr>
         </thead>
         <tbody>
           {sections.map((section) => (
             <React.Fragment key={section.id}>
               <tr className="bg-blue-50 border-b border-gray-200">
-                <td colSpan={2} className="px-4 py-3 font-bold text-blue-900">
+                <td colSpan={2} className="px-4 py-1.5 font-bold text-blue-900">
                   {section.title}
                 </td>
               </tr>
               {section.items.map((item) => (
                 <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-4 py-3 border-r border-gray-200 text-gray-700">
+                  <td className="px-4 py-1.5 border-r border-gray-200 text-gray-700">
                     {item.label}
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-4 py-1.5 text-center">
                     {item.selfDone ? (
                       <span className="text-green-600 font-bold">{isMarathi ? 'पूर्ण' : isHindi ? 'पूरा हुआ' : 'Done'}</span>
                     ) : (
