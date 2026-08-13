@@ -5,9 +5,10 @@ interface PostRowProps {
   post: any;
   isSelected: boolean;
   onSelect: (id: string) => void;
+  previewMode?: 'detailed' | 'compact';
 }
 
-export const PostRow = ({ post, isSelected, onSelect }: PostRowProps) => {
+export const PostRow = ({ post, isSelected, onSelect, previewMode = 'detailed' }: PostRowProps) => {
   const { t, i18n } = useTranslation();
 
   const formatDate = (dateStr: string) => {
@@ -51,20 +52,22 @@ export const PostRow = ({ post, isSelected, onSelect }: PostRowProps) => {
 
       {/* Preview Column */}
       <div className="flex flex-1 min-w-[300px] items-center gap-3">
-        <div className="relative w-12 h-12 bg-gray-100 rounded-lg overflow-hidden shrink-0 border border-gray-200">
-          {post.mediaUrls?.[0] ? (
-            <img src={post.mediaUrls[0]} alt="Thumbnail" className="w-full h-full object-cover" />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 bg-gray-50">
-              <span className="text-[10px] font-bold">TEXT</span>
-            </div>
-          )}
-          {post.platform === 'FACEBOOK' && post.mediaUrls?.[0] && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-               <Play size={16} color="white" fill="white" className="opacity-80" />
-            </div>
-          )}
-        </div>
+        {previewMode === 'detailed' && (
+          <div className="relative w-12 h-12 bg-gray-100 rounded-lg overflow-hidden shrink-0 border border-gray-200">
+            {post.mediaUrls?.[0] ? (
+              <img src={post.mediaUrls[0]} alt="Thumbnail" className="w-full h-full object-cover" />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-400 bg-gray-50">
+                <span className="text-[10px] font-bold">TEXT</span>
+              </div>
+            )}
+            {post.platform === 'FACEBOOK' && post.mediaUrls?.[0] && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                 <Play size={16} color="white" fill="white" className="opacity-80" />
+              </div>
+            )}
+          </div>
+        )}
         <div className="flex flex-col">
           <span className="text-[14px] font-medium text-[#050505] leading-tight mb-1">
             {truncate(post.caption, 45) || t('postCard.noCaption', 'No caption available')}

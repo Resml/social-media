@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../api/axios';
 import { PostRow } from '../components/PostRow';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, Download, Info, ArrowUpDown, ChevronDown, Video } from 'lucide-react';
+import { Search, Plus, Download, Info, ArrowUpDown, ChevronDown, Video, X } from 'lucide-react';
 import * as htmlToImage from 'html-to-image';
 import { jsPDF } from 'jspdf';
 import { toast } from 'sonner';
@@ -25,7 +25,19 @@ export const PostSearch = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newPostText, setNewPostText] = useState('');
+  const [newPostPlatform, setNewPostPlatform] = useState('Facebook');
+  const [showPreviewDropdown, setShowPreviewDropdown] = useState(false);
+  const [previewMode, setPreviewMode] = useState<'detailed' | 'compact'>('detailed');
   const reportRef = useRef<HTMLDivElement>(null);
+
+  const handleCreatePost = () => {
+    if (!newPostText.trim()) return;
+    toast.success(t('postSearch.createModal.success', 'Successfully scheduled to {{platform}}!', { platform: newPostPlatform }));
+    setShowCreateModal(false);
+    setNewPostText('');
+  };
 
   const generatePDF = async () => {
     if (!reportRef.current) return;
@@ -176,7 +188,7 @@ export const PostSearch = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <button className="flex items-center gap-1.5 bg-[#1877f2] hover:bg-[#166fe5] text-white px-4 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
+              <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-1.5 bg-[#1877f2] hover:bg-[#166fe5] text-white px-4 py-1.5 rounded-[6px] text-[14px] font-bold transition-colors">
                 <Plus size={18} strokeWidth={3} />
                 <span>{t('postSearch.actions.create', 'Create')}</span>
                 <ChevronDown size={14} />
@@ -203,9 +215,39 @@ export const PostSearch = () => {
                 className="w-4 h-4 rounded border-gray-300 text-[#1877f2] focus:ring-[#1877f2]"
               />
             </div>
-            <div className="flex-1 flex items-center gap-1 min-w-[300px]">
-              {t('postSearch.table.preview', 'PREVIEW')}
-              <ChevronDown size={14} className="text-[#1877f2]" />
+            <div className="flex-1 min-w-[300px] relative">
+              <button 
+                onClick={() => setShowPreviewDropdown(!showPreviewDropdown)}
+                className="flex items-center gap-1 hover:bg-[#e4e6eb] px-2 py-1 rounded-[6px] transition-colors -ml-2 text-[#65676B] outline-none"
+              >
+                {t('postSearch.table.preview', 'PREVIEW')}
+                <ChevronDown size={14} className={`text-[#1877f2] transition-transform ${showPreviewDropdown ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {showPreviewDropdown && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setShowPreviewDropdown(false)}
+                  />
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-[#ced0d4] shadow-[0_12px_28px_rgba(0,0,0,0.2)] rounded-[8px] z-20 py-2 font-normal normal-case animate-in fade-in zoom-in-95 duration-200">
+                    <button 
+                      onClick={() => { setPreviewMode('detailed'); setShowPreviewDropdown(false); }}
+                      className="w-full text-left px-4 py-2.5 hover:bg-[#F2F3F5] flex items-center gap-3 text-[#050505] text-[15px] font-medium transition-colors"
+                    >
+                      <div className={`w-3 h-3 rounded-full border ${previewMode === 'detailed' ? 'bg-[#1877f2] border-[#1877f2]' : 'border-gray-400'}`} />
+                      {t('postSearch.preview.detailed', 'Detailed View')}
+                    </button>
+                    <button 
+                      onClick={() => { setPreviewMode('compact'); setShowPreviewDropdown(false); }}
+                      className="w-full text-left px-4 py-2.5 hover:bg-[#F2F3F5] flex items-center gap-3 text-[#050505] text-[15px] font-medium transition-colors"
+                    >
+                      <div className={`w-3 h-3 rounded-full border ${previewMode === 'compact' ? 'bg-[#1877f2] border-[#1877f2]' : 'border-gray-400'}`} />
+                      {t('postSearch.preview.compact', 'Compact View')}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
             {['views', 'viewers', 'interactions', 'netFollows', 'impressions'].map(col => (
               <div key={col} className="w-32 flex items-center justify-center gap-1">
@@ -230,6 +272,7 @@ export const PostSearch = () => {
                   post={post} 
                   isSelected={selectedIds.includes(post.id)}
                   onSelect={toggleSelect}
+                  previewMode={previewMode}
                 />
               ))
             ) : (
@@ -247,9 +290,56 @@ export const PostSearch = () => {
       </div>
       
       {/* Floating Create Button (Optional, Facebook has it in sidebar usually but adding a secondary one matches overall feel) */}
-      <button className="fixed bottom-6 right-6 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all scale-100 hover:scale-105 active:scale-95 text-[#050505]">
+      <button onClick={() => setShowCreateModal(true)} className="fixed bottom-6 right-6 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all scale-100 hover:scale-105 active:scale-95 text-[#050505]">
          <Plus size={24} />
       </button>
+
+      {/* Create Post Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-[8px] shadow-[0_12px_28px_rgba(0,0,0,0.2)] w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex justify-between items-center p-4 border-b border-[#ced0d4]">
+              <h3 className="text-[20px] font-bold text-[#050505]">{t('postSearch.createModal.title', 'Create Post')}</h3>
+              <button onClick={() => setShowCreateModal(false)} className="p-2 bg-[#e4e6eb] rounded-full hover:bg-[#d8dadf] transition-colors text-[#050505]">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="block text-[15px] font-semibold text-[#050505] mb-1">{t('postSearch.createModal.selectPlatform', 'Select Platform')}</label>
+                <select 
+                  value={newPostPlatform} 
+                  onChange={(e) => setNewPostPlatform(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#F0F2F5] border-transparent focus:bg-white focus:border-[#1877f2] focus:ring-1 focus:ring-[#1877f2] rounded-[6px] outline-none text-[15px] text-[#050505]"
+                >
+                  <option value="Facebook">Facebook</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="Twitter">Twitter / X</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[15px] font-semibold text-[#050505] mb-1">{t('postSearch.createModal.postContent', 'Post Content')}</label>
+                <textarea 
+                  rows={4}
+                  value={newPostText}
+                  onChange={(e) => setNewPostText(e.target.value)}
+                  placeholder={t('postSearch.createModal.placeholder', "What's on your mind?")}
+                  className="w-full px-3 py-2 bg-[#F0F2F5] border-transparent focus:bg-white focus:border-[#1877f2] focus:ring-1 focus:ring-[#1877f2] rounded-[6px] outline-none resize-none text-[15px] text-[#050505]"
+                />
+              </div>
+            </div>
+            <div className="p-4 bg-white border-t border-[#ced0d4] flex justify-end gap-3">
+              <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-[6px] font-semibold text-[#050505] bg-[#e4e6eb] hover:bg-[#d8dadf] transition-colors text-[15px]">
+                {t('postSearch.createModal.cancel', 'Cancel')}
+              </button>
+              <button onClick={handleCreatePost} className="px-4 py-2 rounded-[6px] font-semibold text-white bg-[#1877f2] hover:bg-[#166fe5] transition-colors text-[15px]">
+                {t('postSearch.createModal.publish', 'Publish')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
