@@ -194,10 +194,18 @@ export const Schedule = () => {
             </div>
           )}
           {mediaUrl && !isUploading && (
-            <div className="mt-3 overflow-hidden rounded-xl h-32 relative">
+            <div className="mt-3 overflow-hidden rounded-xl h-32 relative group cursor-pointer">
               <img src={mediaUrl} className="w-full h-full object-cover" alt="preview" />
               <div className="absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-widest text-white" style={{ background: '#10b981' }}>
                 {t('schedule.ready', 'Ready')}
+              </div>
+              <div 
+                className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => navigate('/psd-editor', { state: { preloadedMediaUrl: mediaUrl } })}
+              >
+                 <button className="bg-white text-black px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow-lg">
+                   Edit Image
+                 </button>
               </div>
             </div>
           )}

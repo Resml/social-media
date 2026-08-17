@@ -202,6 +202,41 @@ export const PSDEditor = () => {
   const [historyVersion, setHistoryVersion] = useState(0);
 
   useEffect(() => {
+    if (location.state?.preloadedMediaUrl) {
+      const img = new window.Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        isHistoryUpdate.current = true;
+        const stageW = 800;
+        const stageH = 600;
+        let w = img.width;
+        let h = img.height;
+        if (w > stageW) {
+          h = h * (stageW / w);
+          w = stageW;
+        }
+        const newLayer = {
+          uniqueId: Math.random().toString(36).substr(2, 9),
+          name: "Imported Image",
+          hidden: false,
+          opacity: 1,
+          blendMode: 'source-over',
+          left: stageW / 2 - w / 2,
+          top: stageH / 2 - h / 2,
+          right: (stageW / 2) + w / 2,
+          bottom: (stageH / 2) + h / 2,
+          imageElement: img
+        };
+        setLayers([newLayer]);
+        setSelectedNodeId(newLayer.uniqueId);
+        setHistoryVersion(v => v + 1);
+        window.history.replaceState({}, document.title);
+      };
+      img.src = location.state.preloadedMediaUrl;
+    }
+  }, [location.state?.preloadedMediaUrl]);
+
+  useEffect(() => {
     if (isHistoryUpdate.current) {
       isHistoryUpdate.current = false;
       return;
@@ -568,6 +603,37 @@ export const PSDEditor = () => {
     }, 100);
   };
 
+  const handleSchedulePost = () => {
+    if (!stageRef.current) return;
+    const prevHover = hoveredLayerId;
+    const prevSelect = selectedNodeId;
+    setHoveredLayerId(null);
+    setSelectedNodeId(null);
+    
+    setTimeout(async () => {
+      if (stageRef.current) {
+        try {
+          const dataURL = stageRef.current.toDataURL({ pixelRatio: 2 });
+          const res = await fetch(dataURL);
+          const blob = await res.blob();
+          const file = new File([blob], "edited_post.png", { type: "image/png" });
+
+          const fd = new FormData();
+          fd.append('media', file);
+          
+          const uploadRes = await api.post('/schedule/upload', fd);
+          
+          navigate('/schedule', { state: { preloadedMediaUrl: uploadRes.data.url } });
+        } catch (err) {
+          console.error("Failed to upload image for scheduling", err);
+          alert("Failed to prepare image for scheduling. Please try again.");
+        }
+      }
+      setHoveredLayerId(prevHover);
+      setSelectedNodeId(prevSelect);
+    }, 100);
+  };
+
   const handleAddImageLayer = () => {
     if (!psdData) {
       handleOpenClick();
@@ -783,6 +849,14 @@ export const PSDEditor = () => {
             onClick={() => setShowBulkModal(true)} 
           >
             <Zap size={14} /> <span className="hide-on-mobile">{t('psdEditor.bulkGenerate', 'Bulk Generate')}</span>
+          </button>
+          
+          <button 
+            className="topbar-action-btn primary"
+            onClick={handleSchedulePost} 
+            style={{ backgroundColor: '#1877f2' }}
+          >
+            <UploadCloud size={14} /> <span className="hide-on-mobile">{t('psdEditor.schedulePost', 'Schedule Post')}</span>
           </button>
         </div>
       </div>
@@ -1059,8 +1133,8 @@ export const PSDEditor = () => {
               <div 
                 className="canvas-container" 
                 style={{ 
-                  width: psdData.width * scale, 
-                  height: psdData.height * scale,
+                  width: (psdData ? psdData.width : 800) * scale, 
+                  height: (psdData ? psdData.height : 600) * scale,
                   position: 'absolute',
                   left: stagePos.x,
                   top: stagePos.y,
@@ -1082,8 +1156,8 @@ export const PSDEditor = () => {
                 }}
               >
                 <Stage 
-                  width={Math.max(1, psdData.width * scale)} 
-                  height={Math.max(1, psdData.height * scale)} 
+                  width={Math.max(1, (psdData ? psdData.width : 800) * scale)} 
+                  height={Math.max(1, (psdData ? psdData.height : 600) * scale)} 
                   scaleX={scale} 
                   scaleY={scale} 
                   ref={stageRef}
