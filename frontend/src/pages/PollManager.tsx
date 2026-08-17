@@ -73,14 +73,7 @@ export const PollManager = () => {
   };
 
   React.useEffect(() => {
-    setPolls([
-      { id:'1', question:String(t('pollManager.mockData.poll1.question', 'Which ward development work should we prioritize?')), platform:'Facebook', status:'active', createdAt:'2025-05-10', totalVotes:342,
-        options:[{id:'a',text:String(t('pollManager.mockData.poll1.opta', 'Road repair')),votes:158},{id:'b',text:String(t('pollManager.mockData.poll1.optb', 'Water supply')),votes:112},{id:'c',text:String(t('pollManager.mockData.poll1.optc', 'Street lights')),votes:72}] },
-      { id:'2', question:String(t('pollManager.mockData.poll2.question', 'Are you satisfied with our work this year?')), platform:'Facebook', status:'closed', createdAt:'2025-04-20', totalVotes:521,
-        options:[{id:'a',text:String(t('pollManager.mockData.poll2.opta', 'Very satisfied')),votes:230},{id:'b',text:String(t('pollManager.mockData.poll2.optb', 'Somewhat satisfied')),votes:189},{id:'c',text:String(t('pollManager.mockData.poll2.optc', 'Not satisfied')),votes:102}] },
-      { id:'3', question:String(t('pollManager.mockData.poll3.question', 'Which social issue concerns you most?')), platform:'Instagram', status:'active', createdAt:'2025-05-14', totalVotes:87,
-        options:[{id:'a',text:String(t('pollManager.mockData.poll3.opta', 'Unemployment')),votes:41},{id:'b',text:String(t('pollManager.mockData.poll3.optb', 'Education')),votes:28},{id:'c',text:String(t('pollManager.mockData.poll3.optc', 'Health')),votes:18}] },
-    ]);
+    setPolls([]);
   }, [t]);
 
   const addOption  = () => { if(opts.length<4) setOpts(p=>[...p,'']); };

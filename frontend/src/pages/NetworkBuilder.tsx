@@ -39,13 +39,7 @@ const initials = (name: string) => name.split(' ').map(w=>w[0]).join('').slice(0
 export const NetworkBuilder = () => {
   const { t } = useTranslation();
 
-  const [contacts, setContacts] = useState<Contact[]>(() => [
-    { id:'1', name:String(t('networkBuilder.mockData.contact1.name', 'Ramesh Patil')), location:String(t('networkBuilder.mockData.contact1.location', 'Ward 12')), interest:'Politics', platform:'Facebook', phone:'9876543210', tag:'Supporter', note:String(t('networkBuilder.mockData.contact1.note', 'Active volunteer')) },
-    { id:'2', name:String(t('networkBuilder.mockData.contact2.name', 'Sunita Deshmukh')), location:String(t('networkBuilder.mockData.contact2.location', 'Ward 14')), interest:'Education', platform:'Facebook', phone:'9765432109', tag:'Influencer', note:String(t('networkBuilder.mockData.contact2.note', 'School principal, 5k followers')) },
-    { id:'3', name:String(t('networkBuilder.mockData.contact3.name', 'Anil Kadam')), location:String(t('networkBuilder.mockData.contact3.location', 'Ward 12')), interest:'Youth', platform:'Instagram', phone:'9654321098', tag:'Activist', note:String(t('networkBuilder.mockData.contact3.note', 'Youth group leader')) },
-    { id:'4', name:String(t('networkBuilder.mockData.contact4.name', 'Priya Shinde')), location:String(t('networkBuilder.mockData.contact4.location', 'Ward 15')), interest:'Women Empowerment', platform:'Facebook', phone:'9543210987', tag:'Voter', note:String(t('networkBuilder.mockData.contact4.note', '')) },
-    { id:'5', name:String(t('networkBuilder.mockData.contact5.name', 'Vijay Mane')), location:String(t('networkBuilder.mockData.contact5.location', 'Ward 12')), interest:'Sports', platform:'Facebook', phone:'9432109876', tag:'Supporter', note:String(t('networkBuilder.mockData.contact5.note', 'Cricket club organizer')) },
-  ]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [showForm, setShowForm]   = useState(false);
   const [search, setSearch]       = useState('');
   const [filterTag, setFilterTag] = useState<Tag|'All'>('All');

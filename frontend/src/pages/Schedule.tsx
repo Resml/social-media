@@ -27,7 +27,7 @@ export const Schedule = () => {
   }, [location.state]);
 
   useEffect(() => {
-    api.get('/oauth/accounts')
+    api.get('/auth/accounts')
        .then(res => { setAccounts(res.data); if (res.data.length > 0) setAccountId(res.data[0].id); })
        .catch(err => console.error('No accounts loaded', err));
     fetchPosts();

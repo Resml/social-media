@@ -50,12 +50,7 @@ const durationCheck = (sec: number, t: any): { ok: boolean; msg: string; color: 
   return           { ok:false, msg:String(t('videoTracker.durationMsgs.tooLong', 'Too long! Document says: max 180 seconds')), color:'#dc2626' };
 };
 
-const INITIAL: VideoEntry[] = [
-  { id:'1', title:'Ward 12 Road Work Progress',    category:'Development Work Update', duration:75,  format:'square', status:'published', assignee:'Harshal Vora',  scheduledDate:'2025-05-10', note:'8k views' },
-  { id:'2', title:'Water scarcity commentary',      category:'Social Issue Commentary', duration:60,  format:'square', status:'filming',   assignee:'Dr. Amol Pawar', scheduledDate:'2025-05-15', note:'' },
-  { id:'3', title:'Youth empowerment motivational', category:'Motivational Ad',         duration:90,  format:'square', status:'editing',   assignee:'Sagar',          scheduledDate:'2025-05-17', note:'' },
-  { id:'4', title:'Hospital expansion plan',        category:'Development Work Update', duration:120, format:'square', status:'idea',      assignee:'Harshal Vora',  scheduledDate:'2025-05-22', note:'Need drone footage' },
-];
+const INITIAL: VideoEntry[] = [];
 
 const inputStyle: React.CSSProperties = {
   width:'100%', padding:'0.65rem 0.9rem', borderRadius:'0.65rem',

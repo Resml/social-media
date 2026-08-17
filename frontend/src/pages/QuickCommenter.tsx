@@ -26,18 +26,7 @@ interface TargetProfile {
   lastPost: string;
 }
 
-const MOCK_PROFILES: TargetProfile[] = [
-  { id: '1', name: 'Rahul Sharma', facebookId: 'fb.rahul.123', platform: 'Facebook', lastPost: 'Just finished a great workout!' },
-  { id: '2', name: 'Anjali Patil', facebookId: 'fb.anjali.p', platform: 'Facebook', lastPost: 'Beautiful sunset in Mumbai.' },
-  { id: '3', name: 'Vikram Singh', facebookId: 'fb.vikram.s', platform: 'Facebook', lastPost: 'Excited for the new project launch.' },
-  { id: '4', name: 'Sneha Gupta', facebookId: 'fb.sneha.g', platform: 'Facebook', lastPost: 'Had an amazing dinner tonight.' },
-  { id: '5', name: 'Amit Verma', facebookId: 'fb.amit.v', platform: 'Facebook', lastPost: 'Weekend vibes!' },
-  { id: '6', name: 'Priya Reddy', facebookId: 'fb.priya.r', platform: 'Facebook', lastPost: 'Exploring the mountains.' },
-  { id: '7', name: 'Sandeep K.', facebookId: 'fb.sandeep.k', platform: 'Facebook', lastPost: 'Congratulations to the team!' },
-  { id: '8', name: 'Meera Das', facebookId: 'fb.meera.d', platform: 'Facebook', lastPost: 'Book club meeting was fun.' },
-  { id: '9', name: 'Rohan Mehta', facebookId: 'fb.rohan.m', platform: 'Facebook', lastPost: 'New car alert!' },
-  { id: '10', name: 'Kavita Iyer', facebookId: 'fb.kavita.i', platform: 'Facebook', lastPost: 'Teaching my kids Marathi today.' },
-];
+const MOCK_PROFILES: TargetProfile[] = [];
 
 export const QuickCommenter = () => {
   const { t, i18n } = useTranslation();

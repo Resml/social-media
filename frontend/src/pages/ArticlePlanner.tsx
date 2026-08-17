@@ -70,15 +70,7 @@ const inputStyle: React.CSSProperties = {
 
 export const ArticlePlanner = () => {
   const { t } = useTranslation();
-  const [articles, setArticles]     = useState<Article[]>(() => [
-    { id:'1', type:'daily-short', category:'Daily Activities / Personal',                 title:String(t('articlePlanner.mockData.a1.title', "Today's ward inspection update")),      writer:'Satish Waghmare', status:'published', dueDate:'2025-05-12', note:String(t('articlePlanner.mockData.a1.note', '')) },
-    { id:'2', type:'daily-short', category:'Youth Achievement',                            title:String(t('articlePlanner.mockData.a2.title', 'Student Rohan wins science olympiad')), writer:'Harshal Vora',   status:'published', dueDate:'2025-05-11', note:String(t('articlePlanner.mockData.a2.note', '')) },
-    { id:'3', type:'daily-short', category:'Public Useful Info (prices, jobs, courses)',   title:String(t('articlePlanner.mockData.a3.title', 'Government job vacancies this week')),  writer:'Sagar',           status:'draft',     dueDate:'2025-05-13', note:String(t('articlePlanner.mockData.a3.note', 'Add links')) },
-    { id:'4', type:'daily-short', category:'Social Awareness Commentary',                  title:String(t('articlePlanner.mockData.a4.title', 'Water conservation — our duty')),       writer:'Sagar',           status:'idea',      dueDate:'2025-05-14', note:String(t('articlePlanner.mockData.a4.note', '')) },
-    { id:'5', type:'weekly-big',  category:'Letter to CM / Party Leaders',                 title:String(t('articlePlanner.mockData.a5.title', 'Letter to CM on ward water crisis')),   writer:'Satish Waghmare', status:'published', dueDate:'2025-05-08', note:String(t('articlePlanner.mockData.a5.note', 'Got 3k reach')) },
-    { id:'6', type:'weekly-big',  category:'New idea on social problem',                   title:String(t('articlePlanner.mockData.a6.title', 'Innovative plastic waste solution')),   writer:'Hemant',          status:'draft',     dueDate:'2025-05-15', note:String(t('articlePlanner.mockData.a6.note', '')) },
-    { id:'7', type:'weekly-big',  category:'Future plans for people',                      title:String(t('articlePlanner.mockData.a7.title', 'Our 5-point vision for Ward 12')),      writer:'Sagar',           status:'idea',      dueDate:'2025-05-20', note:String(t('articlePlanner.mockData.a7.note', '')) },
-  ]);
+  const [articles, setArticles]     = useState<Article[]>([]);
   const [showForm, setShowForm]     = useState(false);
   const [showGuide, setShowGuide]   = useState(false);
   const [activeTab, setActiveTab]   = useState<ArticleType>('daily-short');

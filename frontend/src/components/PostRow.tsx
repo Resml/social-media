@@ -23,14 +23,14 @@ export const PostRow = ({ post, isSelected, onSelect, previewMode = 'detailed' }
     return text.length > length ? text.substring(0, length) + '...' : text;
   };
 
-  // Mock metrics if not present
+  // Default to zero if metrics not present
   const metrics = post.metrics || {
-    likes: Math.floor(Math.random() * 1000),
-    comments: Math.floor(Math.random() * 500),
-    shares: Math.floor(Math.random() * 100),
-    views: Math.floor(Math.random() * 5000),
-    viewers: Math.floor(Math.random() * 3000),
-    impressions: Math.floor(Math.random() * 8000),
+    likes: 0,
+    comments: 0,
+    shares: 0,
+    views: 0,
+    viewers: 0,
+    impressions: 0,
   };
 
   const interactions = metrics.likes + metrics.comments + metrics.shares;

@@ -68,12 +68,7 @@ export const GroupsManager = () => {
   };
 
   React.useEffect(() => {
-    setGroups([
-      { id:'1', name:String(t('groupsManager.mockData.g1.name', 'Ward 12 Citizens Forum')), category:'Community', members:342, platform:'WhatsApp', admin:'Sagar', joinedDate:'2025-01-15', status:'active', notes:'' },
-      { id:'2', name:String(t('groupsManager.mockData.g2.name', 'Youth Leaders Association')), category:'Youth', members:120, platform:'Facebook', admin:'Harshal Vora', joinedDate:'2024-11-20', status:'active', notes:String(t('groupsManager.mockData.g2.notes', 'Very active in tech discussions')) },
-      { id:'3', name:String(t('groupsManager.mockData.g3.name', 'Women Empowerment Cell')), category:'Women', members:45, platform:'WhatsApp', admin:'—', joinedDate:'2025-02-10', status:'active', notes:'' },
-      { id:'4', name:String(t('groupsManager.mockData.g4.name', 'Local Business Owners')), category:'Business', members:18, platform:'Facebook', admin:'Dr. Amol Pawar', joinedDate:'2025-03-05', status:'inactive', notes:String(t('groupsManager.mockData.g4.notes', 'Needs revival')) },
-    ]);
+    setGroups([]);
   }, [t]);
 
   const addGroup = () => {

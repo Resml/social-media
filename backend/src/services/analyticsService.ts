@@ -125,21 +125,18 @@ export const fetchFollowerGrowth = async (userId: string, platform?: string) => 
   }
 
   const data = [];
-  let base = targetFollowers * 0.85; 
-  const dailyGrowth = (targetFollowers - base) / 30;
-
+  
+  // Since we don't have historical follower snapshots yet, just return flat data
   for (let i = 30; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     data.push({
       date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       timestamp: d.getTime(),
-      followers: Math.floor(base)
+      followers: targetFollowers
     });
-    base += dailyGrowth + (Math.random() * dailyGrowth * 0.5 - dailyGrowth * 0.25);
   }
   
-  if (data.length > 0) data[data.length - 1].followers = targetFollowers;
   return data;
 };
 
@@ -196,9 +193,9 @@ export const fetchEngagementBreakdown = async (userId: string, platform?: string
 
   if (totalLikes === 0 && totalComments === 0) {
     return [
-      { name: 'Likes', value: 65, fill: '#4f46e5' },
-      { name: 'Comments', value: 20, fill: '#14b8a6' },
-      { name: 'Shares', value: 15, fill: '#f59e0b' },
+      { name: 'Likes', value: 0, fill: '#4f46e5' },
+      { name: 'Comments', value: 0, fill: '#14b8a6' },
+      { name: 'Shares', value: 0, fill: '#f59e0b' },
     ];
   }
 

@@ -27,16 +27,27 @@ export const PostSearch = () => {
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newPostText, setNewPostText] = useState('');
-  const [newPostPlatform, setNewPostPlatform] = useState('Facebook');
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [selectedAccountId, setSelectedAccountId] = useState('');
   const [showPreviewDropdown, setShowPreviewDropdown] = useState(false);
   const [previewMode, setPreviewMode] = useState<'detailed' | 'compact'>('detailed');
   const reportRef = useRef<HTMLDivElement>(null);
 
-  const handleCreatePost = () => {
-    if (!newPostText.trim()) return;
-    toast.success(t('postSearch.createModal.success', 'Successfully scheduled to {{platform}}!', { platform: newPostPlatform }));
-    setShowCreateModal(false);
-    setNewPostText('');
+  const handleCreatePost = async () => {
+    if (!newPostText.trim() || !selectedAccountId) return;
+    try {
+      await api.post('/schedule', {
+        socialAccountId: selectedAccountId,
+        content: newPostText,
+        scheduledAt: new Date().toISOString()
+      });
+      toast.success(t('postSearch.createModal.success', 'Successfully published post!'));
+      setShowCreateModal(false);
+      setNewPostText('');
+      fetchResults();
+    } catch (err) {
+      toast.error('Failed to publish post.');
+    }
   };
 
   const generatePDF = async () => {
@@ -72,6 +83,13 @@ export const PostSearch = () => {
       setIsGeneratingReport(false);
     }
   };
+
+  useEffect(() => {
+    api.get('/auth/accounts').then(res => {
+      setAccounts(res.data);
+      if (res.data.length > 0) setSelectedAccountId(res.data[0].id);
+    }).catch(console.error);
+  }, []);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => { fetchResults(); }, 300);
@@ -307,16 +325,16 @@ export const PostSearch = () => {
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <label className="block text-[15px] font-semibold text-[#050505] mb-1">{t('postSearch.createModal.selectPlatform', 'Select Platform')}</label>
+                <label className="block text-[15px] font-semibold text-[#050505] mb-1">{t('postSearch.createModal.selectPlatform', 'Select Account')}</label>
                 <select 
-                  value={newPostPlatform} 
-                  onChange={(e) => setNewPostPlatform(e.target.value)}
+                  value={selectedAccountId} 
+                  onChange={(e) => setSelectedAccountId(e.target.value)}
                   className="w-full px-3 py-2 bg-[#F0F2F5] border-transparent focus:bg-white focus:border-[#1877f2] focus:ring-1 focus:ring-[#1877f2] rounded-[6px] outline-none text-[15px] text-[#050505]"
                 >
-                  <option value="Facebook">Facebook</option>
-                  <option value="Instagram">Instagram</option>
-                  <option value="Twitter">Twitter / X</option>
-                  <option value="LinkedIn">LinkedIn</option>
+                  {accounts.map(acc => (
+                    <option key={acc.id} value={acc.id}>{acc.platform}: {acc.accountHandle}</option>
+                  ))}
+                  {accounts.length === 0 && <option value="" disabled>No accounts connected</option>}
                 </select>
               </div>
               <div>

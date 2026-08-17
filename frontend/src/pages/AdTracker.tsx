@@ -22,12 +22,7 @@ const inputStyle: React.CSSProperties = {
 export const AdTracker = () => {
   const { t } = useTranslation();
 
-  const [ads, setAds] = useState<Ad[]>(() => [
-    { id:'1', month:String(t('adTracker.mockData.campaign1.month', 'May 2025')), campaign:String(t('adTracker.mockData.campaign1.campaign', 'Ward development awareness')), spend:500, reach:18400, clicks:740, platform:'Facebook', status:'active', notes:String(t('adTracker.mockData.campaign1.notes', 'Running well')) },
-    { id:'2', month:String(t('adTracker.mockData.campaign2.month', 'April 2025')), campaign:String(t('adTracker.mockData.campaign2.campaign', 'Community event promotion')), spend:400, reach:12300, clicks:510, platform:'Facebook', status:'ended', notes:String(t('adTracker.mockData.campaign2.notes', 'Good reach')) },
-    { id:'3', month:String(t('adTracker.mockData.campaign3.month', 'March 2025')), campaign:String(t('adTracker.mockData.campaign3.campaign', 'Voter registration drive')), spend:600, reach:22100, clicks:890, platform:'Facebook', status:'ended', notes:String(t('adTracker.mockData.campaign3.notes', 'High engagement')) },
-    { id:'4', month:String(t('adTracker.mockData.campaign4.month', 'February 2025')), campaign:String(t('adTracker.mockData.campaign4.campaign', 'Festival greetings sponsored')), spend:300, reach:8900, clicks:310, platform:'Facebook', status:'ended', notes:String(t('adTracker.mockData.campaign4.notes', '')) },
-  ]);
+  const [ads, setAds] = useState<Ad[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Omit<Ad,'id'>>({
     month:'', campaign:'', spend:0, reach:0, clicks:0, platform:'Facebook', status:'active', notes:''

@@ -41,14 +41,7 @@ const avatar = (name: string) => name.split(' ').map(w=>w[0]).join('').slice(0,2
 export const TeamTasks = () => {
   const { t } = useTranslation();
 
-  const [tasks, setTasks] = useState<Task[]>(() => [
-    { id:'1', title:String(t('teamTasks.mockData.task1', 'Ambedkar Jayanti graphic')), category:'Birthday Post', assignee:'Harshal Vora', priority:'high', status:'done', dueDate:'2025-04-14' },
-    { id:'2', title:String(t('teamTasks.mockData.task2', 'Water scarcity reel')), category:'Social Issue', assignee:'Dr. Amol Pawar', priority:'high', status:'inprogress', dueDate:'2025-05-15' },
-    { id:'3', title:String(t('teamTasks.mockData.task3', 'Ward development poll')), category:'Poll', assignee:'Sagar', priority:'medium', status:'inprogress', dueDate:'2025-05-16' },
-    { id:'4', title:String(t('teamTasks.mockData.task4', 'Google Meet → FB Live')), category:'Live Video', assignee:'Dr. Amol Pawar', priority:'high', status:'todo', dueDate:'2025-05-20' },
-    { id:'5', title:String(t('teamTasks.mockData.task5', 'Monthly paid ad May')), category:'Campaign', assignee:'Sagar', priority:'medium', status:'todo', dueDate:'2025-05-25' },
-    { id:'6', title:String(t('teamTasks.mockData.task6', 'Repost road work update')), category:'Repost', assignee:'Harshal Vora', priority:'low', status:'todo', dueDate:'2025-05-28' },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Omit<Task,'id'>>({ title:'', category:CATEGORIES[0], assignee:TEAM[0], priority:'medium', status:'todo', dueDate:'' });
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);

@@ -80,12 +80,7 @@ export const LiveTracker = () => {
 
   // Update INITIAL with translations inside component
   React.useEffect(() => {
-    setSessions([
-      { id:'1', topic:String(t('liveTracker.mockData.l1.topic', 'Ward development progress update')),  platform:'Facebook', via:'Direct',      scheduledAt:'2025-05-10T19:00', duration:30, status:'done',      notes:String(t('liveTracker.mockData.l1.notes', 'Good turnout')) },
-      { id:'2', topic:String(t('liveTracker.mockData.l2.topic', 'Water crisis: open discussion')),     platform:'Facebook', via:'Google Meet', scheduledAt:'2025-05-18T20:00', duration:45, status:'scheduled', notes:'' },
-      { id:'3', topic:String(t('liveTracker.mockData.l3.topic', 'Social cultural event highlights')),  platform:'Both',     via:'Direct',      scheduledAt:'2025-05-22T18:30', duration:20, status:'scheduled', notes:'' },
-      { id:'4', topic:String(t('liveTracker.mockData.l4.topic', 'Road work inspection live')),         platform:'Facebook', via:'Direct',      scheduledAt:'2025-04-28T17:00', duration:15, status:'done',      notes:String(t('liveTracker.mockData.l4.notes', 'Shared to group')) },
-    ]);
+    setSessions([]);
   }, [t]);
 
   const addSession = () => {

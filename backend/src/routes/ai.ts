@@ -24,17 +24,9 @@ router.post('/suggest-reply', async (req: AuthRequest, res) => {
 
     if (!item) return res.status(404).json({ error: 'Message context unavailable' });
 
-    // Fallback Mock Payload if API Config runs null during testing phases
     if (!openai) {
-      console.warn('[AI Service] OPENAI_API_KEY not defined. Generating internal fallback predictions.', tone);
-      await new Promise(r => setTimeout(r, 1000));
-      return res.json({
-        suggestions: [
-          `[${tone.toUpperCase()} Mock] Thanks for reaching out ${item.authorHandle}! We really appreciate the ${item.type.toLowerCase()}.`,
-          `[${tone.toUpperCase()} Mock] Absolutely brilliant point. Let's touch base on this!`,
-          `[${tone.toUpperCase()} Mock] Have you checked out our latest post regarding this?`
-        ]
-      });
+      console.error('[AI Service] OPENAI_API_KEY not defined. Cannot generate AI suggestions.');
+      return res.status(503).json({ error: 'AI Service is currently unavailable due to missing configuration.' });
     }
 
     const systemPrompt = `
