@@ -149,10 +149,15 @@ export const Dashboard = () => {
                 value={selectedAccount || ''}
                 onChange={(e) => setSelectedAccount(e.target.value)}
                 className="flex-1 lg:w-48 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-slate-50 outline-none focus:ring-2 focus:ring-brand-400"
+                disabled={accounts.length === 0}
               >
-                {accounts.map(acc => (
-                  <option key={acc.id} value={acc.id}>{String(t(`dashboard.platforms.${acc.platform.toLowerCase()}`, acc.platform)).toUpperCase()}: {acc.accountHandle}</option>
-                ))}
+                {accounts.length === 0 ? (
+                  <option value="">{t('dashboard.noAccounts', 'No accounts connected')}</option>
+                ) : (
+                  accounts.map(acc => (
+                    <option key={acc.id} value={acc.id}>{String(t(`dashboard.platforms.${acc.platform.toLowerCase()}`, acc.platform)).toUpperCase()}: {acc.accountHandle}</option>
+                  ))
+                )}
               </select>
               
               <button 

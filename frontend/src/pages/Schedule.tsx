@@ -134,10 +134,15 @@ export const Schedule = () => {
           </label>
           <select value={accountId} onChange={e => setAccountId(e.target.value)}
             style={{ ...inputBase, cursor: 'pointer', fontWeight: 600, color: 'var(--slate-700)' }}
-            onFocus={handleFocus as any} onBlur={handleBlur as any}>
-            {accounts.map(a => (
-              <option key={a.id} value={a.id}>{a.platform} — {a.accountHandle}</option>
-            ))}
+            onFocus={handleFocus as any} onBlur={handleBlur as any}
+            disabled={accounts.length === 0}>
+            {accounts.length === 0 ? (
+              <option value="">No accounts connected</option>
+            ) : (
+              accounts.map(a => (
+                <option key={a.id} value={a.id}>{a.platform} — {a.accountHandle}</option>
+              ))
+            )}
           </select>
         </div>
 
